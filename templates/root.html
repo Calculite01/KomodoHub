@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Komodo Hub</title>
-</head>
-<body>
-    <header style="background-color: whitesmoke; display: flex;">
-        <div>Komodo Hub</div>
-        <div style="margin-right: 10px; margin-left: auto;">Contact</div>
-        <button><a href="login.html">Sign up</a></button>
-    </header>
-    <div style="background-color: greenyellow; width: auto; height: 325px; display: flex; justify-content: center; align-items: center; flex-direction: column;"><img>
-        <h1>Komodo Hub</h1>
-        <h6 style="text-align: center;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis illum eius tempora maiores incidunt vitae quia ab deleniti, nulla quo aliquid repudiandae exercitationem itaque ipsa facere dignissimos tenetur in. At.</h6>
-        <div><button><a href="login.html">Sign up</a></button></div>
-    </div>
-    <h1>UNDER CONSTRUCTION</h1>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+<header style="background-color: whitesmoke; display: flex;">
+    <div>Komodo Hub</div>
+    <div style="margin-right: 10px; margin-left: auto;">Contact</div>
+    <button><a href="{{ url_for('login') }}">Sign up</a></button>
+</header>
+<div style="background-color: greenyellow; width: auto; height: 325px; display: flex; justify-content: center; align-items: center; flex-direction: column;"><img>
+    <h1>Komodo Hub</h1>
+    <h6 style="text-align: center;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis illum eius tempora maiores incidunt vitae quia ab deleniti, nulla quo aliquid repudiandae exercitationem itaque ipsa facere dignissimos tenetur in. At.</h6>
+    <div><button><a href="{{ url_for('login') }}">Sign up</a></button></div>
+</div>
+<h1>UNDER CONSTRUCTION</h1>
+{% endblock content %}
