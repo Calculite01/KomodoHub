@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -31,10 +31,40 @@ with app.app_context():
     if not os.path.exists('komodohub.db'):
         db.create_all()
 
-@app.route("/")
-def index():
-    return f"<h1>{User.query.all()}</h1>"
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=2222, debug=True)
+@app.route('/')
+def root():
+    return render_template('root.html')
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        return f"Logged in with {email}"
+
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            return "Passwords do not match!"
+
+        return f"Registered {first_name} {last_name} successfully!"
+
+    return render_template('register.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
  
