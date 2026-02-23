@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_bcrypt import Bcrypt
 import os
 
 app = Flask(__name__)
@@ -7,9 +9,19 @@ app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///komodohub.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 
-class User(db.Model):
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+class User(db.Model,UserMixin):
     Uid = db.Column(db.Integer, nullable=False, primary_key=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     first_name = db.Column(db.String(50), nullable=False)
@@ -19,7 +31,8 @@ class User(db.Model):
 
     def __repr__(self):
         return f"User('{self.Uid}','{self.first_name}', '{self.last_name}')"
-class Organization(db.Model):
+    
+class Organization(db.Model,UserMixin):
     Oid = db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     og_type = db.Column(db.String(20), nullable=False)
@@ -30,6 +43,7 @@ class Organization(db.Model):
 with app.app_context():
     if not os.path.exists('komodohub.db'):
         db.create_all()
+
 
 @app.route('/')
 def root():
@@ -66,5 +80,3 @@ def register():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
- 
