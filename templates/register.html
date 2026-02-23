@@ -1,12 +1,47 @@
-{% extends "layout.html" %}
-{% block content %}
-<form method="post" action="">
-    <span>First Name</span><input type="text"> 
-    <span>Last Name</span><input type="text"> 
-    <span>Email</span><input type="text"> 
-    <span>Password</span><input type="password">
-    <span>Confirm Password</span><input type="password">
-    <input type="submit">
-</form>
-<a href="{{ url_for('login') }}">Already have an account?</a>
-{% endblock content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komodo Hub</title>
+    <link rel="stylesheet" href="bird.css">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+</style>
+<body>
+
+<div class="bird-side"></div>
+
+<div class="right-side">
+    <div class="login-container">
+        <h2>Register</h2>
+    
+        <form id="loginForm">
+            <div class="input-group">
+                <label>Email</label>
+                <input type="text" id="Email" required>
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Register</button>
+        </form>
+
+        <div class="register-link">
+            <p>Already have an account?
+                <a href="THE LINK TO THE REGISTER WEBSITE.html">Log in here</a>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
