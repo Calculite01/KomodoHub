@@ -1,20 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Komodo Hub</title>
-    <link rel="stylesheet" href="bird.css">
-</head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-    }
-</style>
-<body>
+{% extends "layout.html" %}
+{% block head %}
+<link rel="stylesheet" href="/static/style/bird.css">
+<title>Register - Komodo Hub</title>
+{% endblock head %}
+{% block content %}
 
 <div class="bird-side"></div>
 
@@ -38,10 +27,9 @@
 
         <div class="register-link">
             <p>Already have an account?
-                <a href="THE LINK TO THE REGISTER WEBSITE.html">Log in here</a>
+                <a href="{{ url_for('login') }}">Log in here</a>
             </p>
         </div>
     </div>
 </div>
-</body>
-</html>
+{% endblock content %}
