@@ -48,10 +48,10 @@ with app.app_context():
 
 @app.route('/')
 def root():
-    return render_template('root.html')
+    return render_template('landing.html')
 
-@login_required
 @app.route('/home')
+@login_required
 def home():
     return render_template('home.html')
 
