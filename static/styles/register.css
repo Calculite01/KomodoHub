@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.body {
+    height: 89.6vh;
+    display: flex;
+}
+
+.bird-side {
+    width: 50%;
+    background: url('/static/images/bird.jpg') no-repeat center center/cover;
+}
+
+.right-side {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+
+.register-container {
+    width: 350px;
+    height: 500px;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 15px;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.register-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+    .regiser-btn:hover {
+    background-color: #45a049;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.register-link a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.navbar {
+display: flex;
+justify-content: space-between; 
+align-items: center;           
+padding: 20px 40px;
+border-bottom: 1px solid #228B22;
+background-color: #9fea4a;
+}
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  gap: 12px; 
+  color: #228B22;
+}
+
+.logo-group a {
+  text-decoration: none;
+  color: #228B22;
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 22px;
+}
+
+h1 {
+  font-family: sans-serif;
+  font-size: 22px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px; 
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #228B22;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+.sign-in {
+  background-color: 	#228B22;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}

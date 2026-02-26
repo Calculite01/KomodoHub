@@ -1,35 +1,53 @@
 {% extends "layout.html" %}
 {% block head %}
 <title>Login - Komodo Hub</title>
-<link rel="stylesheet" href="/static/styles/bird.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="/static/styles/login.css">
 {% endblock head %}
 {% block content %}
+<body>
+    <div>       
+        <header class="navbar">
+            <div class="logo-group">
+                <i class="fa-solid fa-paw" style="color: #228B22;font-size: 24px;"></i>
+                <a href="#">Komodo Hub</a>
+            </div>
 
-<div class="bird-side"></div>
-
-<div class="right-side">
-    <div class="login-container">
-        <h2>Login</h2>
+            <nav class="nav-links">
+                <a href="#">About</a> 
+                <a href="#">Contact</a>
+                <a href="{{ url_for('login') }}"><button class="sign-in">Sign in</button></a>
+            </nav>
+        </header>
+    </div>
+    <div class="body">
+        <div class="bird-side"></div>
     
-        <form id="loginForm">
-            <div class="input-group">
-                <label>Email</label>
-                <input type="text" id="Email" required>
+        <div class="right-side">
+            <div class="login-container">
+                <h2>Login</h2>
+            
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="text" id="Email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+
+                    <button type="submit" class="login-btn">Log In</button>
+                </form>
+
+                <div class="register-link">
+                    <p>Don't have an account?
+                        <a href="{{ url_for('register') }}">Register here</a>
+                    </p>
+                </div>
             </div>
-
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="password" required>
-            </div>
-
-            <button type="submit" class="login-btn">Log In</button>
-        </form>
-
-        <div class="register-link">
-            <p>Don't have an account?
-                <a href="{{ url_for('register') }}">Register here</a>
-            </p>
         </div>
     </div>
-</div>
+</body>
 {% endblock content %}
