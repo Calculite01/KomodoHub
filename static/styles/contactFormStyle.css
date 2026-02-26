@@ -1,0 +1,162 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    /* centres the form */
+    display: flex;
+    justify-content: center;
+    /* centre horizontally */
+    align-items: center;
+    /* centre vertically */
+    /* prevents form from hitting top/bottom */
+    padding: 2rem 0;
+}
+
+/* Blurring the background image */
+.bg-container {
+    background-image: url('/static/images/leopard.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    min-width: 120vh;
+    filter: blur(3px);
+    z-index: -20;
+    /* push bg to back */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.contact-form {
+    border-width: 3px;
+    border-radius: 1.3rem;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.993);
+    font-weight: bold;
+    justify-content: center;
+    /* frosty white bg */
+    background: rgba(255, 255, 255, 0.664);
+    box-sizing: border-box;
+    max-width: 500px;
+    width: 90%;
+    align-items: center;
+    text-align: center;
+}
+
+.contact-form h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: #222;
+}
+
+#input-fields {
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.input-fields label {
+    margin-top: 1.2rem;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.input-fields input,
+.input-fields select,
+.input-fields textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+#regions {
+    text-align: center;
+}
+
+.input-fields textarea {
+    resize: vertical;
+}
+
+.form-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+.form-btns input {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 0.5 rem;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.name-fields {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-bottom: 1.2rem;
+}
+
+.name-fields .input-fields {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* Button Colors */
+#submit-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#submit-btn:hover {
+    background-color: #45a049;
+}
+
+#reset-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+#reset-btn:hover {
+    background-color: #da190b;
+}
+
+#back-btn {
+    background-color: #ddd;
+    color: #333;
+}
+
+#back-btn:hover {
+    background-color: #bbb;
+}
+
+@media (max-width: 600px) {
+
+    /* scale down form size to adjust on smaller width screens */
+    .contact-form {
+        padding: 1.5rem;
+    }
+
+    .form-btns {
+        flex-direction: column;
+    }
+}
