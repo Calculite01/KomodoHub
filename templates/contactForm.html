@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static//styles/contactFormStyle.css">
+</head>
+
+<body style="min-height: 100vh;">
+    <div class="bg-container"></div>
+    <div class="contact-form">
+        <h3>Fill out the form below and share your queries with us</h3>
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="name-fields">
+                <div class="input-fields">
+                    <label for="first-name">First Name</label>
+                    <input type="text" id="first-name" class="first-name" placeholder="Tony" minlength="4"
+                        maxlength="15" required>
+                </div>
+                <div class="input-fields">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" id="last-name" class="last-name" placeholder="Stark" minlength="4" maxlength="15"
+                        required>
+                </div>
+            </div>
+
+            <div class="input-fields">
+                <label for="company-email">Company Email</label>
+                <input type="email" id="company-email" class="company-email" placeholder="shieldHydra@avengers.us"
+                    required>
+            </div>
+
+            <div class="input-fields">
+                <label for="phone-number">Phone Number</label>
+                <input type="tel" id="phone-number" class="phone-number" placeholder="07xxxxxxxxx" minlength="11"
+                    maxlength="11" pattern="^07[0-9]{3}[ \-\][0-9]{6}$" required>
+            </div>
+
+            <!-- select region in Indonesia (for user data behvaiour / distribution purposes) -->
+            <div class="input-fields">
+                <label for="region">Region</label>
+                <select id="regions" name="regions">
+                    <option value="java">Java</option>
+                    <option value="sumatra">Sumatra</option>
+                    <option value="kalimantan/borneo">Kalimantan / Borneo</option>
+                    <option value="sulawesi">Sulawesi</option>
+                    <option value="nusaTenggara">Nusa Tenggara (Lesser Sunda Islands)</option>
+                    <option value="malukuIslands">Maluku Islands</option>
+                    <option value="papua">Papua</option>
+                </select>
+            </div>
+
+            <div class="input-fields">
+                <label for="user-query">Query</label>
+                <textarea name="query" id="user-query" cols="30"
+                    rows="5">Enter your query and concerns here. </textarea>
+            </div>
+
+            <div class="form-btns">
+                <input type="submit" name="submit-btn" id="submit-btn" value="Submit">
+                <input type="reset" name="reset-btn" id="reset-btn" value="Reset Form Fields">
+                <input type="button" id="go-back-btn" onclick="window.history.back()" value="Go Back">
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
