@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block head %}OTP Verification{% endblock %}
+
+{% block content %}
+    <h1>OTP Verification</h1>
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}     <!-- CSRF token for protection -->
+
+        {{ form.user_entered_OTP.label }}
+        {{ form.user_entered_OTP(size=6, maxlength=6) }}
+
+        {{ form.submit_btn() }}
+    </form>
+
+    {% with messages=get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
