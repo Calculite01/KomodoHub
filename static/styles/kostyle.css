@@ -7,8 +7,12 @@ html {
   justify-content: space-between; 
   align-items: center;           
   padding: 20px 40px;
-  border-bottom: 1px solid #228B22;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   background-color: #9fea4a;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
 .logo-group {
@@ -97,7 +101,8 @@ h1 {
 
 .bg-container {
   background-image: url("/static/images/leopard.jpg");
-  
+  border-radius: 25px;
+
 
   background-size: cover;      
   background-position: center; 
@@ -120,16 +125,10 @@ h1 {
 body, html {
   width: 100%;
   overflow-x: hidden; /* Prevents horizontal scrolling */
+  background:black;
+
 }
 
-body::-webkit-scrollbar {   /*to elemenatete the scrollbar*/
-  display: none;
-}
-
-body {                        /*to elemenatete the scrollbar for edge*/
-  -ms-overflow-style: none;  
-  scrollbar-width: none;  
-}
 
 .features-container {
   display: flex;

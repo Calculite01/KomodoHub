@@ -65,7 +65,7 @@
     margin-top: 10px;
 }
 
-    .login-btn:hover {
+.login-btn:hover {
     background-color: #45a049;
 }
 
@@ -133,4 +133,18 @@ h1 {
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.forgot-password-link {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.forgot-password-link a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
 }

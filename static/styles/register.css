@@ -25,7 +25,7 @@
 
 .register-container {
     width: 350px;
-    height: 500px;
+    height: 650px;
     padding: 40px;
     background: white;
     border-radius: 10px;
@@ -134,4 +134,15 @@ h1 {
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.termbox {
+  display:block;
+  padding: 1em;
+  max-width: 800px;
+}
+
+.termbox a {
+    color: #4CAF50;
+    text-decoration: none;
 }

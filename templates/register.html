@@ -30,6 +30,15 @@
             
                 <form id="loginForm">
                     <div class="input-group">
+                        <label>First Name</label>
+                        <input type="text" id="first_name" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        <input type="text" id="last_name" required>
+                    </div>
+                    <div class="input-group">
                         <label>Email</label>
                         <input type="text" id="Email" required>
                     </div>
@@ -37,6 +46,21 @@
                     <div class="input-group">
                         <label>Password</label>
                         <input type="password" id="password" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    
+                    <div class="termbox">
+                        <input type="checkbox" id="checkbox" name="terms" required>
+                        <label for="checkbox">
+                            I agree to deez<br>
+                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">
+                                Terms and Conditions
+                            </a>
+                        </label>
                     </div>
 
                     <button type="submit" class="register-btn">Register</button>
