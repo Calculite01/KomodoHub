@@ -24,13 +24,13 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # email configuration
-app.config['MAIL_SERVER'] = 'selected_mail_server_like_smtp'
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
+app.config['MAIL_PORT'] = 2525
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'sender_username'
-app.config['MAIL_PASSWORD'] = 'sender_password'
-app.config['MAIL_DEFAULT_SENDER'] = 'example_email@gmail.com'
+app.config['MAIL_USERNAME'] = 'a98e6c8fa56eec'
+app.config['MAIL_PASSWORD'] = 'd30e3f036c028e'
+app.config['MAIL_DEFAULT_SENDER'] = 'infinityaffu@gmail.com'
 
 mail = Mail(app)
 
@@ -46,6 +46,7 @@ class User(db.Model,UserMixin):
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     acc_type = db.Column(db.String(20), nullable=False)
+    is_verified = db.Column(db.Boolean(), nullable=False)
 
     def __repr__(self):
         return f"User('{self.id}','{self.first_name}', '{self.last_name}')"
@@ -79,7 +80,7 @@ otp_storage = {}    # stores OTPs for verification of user entered OTP
 
 def generate_otp(email):
     otp = f"{secrets.randbelow(1000000):06}"
-    expiration_time = datetime.now() + timedelta(minutes=5);    # OTP stays valid for 5 minutes from time of generation
+    expiration_time = datetime.now() + timedelta(minutes=5)    # OTP stays valid for 5 minutes from time of generation
     otp_storage[email] = {'otp': otp, 'expires': expiration_time}
     return otp
 
@@ -141,11 +142,25 @@ def login():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(email=form.email.data, first_name=form.first_name.data, last_name=form.last_name.data, password=hashed_password)
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        email = form.email.data
+        new_user = User(email=email,
+                        first_name=form.first_name.data,
+                        last_name=form.last_name.data,
+                        password=hashed_password,
+                        acc_type="Student",
+                        is_verified=False)
+        session['verify_registration_email'] = email
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('login'))
+
+        # send email with OTP for verification
+        otp = generate_otp(email)
+        send_otp_email(recipient_email=email, otp=otp)
+        flash("OTP sent to email. Please enter OTP", 'notification')
+
+        return redirect(url_for('verify_registration'))     # redirect to OTP form
+
     return render_template('register.html', form=form)
 
 @app.route('/contact', methods= ['GET', 'POST'])
@@ -165,10 +180,10 @@ def contact():
             flash("Query Submitted! Confirmation email sent to you!", "success")
 
             # send confirmation email
-            acknowledge_contact_email(email);
+            acknowledge_contact_email(email)
 
-            #render contact form to get user OTP
-            return redirect(url_for('verify_contact_otp'))
+            # render homepage
+            return redirect(url_for('home'))
 
         except Exception as e:
             db.session.rollback()
@@ -181,32 +196,32 @@ def contact():
         return render_template('contactForm.html', form=form)
 
 @app.route('/register/verify', methods= ['GET', 'POST'])
-def verify_contact_otp():              # get otp entered by user in the form
+def verify_registration():              # get otp entered by user in the form
     form = OTPForm()
-    recipient_email = session.get('contact_email')
+    register_email = session.get('verify_registration_email')
 
-    # send email with OTP for verification
-    otp = generate_otp(email)
-    send_otp_email(recipient_email=email, otp=otp)
-    session['contact_email'] = email
-
-    if not recipient_email:
-        flash("Please submit the contact form again.")
-        return redirect('contact')
+    if not register_email:
+        flash("Please register again.", 'failure')
+        return redirect('register')
 
     if form.validate_on_submit():
         otp = form.user_entered_OTP.data
-        if verify_email_otp(email= recipient_email, entered_otp= otp):
+        if verify_email_otp(email= register_email, entered_otp= otp):
             flash("OTP verified. Your message has been confirmed", 'success')
             session.pop('contact_email', None)              # clear session after successful verification
 
-            if current_user.is_authenticated:
-                return redirect(url_for('home'))            # if the user in current session if logged in, redirect to homepage
-            else:
-                return redirect(url_for('index'))           # otherwise redirect to landing page
+            # update in Database that user has been verified
+            user = User.query.filter_by(email=register_email).first()
+            user.is_verified = True
+            db.session.commit()
+
+            user = User.query.filter_by(email= register_email).first()
+            if user and user.is_verified:
+                session.pop("verify_registration_email", None)
+                return redirect(url_for('login'))
 
         else:
-            flash("Incorrect or expired OTP. Please try again", 'danger')
+            flash("Incorrect or expired OTP. Please try again", 'failure')
             return redirect(url_for('verify_contact_otp'))
 
     return render_template('otp_form.html', form=form)

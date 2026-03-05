@@ -98,6 +98,10 @@ body {
     margin-top: 1.5rem;
 }
 
+.btns {
+    border-radius: 6px;
+}
+
 .form-btns input {
     flex: 1;
     padding: 0.8rem;

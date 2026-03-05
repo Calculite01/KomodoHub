@@ -1,78 +1,73 @@
 {% extends "layout.html" %}
+
 {% block head %}
-<title>Register - Komodo Hub</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<link rel="stylesheet" href="/static/styles/register.css">
-{% endblock head %}
+    <title>Register - Komodo Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/static/styles/register.css">
+{% endblock %}
+
+
 {% block content %}
+    <body>
+        <div>
+            <header class="navbar">
+                <div class="logo-group">
+                    <i class="fa-solid fa-paw" style="color: #228B22;font-size: 24px;"></i>
+                    <a href="#">Komodo Hub</a>
+                </div>
 
-<body>
-    <div>       
-        <header class="navbar">
-            <div class="logo-group">
-                <i class="fa-solid fa-paw" style="color: #228B22;font-size: 24px;"></i>
-                <a href="#">Komodo Hub</a>
-            </div>
+                <nav class="nav-links">
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <a href="{{ url_for('login') }}"><button class="sign-in">Sign in</button></a>
+                </nav>
+            </header>
+        </div>
+        <div class="body">
+            <div class="bird-side"></div>
 
-            <nav class="nav-links">
-                <a href="#">About</a> 
-                <a href="#">Contact</a>
-                <a href="{{ url_for('login') }}"><button class="sign-in">Sign in</button></a>
-            </nav>
-        </header>
-    </div>
-    <div class="body">
-        <div class="bird-side"></div>
-    
-        <div class="right-side">
-            <div class="register-container">
-                <h2>Register</h2>
-            
-                <form id="loginForm">
-                    <div class="input-group">
-                        <label>First Name</label>
-                        <input type="text" id="first_name" required>
+            <div class="right-side">
+                <div class="register-container">
+                    <h2>Register</h2>
+
+                    <form action="{{ url_for('register') }}" method="POST">
+                        {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
+
+                        <div class="input-group">
+                            {{ form.first_name.label }}
+                            {{ form.first_name(id="first-name", placeholder="Steve") }}
+                        </div>
+
+                        <div class="input-group">
+                            {{ form.last_name.label }}
+                            {{ form.last_name(id="last-name", placeholder="Rogers") }}
+                        </div>
+
+                        <div class="input-group">
+                            {{ form.email.label }}
+                            {{ form.email(id="Email", placeholder="ageOfUltron@avengers.com") }}
+                        </div>
+
+                        <div class="input-group">
+                            {{ form.password.label }}
+                            {{ form.password(id="password", placeholder="123456789") }}
+                        </div>
+
+                        <div class="input-group">
+                            {{ form.confirm_password.label }}
+                            {{ form.confirm_password(id="confirm-password", placeholder="123456789") }}
+                        </div>
+
+                        {{ form.submit(id="register-btn", class="register-btn") }}
+                    </form>
+
+                    <div class="register-link">
+                        <p>Already have an account?
+                            <a href="{{ url_for('login') }}">Log in here</a>
+                        </p>
                     </div>
-
-                    <div class="input-group">
-                        <label>Last Name</label>
-                        <input type="text" id="last_name" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Email</label>
-                        <input type="text" id="Email" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" id="password" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Confirm Password</label>
-                        <input type="password" id="password" required>
-                    </div>
-                    
-                    <div class="termbox">
-                        <input type="checkbox" id="checkbox" name="terms" required>
-                        <label for="checkbox">
-                            I agree to deez<br>
-                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">
-                                Terms and Conditions
-                            </a>
-                        </label>
-                    </div>
-
-                    <button type="submit" class="register-btn">Register</button>
-                </form>
-
-                <div class="register-link">
-                    <p>Already have an account?
-                        <a href="{{ url_for('login') }}">Log in here</a>
-                    </p>
                 </div>
             </div>
         </div>
-    </div>
-</body>
-{% endblock content %}
+    </body>
+{% endblock %}

@@ -6,65 +6,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Form</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static//styles/contactFormStyle.css">
+    <link rel="stylesheet" href="/static/styles/contactFormStyle.css">
 </head>
 
+<!--   FLASK FORM RENDERING     -->
 <body style="min-height: 100vh;">
     <div class="bg-container"></div>
-    <div class="contact-form">
+
+    <div class="contact-form" action="{{ url_for('contact') }}">
         <h3>Fill out the form below and share your queries with us</h3>
-        <form method="POST" action="{{ url_for('login') }}">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}     <!-- CSRF token for protection -->
             <div class="name-fields">
                 <div class="input-fields">
-                    <label for="first-name">First Name</label>
-                    <input type="text" id="first-name" class="first-name" placeholder="Tony" minlength="4"
-                        maxlength="15" required>
+                    {{ form.first_name.label(for="first-name") }}
+                    {{ form.first_name(id="first-name", class="first-name"+ ("input-error" if form.first_name.errors else ""), placeholder="Tony") }}
+
+                    {% if form.first_name.errors %}
+                        <div class="errors-container">
+                            {% for error in form.first_name.errors %}
+                                <span class="errors">{{ error }}</span><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
+
                 <div class="input-fields">
-                    <label for="last-name">Last Name</label>
-                    <input type="text" id="last-name" class="last-name" placeholder="Stark" minlength="4" maxlength="15"
-                        required>
+                    {{ form.last_name.label(for="last-name") }}
+                    {{ form.last_name(id="last-name", class="last-name"+ ("input-error" if form.last_name.errors else ""), placeholder="Stark") }}
+
+                    {% if form.last_name.errors %}
+                        <div class="errors-container">
+                            {% for error in form.last_name.errors %}
+                                <span class="errors">{{ error }}</span><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="input-fields">
-                <label for="company-email">Company Email</label>
-                <input type="email" id="company-email" class="company-email" placeholder="shieldHydra@avengers.us"
-                    required>
+                {{ form.company_email.label(for="company-email") }}
+                {{ form.company_email(id="company-email", class="company-email"+ ("input-error" if form.company_email.errors else ""), placeholder="shieldHydra@avengers.us") }}
+                {% if form.company_email.errors %}
+                    <div class="errors-container">
+                        {% for error in form.company_email.errors %}
+                             <span class="errors">{{ error }}</span><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="input-fields">
-                <label for="phone-number">Phone Number</label>
-                <input type="tel" id="phone-number" class="phone-number" placeholder="07xxxxxxxxx" minlength="11"
-                    maxlength="11" pattern="^07[0-9]{3}[ \-\][0-9]{6}$" required>
+                {{ form.ph_number.label(for="phone-number") }}
+                {{ form.ph_number(id="phone-number", class="phone-number"+ ("input-error" if form.ph_number.errors else ""), placeholder="07xxxxxxxxx or 07xxx-xxxxxx") }}
+
+                {% if form.ph_number.errors %}
+                    <div class="errors-container">
+                        {% for error in form.ph_number.errors %}
+                             <span class="errors">{{ error }}</span><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- select region in Indonesia (for user data behvaiour / distribution purposes) -->
             <div class="input-fields">
-                <label for="region">Region</label>
-                <select id="regions" name="regions">
-                    <option value="java">Java</option>
-                    <option value="sumatra">Sumatra</option>
-                    <option value="kalimantan/borneo">Kalimantan / Borneo</option>
-                    <option value="sulawesi">Sulawesi</option>
-                    <option value="nusaTenggara">Nusa Tenggara (Lesser Sunda Islands)</option>
-                    <option value="malukuIslands">Maluku Islands</option>
-                    <option value="papua">Papua</option>
-                </select>
+                {{ form.region.label(for="regions") }}
+                {{ form.region(id="regions") }}
             </div>
 
             <div class="input-fields">
-                <label for="user-query">Query</label>
-                <textarea name="query" id="user-query" cols="30"
-                    rows="5">Enter your query and concerns here. </textarea>
+                {{ form.userQuery.label(for="user-query") }}
+                {{ form.userQuery(id="user-query", cols="30", rows="5", placeholder="Enter your query and concerns here.") }}
             </div>
 
             <div class="form-btns">
-                <input type="submit" name="submit-btn" id="submit-btn" value="Submit">
-                <input type="reset" name="reset-btn" id="reset-btn" value="Reset Form Fields">
-                <input type="button" id="go-back-btn" onclick="window.history.back()" value="Go Back">
+                {{ form.submit_btn(id="submit-btn", class="btns") }}
+                <input type="reset" name="reset-btn" id="reset-btn" class="btns" value="Reset Form Fields">
+                <input type="button" name="go-back-btn" id="go-back-btn" class="btns" onclick="window.history.back()" value="Go Back">
             </div>
         </form>
+
+<!--   Form Flashed Messages (one-time)  -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul>
+                    {% for category , message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
     </div>
 </body>
 
