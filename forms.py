@@ -26,3 +26,7 @@ class ContactForm(FlaskForm):
     userQuery = TextAreaField(label= 'Query', default= "Enter Your query and concerns here...")
     submit_btn = SubmitField('Submit')
     # reset and goBack buttons handled in HTML code
+
+class OTPForm(FlaskForm):
+    user_entered_OTP = StringField(label= "Enter OTP", validators=[InputRequired(), Length(min=6, max=6)])
+    submit_btn = SubmitField(label= 'Verify OTP')
