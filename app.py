@@ -131,11 +131,25 @@ def home():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data.strip()).first()
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('home'))
+                if user.is_verified:
+                    login_user(user)
+                    return redirect(url_for('home'))
+                else:       # unverified user
+                    flash('User not verified. Enter valid OTP', 'failure')
+                    return redirect(url_for('verify_registration'))
+            else:       # password does not match
+                flash("Invalid password. Try again", 'failure')
+                return redirect(url_for('login'))
+        else:       # non-existent user --> redirect to registration page
+            flash("User does not exist. Register now", 'failure')
+            return redirect(url_for('register'))
+
+    if form.errors:
+        print(f"Login Form Errors: {form.errors}")
+
     return render_template('login.html',form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -144,12 +158,20 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         email = form.email.data
-        new_user = User(email=email,
-                        first_name=form.first_name.data,
-                        last_name=form.last_name.data,
-                        password=hashed_password,
-                        acc_type="Student",
-                        is_verified=False)
+        new_user = User(email= email,
+                        first_name= form.first_name.data.strip(),
+                        last_name= form.last_name.data.strip(),
+                        password= hashed_password,
+                        acc_type= "Student",
+                        is_verified= False)
+
+        new_user_exists = User.query.filter_by(email= email,
+                                               acc_type="Student").first()
+
+        if new_user_exists:
+            flash("User already exists. Please Login")
+            return redirect(url_for('login'))
+
         session['verify_registration_email'] = email
         db.session.add(new_user)
         db.session.commit()
@@ -227,4 +249,4 @@ def verify_registration():              # get otp entered by user in the form
     return render_template('otp_form.html', form=form)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=2222)
