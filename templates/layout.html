@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block head %}This is the default page title{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles/layout.css">
 </head>
 <body>
+    <div class="flashes">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category,msg in messages %}
+                    <div class="{{ category }}-alert">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
     {% block content %}{% endblock content %}
 </body>
 </html>

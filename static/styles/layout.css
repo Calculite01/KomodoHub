@@ -1,0 +1,56 @@
+.flashes {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    z-index: 1000;
+}
+
+.flashes > div {
+    margin-top: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 500;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    animation: flashSlide 5s ease;
+    animation-fill-mode: forwards;
+}
+
+.success-alert {
+    background: #e6f9ec;
+    border-left: 6px solid #2ecc71;
+    color: #1b5e20;
+}
+
+.failure-alert {
+    background: #ffe6e6;
+    border-left: 6px solid #e74c3c;
+    color: #7f1d1d;
+}
+
+.notification-alert {
+    background: #e6f4ff;
+    border-left: 6px solid #3498db;
+    color: hsl(214, 52%, 25%);
+}
+
+@keyframes flashSlide {
+    0% {
+        opacity: 0;
+        transform: translate(0, -10px);
+    }
+    5% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    95% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(0,10px);
+    }
+}
+    
