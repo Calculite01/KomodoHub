@@ -42,8 +42,8 @@ function passwordCheck(){
         if (re.test(password)){strength++;}
     }
     if (strength < 3){
-        passwordfeedback.textContent = ""; //Strength: Weak
-        passwordfeedback2.textContent = "Password must contain atleast one letter, one number, and one special character";
+        passwordfeedback.textContent = "Password must contain atleast one letter, one number, and one special character"; //Strength: Weak
+        passwordfeedback2.textContent = "";
     }
     else{passwordfeedback.textContent = ""; passwordfeedback2.textContent = "";}//Strength: Strong
     return strength;
