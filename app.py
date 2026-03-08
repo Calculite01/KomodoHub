@@ -9,6 +9,7 @@ from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail, Message
 import secrets      # for otp generation
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
@@ -18,19 +19,18 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.secret_key = "secret-key-for-csrf-tokens"
 csrf = CSRFProtect(app)     # enable CSRF protection globally on the 'app' instance
+load_dotenv()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # email configuration
-app.config['MAIL_SERVER'] = 'sandbox.smtp.mailtrap.io'
-app.config['MAIL_PORT'] = 2525
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'a98e6c8fa56eec'
-app.config['MAIL_PASSWORD'] = 'd30e3f036c028e'
-app.config['MAIL_DEFAULT_SENDER'] = 'infinityaffu@gmail.com'
+app.config['MAIL_USERNAME'] = os.getenv("EMAIL")
+app.config['MAIL_PASSWORD'] = os.getenv("PASSWORD")
 
 mail = Mail(app)
 
@@ -49,7 +49,7 @@ class User(db.Model,UserMixin):
     is_verified = db.Column(db.Boolean(), nullable=False)
 
     def __repr__(self):
-        return f"User('{self.id}','{self.first_name}', '{self.last_name}')"
+        return f"User('{self.id}','{self.email}','{self.first_name}', '{self.last_name}', '{self.password}', '{self.acc_type}', '{self.is_verified}')"
     
 class Organization(db.Model,UserMixin):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
@@ -75,7 +75,7 @@ with app.app_context():
     if not os.path.exists('komodohub.db'):
         db.create_all()
 
-# TODO: implement DB storage for OTPs
+# Todo: implement DB storage for OTPs
 otp_storage = {}    # stores OTPs for verification of user entered OTP
 
 def generate_otp(email):
@@ -91,7 +91,7 @@ def send_otp_email(recipient_email, otp):
     msg = Message(subject="OTP Code for verification",
                   recipients=[recipient_email],
                   body= f"Your OTP is {otp}. It will expire in {expires_in} minutes.",
-                  sender= app.config['MAIL_USERNAME'])
+                  sender= os.getenv("EMAIL"))
     mail.send(msg)
 
 def verify_email_otp(email, entered_otp):
@@ -120,6 +120,8 @@ def acknowledge_contact_email(email):
 
 @app.route('/')
 def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     return render_template('landing.html')
 
 @app.route('/home')
@@ -129,6 +131,8 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.strip()).first()
@@ -152,8 +156,16 @@ def login():
 
     return render_template('login.html',form=form)
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -169,8 +181,9 @@ def register():
                                                acc_type="Student").first()
 
         if new_user_exists:
-            flash("User already exists. Please Login")
-            return redirect(url_for('login'))
+            flash("Email already in use", "failure")
+            #return redirect(url_for('login'))
+            return render_template('register.html', form=form)
 
         session['verify_registration_email'] = email
         db.session.add(new_user)
@@ -187,6 +200,8 @@ def register():
 
 @app.route('/contact', methods= ['GET', 'POST'])
 def contact():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = ContactForm()
     if form.validate_on_submit():
         email = form.company_email.data.strip().lower()
@@ -219,6 +234,8 @@ def contact():
 
 @app.route('/register/verify', methods= ['GET', 'POST'])
 def verify_registration():              # get otp entered by user in the form
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = OTPForm()
     register_email = session.get('verify_registration_email')
 
@@ -247,6 +264,10 @@ def verify_registration():              # get otp entered by user in the form
             return redirect(url_for('verify_contact_otp'))
 
     return render_template('otp_form.html', form=form)
+
+@app.route('/database')  #This is for testing if you go to this route you can just see the users in the database will remove this at the end
+def database():
+    return f"<h1>Users</h1><br>{User.query.all()}"
 
 if __name__ == '__main__':
     app.run(debug=True, port=2222)
