@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db
-from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm
 from app.models import User, Organization, ContactMessage, OTP
 from datetime import datetime, timedelta
 import secrets      # for otp generation
@@ -31,6 +31,18 @@ def send_otp_email(recipient_email, otp):
                   recipients=[recipient_email],
                   body= f"Your OTP is {otp}. It will expire in {expires_in} minutes.",
                   sender= os.getenv("EMAIL"))
+    mail.send(msg)
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request',
+                  sender= os.getenv("EMAIL"),
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_token', token=token, _external=True)}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
     mail.send(msg)
 
 def verify_email_otp(email, entered_otp):
@@ -214,3 +226,34 @@ def verify_registration():              # get otp entered by user in the form
 @app.route('/database')  #This is for testing if you go to this route you can just see the users in the database will remove this at the end
 def database():
     return f"<h1>Users</h1><br>{User.query.all()}"
+
+
+@app.route("/forgot_password", methods=['GET', 'POST'])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'notification')
+        return redirect(url_for('login'))
+    return render_template('forgot_password.html', title='Reset Password', form=form)
+
+
+@app.route("/reset_token/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'failure')
+        return redirect(url_for('forgot_password'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', title='Reset Password', form=form)

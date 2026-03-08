@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{% endblock head %}
+
+
+{% block content %}
+    <div>
+        <header class="navbar">
+            <div class="logo-group">
+                <i class="fa-solid fa-paw" style="color: #228B22;font-size: 24px;"></i>
+                <a href="#">Komodo Hub</a>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#">About</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+                <a href="{{ url_for('login') }}"><button class="sign-in">Sign in</button></a>
+            </nav>
+        </header>
+    </div>
+
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
+
+        <div class="input-group">
+            {{ form.password.label }}
+            {{ form.password(id="password", placeholder="123456789") }}
+            {% for error in form.password.errors %}
+                <div class="errors">{{ error }}</div>
+            {% endfor %}
+            <div id="passwordfeedback" class="errors"></div>
+            <div id="passwordfeedback2" class="errors"></div>
+        </div>
+
+        <div class="input-group">
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password(id="confirm-password", placeholder="123456789") }}
+            {% for error in form.confirm_password.errors %}
+                <div class="errors">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        {{ form.submit(id="register-btn", class="register-btn") }}
+    </form>
+{% endblock content %}

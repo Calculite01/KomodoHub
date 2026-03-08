@@ -46,4 +46,17 @@ class ContactForm(FlaskForm):
 class OTPForm(FlaskForm):
     user_entered_OTP = StringField(label= "Enter OTP", validators=[InputRequired(), Length(min=6, max=6)])
     submit_btn = SubmitField(label= 'Verify OTP')
+
+class ForgotPasswordForm(FlaskForm):
+    email = EmailField('Email',validators=[InputRequired(),Email(),Length(max=100)])
+    submit = SubmitField('Reqest Password Reset')
     
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if not user or not user.is_verified:
+            raise ValidationError('Invalid Email')
+        
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Password',validators=[InputRequired(),Length(min=8,max=100)])
+    confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('password')])
+    submit = SubmitField('Reset Password')

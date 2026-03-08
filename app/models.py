@@ -2,6 +2,7 @@ from app import db, app
 from flask_login import UserMixin
 from datetime import datetime
 import os
+from itsdangerous import URLSafeTimedSerializer as Serializer
 
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
@@ -10,8 +11,24 @@ class User(db.Model,UserMixin):
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     acc_type = db.Column(db.String(20), nullable=False)
+    organization = db.Column(db.String(100))
     is_verified = db.Column(db.Boolean(), nullable=False)
+    uniqueAccessCode = db.Column(db.String(8))
 
+    def get_reset_token(self):
+        s = Serializer(app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.id})
+
+    @staticmethod
+    def verify_reset_token(token, expires_sec=600):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token, max_age=expires_sec)['user_id']
+        except:
+            return None
+
+        return User.query.get(user_id)
+    
     def __repr__(self):
         return f"User('{self.id}','{self.email}','{self.first_name}', '{self.last_name}', '{self.password}', '{self.acc_type}', '{self.is_verified}')"
     
