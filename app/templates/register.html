@@ -4,7 +4,7 @@
     <title>Register - Komodo Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/static/styles/register.css">
-{% endblock %}
+{% endblock head %}
 
 
 {% block content %}
@@ -26,55 +26,68 @@
             <div class="bird-side"></div>
 
             <div class="right-side">
-                <div class="register-container">
-                    <h2>Register</h2>
+                {% if not showotpform %}
+                    <div class="register-container">
+                        <h2>Register</h2>
+                        <form action="{{ url_for('register') }}" method="POST">
+                            {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
 
-                    <form action="{{ url_for('register') }}" method="POST">
-                        {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
+                            <div class="input-group">
+                                {{ form.first_name.label }}
+                                {{ form.first_name(id="first-name", placeholder="Steve") }}
+                            </div>
+                            <div class="input-group">
+                                {{ form.last_name.label }}
+                                {{ form.last_name(id="last-name", placeholder="Rogers") }}
+                            </div>
+                            <div class="input-group">
+                                {{ form.email.label }}
+                                {{ form.email(id="Email", placeholder="ageOfUltron@avengers.com") }}
+                                {% for error in form.email.errors %}
+                                    <div class="errors">{{ error }}</div>
+                                {% endfor %}
+                            </div>
 
-                        <div class="input-group">
-                            {{ form.first_name.label }}
-                            {{ form.first_name(id="first-name", placeholder="Steve") }}
-                        </div>
-                        <div class="input-group">
-                            {{ form.last_name.label }}
-                            {{ form.last_name(id="last-name", placeholder="Rogers") }}
-                        </div>
-                        <div class="input-group">
-                            {{ form.email.label }}
-                            {{ form.email(id="Email", placeholder="ageOfUltron@avengers.com") }}
-                            {% for error in form.email.errors %}
-                                <div class="errors">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                            <div class="input-group">
+                                {{ form.password.label }}
+                                {{ form.password(id="password", placeholder="123456789") }}
+                                {% for error in form.password.errors %}
+                                    <div class="errors">{{ error }}</div>
+                                {% endfor %}
+                                <div id="passwordfeedback" class="errors"></div>
+                                <div id="passwordfeedback2" class="errors"></div>
+                            </div>
+                            <div class="input-group">
+                                {{ form.confirm_password.label }}
+                                {{ form.confirm_password(id="confirm-password", placeholder="123456789") }}
+                                {% for error in form.confirm_password.errors %}
+                                    <div class="errors">{{ error }}</div>
+                                {% endfor %}
+                            </div>
 
-                        <div class="input-group">
-                            {{ form.password.label }}
-                            {{ form.password(id="password", placeholder="123456789") }}
-                            {% for error in form.password.errors %}
-                                <div class="errors">{{ error }}</div>
-                            {% endfor %}
-                            <div id="passwordfeedback" class="errors"></div>
-                            <div id="passwordfeedback2" class="errors"></div>
-                        </div>
-                        <div class="input-group">
-                            {{ form.confirm_password.label }}
-                            {{ form.confirm_password(id="confirm-password", placeholder="123456789") }}
-                            {% for error in form.confirm_password.errors %}
-                                <div class="errors">{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                            {{ form.submit(id="register-btn", class="register-btn") }}
+                        </form>
 
-                        {{ form.submit(id="register-btn", class="register-btn") }}
-                    </form>
-
-                    <div class="register-link">
-                        <p>Already have an account?
-                            <a href="{{ url_for('login') }}">Log in here</a>
-                        </p>
+                        <div class="register-link">
+                            <p>Already have an account?
+                                <a href="{{ url_for('login') }}">Log in here</a>
+                            </p>
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    <div class="register-container">
+                        <H2>Enter OTP</H2>
+                        <form action="{{ url_for('register') }}" method="POST">
+                            {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
+                            <div class="input-group">
+                                {{ otpform.user_entered_OTP.label }}
+                                {{ otpform.user_entered_OTP }}
+                            </div>
+                            {{ otpform.submit_btn(id="otp-btn", class="otp-btn") }}
+                        </form>
+                    </div>
+                {% endif %}
             </div>
         </div>
 <script src="/static/scripts/register.js"></script>
-{% endblock %}
+{% endblock content %}

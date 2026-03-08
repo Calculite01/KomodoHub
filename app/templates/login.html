@@ -38,6 +38,9 @@
                     <div class="input-group">
                         {{ form.password.label }}
                         {{ form.password(id="password") }}
+                        {% for error in form.password.errors %}
+                            <div class="errors">{{ error }}</div>
+                        {% endfor %}
                     </div>
                     
                     <div class="forgot-password-link">

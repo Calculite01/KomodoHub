@@ -15,7 +15,7 @@ class User(db.Model,UserMixin):
     def __repr__(self):
         return f"User('{self.id}','{self.email}','{self.first_name}', '{self.last_name}', '{self.password}', '{self.acc_type}', '{self.is_verified}')"
     
-class Organization(db.Model,UserMixin):
+class Organization(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     og_type = db.Column(db.String(20), nullable=False)
@@ -34,6 +34,12 @@ class ContactMessage(db.Model):
 
     def __repr__(self):
         return f"ContactMessage({self.first_name} {self.last_name}: {self.userMessage})"
+
+class OTP(db.Model):
+    id = db.Column(db.Integer, nullable = False, primary_key= True)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    otp = db.Column(db.String(6), nullable=False)
+    expiration_time = db.Column(db.DateTime)
 
 with app.app_context():
     if not os.path.exists('komodohub.db'):

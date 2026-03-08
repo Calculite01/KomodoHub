@@ -148,3 +148,9 @@ h1 {
 .forgot-password-link a:hover {
     text-decoration: underline;
 }
+
+.errors {
+    position: absolute;
+    font-size: small;
+    color: red;
+}

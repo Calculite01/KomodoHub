@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm
-from app.models import User, Organization, ContactMessage, otp_storage
+from app.models import User, Organization, ContactMessage, OTP
 from datetime import datetime, timedelta
 import secrets      # for otp generation
 from flask_login import login_user, login_required, logout_user, current_user
@@ -17,13 +17,16 @@ def load_user(user_id):
 def generate_otp(email):
     otp = f"{secrets.randbelow(1000000):06}"
     expiration_time = datetime.now() + timedelta(minutes=5)    # OTP stays valid for 5 minutes from time of generation
-    otp_storage[email] = {'otp': otp, 'expires': expiration_time}
+    otp_object = OTP(email=email,otp=otp,expiration_time=expiration_time)
+    db.session.add(otp_object)
+    db.session.commit()
     return otp
 
 def send_otp_email(recipient_email, otp):
-    if not otp_storage.get(recipient_email):
+    otp_object = OTP.query.filter_by(email=recipient_email).first()
+    if not otp_object:
         return
-    expires_in = int((otp_storage.get(recipient_email).get('expires') - datetime.now()).total_seconds() // 60)
+    expires_in = int((otp_object.expiration_time - datetime.now()).total_seconds() // 60)
     msg = Message(subject="OTP Code for verification",
                   recipients=[recipient_email],
                   body= f"Your OTP is {otp}. It will expire in {expires_in} minutes.",
@@ -31,18 +34,20 @@ def send_otp_email(recipient_email, otp):
     mail.send(msg)
 
 def verify_email_otp(email, entered_otp):
-    otp_record = otp_storage.get(email, None)
+    otp_object = OTP.query.filter_by(email=email).first()
 
-    if not otp_record:      # check if record exists
+    if not otp_object:      # check if record exists
         return False
 
-    if datetime.now() > otp_record['expires']:      # check if OTP has expired
-        otp_storage.pop(email, None)
+    if datetime.now() > otp_object.expiration_time:      # check if OTP has expired
+        db.session.delete(otp_object)
+        db.session.commit()
         return False
 
     # check if user entered OTP matches the OTP in records sent to the user
-    if entered_otp == otp_record['otp']:
-        otp_storage.pop(email, None)
+    if entered_otp == otp_object.otp:
+        db.session.delete(otp_object)
+        db.session.commit()
         return True
 
     return False    # if entered OTP is incorrect
@@ -72,24 +77,14 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.strip()).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                if user.is_verified:
-                    login_user(user)
-                    return redirect(url_for('home'))
-                else:       # unverified user
-                    flash('User not verified. Enter valid OTP', 'failure')
-                    return redirect(url_for('verify_registration'))
-            else:       # password does not match
-                flash("Invalid password. Try again", 'failure')
-                return redirect(url_for('login'))
-        else:       # non-existent user --> redirect to registration page
-            flash("User does not exist. Register now", 'failure')
-            return redirect(url_for('register'))
-
-    if form.errors:
-        print(f"Login Form Errors: {form.errors}")
-
+        if user.is_verified:
+            flash('User not verified. Enter valid OTP', 'failure')
+            flash(f"Logged in as {user.first_name} {user.last_name}", 'success')
+            login_user(user)
+            return redirect(url_for('home'))
+        else:       # unverified user
+            flash('User not verified. Enter valid OTP', 'failure')
+            return redirect(url_for('verify_registration'))
     return render_template('login.html',form=form)
 
 @app.route("/logout")
@@ -103,36 +98,51 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+    otpform = OTPForm()
+    showotpform = False
+    if form.submit.data and form.validate_on_submit():
         email = form.email.data
+        user = User.query.filter_by(email=email).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         new_user = User(email= email,
                         first_name= form.first_name.data.strip(),
                         last_name= form.last_name.data.strip(),
                         password= hashed_password,
-                        acc_type= "Student",
+                        acc_type= "Individual",
                         is_verified= False)
-
-        new_user_exists = User.query.filter_by(email= email,
-                                               acc_type="Student").first()
-
-        if new_user_exists:
-            flash("Email already in use", "failure")
-            #return redirect(url_for('login'))
-            return render_template('register.html', form=form)
-
         session['verify_registration_email'] = email
         db.session.add(new_user)
         db.session.commit()
 
+        otp_object = OTP.query.filter_by(email=email).first()
+        if otp_object:
+            db.session.delete(otp_object)
+            db.session.commit()
+            
         # send email with OTP for verification
-        otp = generate_otp(email)
+        showotpform = True
+        otp = generate_otp(email) 
         send_otp_email(recipient_email=email, otp=otp)
         flash("OTP sent to email. Please enter OTP", 'notification')
 
-        return redirect(url_for('verify_registration'))     # redirect to OTP form
-
-    return render_template('register.html', form=form)
+    if otpform.submit_btn.data and otpform.validate_on_submit():
+        email = session.get('verify_registration_email')
+        otp = otpform.user_entered_OTP.data
+        if verify_email_otp(email=email,entered_otp=otp):
+            user = User.query.filter_by(email=email).first()   #Set user is_verified to true
+            user.is_verified = True
+            db.session.commit()
+            session.pop('verify_registration_email', None)              # clear session after successful verification
+            flash("Account created, you can now log in", 'success')
+            return redirect(url_for('login'))
+        else:
+            session.pop('verify_registration_email', None)              # clear session after unsuccessful verification
+            flash("Account registration failed. Invalid code", 'failure')
+            return redirect(url_for('register'))
+    return render_template('register.html', form=form, otpform=otpform, showotpform=showotpform)
 
 @app.route('/contact', methods= ['GET', 'POST'])
 def contact():

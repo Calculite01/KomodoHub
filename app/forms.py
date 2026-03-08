@@ -1,6 +1,8 @@
+from app import bcrypt
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, EmailField, TelField, SelectField, TextAreaField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, EqualTo, Regexp, DataRequired
+from app.models import User
 
 class RegistrationForm(FlaskForm):
     email = EmailField('Email',validators=[InputRequired(),Email(),Length(max=100)])
@@ -10,10 +12,24 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('password')])
     submit = SubmitField('Register')
 
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user and user.is_verified:
+            raise ValidationError('Email already in use.')
+
+
 class LoginForm(FlaskForm):
     email = EmailField('Email',validators=[InputRequired(),Email(),Length(max=100)])
     password = PasswordField('Password',validators=[InputRequired(),Length(min=8,max=100)])
     submit = SubmitField('Login')
+
+    def validate_password(self,password):
+        user = User.query.filter_by(email=self.email.data.strip()).first()
+        if user and bcrypt.check_password_hash(user.password, password.data):
+            pass
+        else:
+            raise ValidationError("Incorrect email or password")
+
 
 class ContactForm(FlaskForm):
     first_name = StringField(label= 'First Name', validators=[InputRequired(), Length(min=4, max=15)])
@@ -30,3 +46,4 @@ class ContactForm(FlaskForm):
 class OTPForm(FlaskForm):
     user_entered_OTP = StringField(label= "Enter OTP", validators=[InputRequired(), Length(min=6, max=6)])
     submit_btn = SubmitField(label= 'Verify OTP')
+    
