@@ -14,7 +14,7 @@ class RegistrationForm(FlaskForm):
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
-        if user and user.is_verified:
+        if user and user.is_verified or user.organization != "None":
             raise ValidationError('Email already in use.')
 
 
@@ -60,3 +60,7 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password',validators=[InputRequired(),Length(min=8,max=100)])
     confirm_password = PasswordField('Confirm Password',validators=[InputRequired(),EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class UniqueAccessCodeForm(FlaskForm):
+    uniqueAccessCode = StringField(label= "Unique Access Code", validators=[InputRequired(), Length(min=8, max=8)])
+    submit = SubmitField('Set Up')

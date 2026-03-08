@@ -61,6 +61,3 @@ class OTP(db.Model):
 with app.app_context():
     if not os.path.exists('komodohub.db'):
         db.create_all()
-
-# Todo: implement DB storage for OTPs
-otp_storage = {}    # stores OTPs for verification of user entered OTP

@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db
-from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
 from app.models import User, Organization, ContactMessage, OTP
 from datetime import datetime, timedelta
 import secrets      # for otp generation
@@ -253,7 +253,22 @@ def reset_token(token):
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user.password = hashed_password
+        user.is_verified = True
+        user.uniqueAccessCode = ""
         db.session.commit()
         flash('Your password has been updated!', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+
+@app.route("/orglogin",methods=["GET","POST"])
+def orglogin():
+    form = UniqueAccessCodeForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(uniqueAccessCode=form.uniqueAccessCode.data).first()
+        if not user:
+            flash("Invalid Unique Access Code",'failure')
+        else:
+            send_reset_email(user)
+            flash('An email has been sent with instructions to set your password.', 'notification')
+            return redirect(url_for('login'))
+    return render_template("orglogin.html",form=form)
