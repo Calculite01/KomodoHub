@@ -1,19 +1,17 @@
 .flashes {
     position: fixed;
     top: 80px;
-    left: 50%;
-    transform: translateX(-50%);
     width: 500px;
-    z-index: 1000;
+    justify-self: center;
 }
 
 .flashes > div {
     margin-top: 12px;
     padding: 14px 18px;
     border-radius: 10px;
-    font-weight: 500;
+    font-weight: bold;
     box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    animation: flashSlide 5s ease;
+    animation: flashSlide 5s ease-in-out;
     animation-fill-mode: forwards;
 }
 

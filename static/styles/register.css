@@ -69,6 +69,10 @@
     .regiser-btn:hover {
     background-color: #45a049;
 }
+.register-btn:disabled {
+    background-color: #45a04991;
+    cursor: auto;
+}
 
 .register-link {
     text-align: center;
@@ -145,4 +149,10 @@ h1 {
 .termbox a {
     color: #4CAF50;
     text-decoration: none;
+}
+
+.errors {
+    position: absolute;
+    font-size: small;
+    color: red;
 }
