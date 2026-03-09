@@ -1,6 +1,6 @@
-from flask import render_template, url_for, redirect, flash, session
+from flask import render_template, url_for, redirect, flash, session, request
 from app import app, login_manager, mail, bcrypt, db
-from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, TaskForm
 from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask
 from datetime import datetime, timedelta
 import secrets      # for otp generation
@@ -293,9 +293,47 @@ def classrooms(orgid):
 
 @app.route("/class/<orgid>/<classid>",methods=["GET"])
 def classroom(orgid,classid):
-    return render_template("classroom.html")
+    return render_template("classroom.html", classid=classid)
 
 @app.route("/announcements/<orgid>",methods=["GET"])
 def announcements(orgid):
     announcements = Announcement.query.filter_by(organization_id=current_user.organization_id)
     return render_template("announcements.html", announcements=announcements)
+
+@app.route("/commonroom/<orgid>/<classid>",methods=["GET"])
+def commonroom(orgid,classid):
+    return render_template("commonroom.html")
+
+@app.route("/members/<orgid>/<classid>",methods=["GET"])
+def members(orgid,classid):
+    return render_template("members.html")
+
+@app.route("/tasks/<orgid>/<classid>",methods=["GET"])
+def classtasks(orgid,classid):
+    tasks = UserTask.query.filter_by(user_id=current_user.id)
+    return render_template("classtasks.html", tasks=tasks)
+
+@app.route("/createtask",methods=["GET","POST"])
+def createtask():
+    form = TaskForm()
+    readingContent = request.args.get('readingContent')
+    if readingContent:
+        form.readingContent.data = readingContent
+    return render_template("createtask.html",  form=form)
+
+@app.route("/programs",methods=["GET"])
+def programs():
+    query = request.args.get('taskcreate')
+    taskcreate = bool(query)  #False if None, True if anything else
+    return render_template("programs.html", taskcreate=taskcreate)
+
+@app.route("/programs/rhino",methods=["GET"])
+def rhino():
+    query = request.args.get('taskcreate')
+    taskcreate = bool(query)  #False if None, True if anything else
+    return render_template("programrhino.html", taskcreate=taskcreate)
+
+@app.route("/publiclibrary",methods=["GET"])
+def publiclibrary():
+    contributions = Contribution.query.all()
+    return render_template("publiclibrary.html", contributions=contributions)

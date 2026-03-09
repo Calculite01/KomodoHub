@@ -4,6 +4,14 @@
 {% endblock head%}
 {% block content %}
 <h1>Rhinossss yayyy</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='RhinoThreat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
 <h2>Info</h2>
 <p>
     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
@@ -11,6 +19,14 @@
     magnam voluptate dolore minima aliquid blanditiis totam 
     iusto autem veniam quidem cum, reprehenderit harum.
 </p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
 <h2>Threats and that</h2>
 <p>
     Lorem, ipsum dolor sit amet consectetur adipisicing elit.
@@ -18,11 +34,21 @@
      m quisquam, sunt quam enim consectetur voluptas accusant
      ium rem id architecto minima quae incidunt.
 </p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
 <h2>How you can help</h2>
 <ul>
     <li>Sightings</li>
     <li>Conservation Acts</li>
     <li>Information</li>
 </ul>
+</div>
+
 <div>Link to game somewhere lol!!!</div>
 {% endblock content %}

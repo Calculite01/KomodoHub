@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Create Task - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+
+<form action="{{ url_for( 'programs' ) }}" method="get">
+  <input type="hidden" name="taskcreate" value=1>
+  <button type="submit">Add Content</button>
+</form>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}     <!-- CSRF token for protection -->
+
+    <div>
+        {{ form.task_type.label }}
+        {{ form.task_type }}
+    </div>
+
+    <div>
+        {{ form.readingContent.label }}
+        {{ form.readingContent }}
+    </div>
+
+    <div>
+        {{ form.images.label }}
+        {{ form.images }}
+    </div>
+    
+    <div>
+        {{ form.text.label }}
+        {{ form.text }}
+    </div>
+
+    {{ form.submit }}
+</form>
+{% endblock content %}

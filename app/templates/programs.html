@@ -4,7 +4,14 @@
 {% endblock head%}
 {% block content %}
 <h1>Take part in a program!!!</h1>
-<a href="">Rhino</a>
+{% if taskcreate %}
+<form action="{{ url_for( 'rhino' ) }}" method="get">
+  <input type="hidden" name="taskcreate" value=1>
+  <button type="submit">Rhino</button>
+</form>
+{% else %}
+<a href="{{ url_for('rhino') }}">Rhino</a>
 <a href="">Animal 2</a>
 <a href="">Animal 3</a>
+{% endif %}
 {% endblock content %}

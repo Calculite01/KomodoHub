@@ -10,6 +10,6 @@
 {% else %}
     <div>ur part of no organization bum</div>
 {% endif %}
-<a href="">Programs</a>
-<a href="">Public Library</a>
+<a href="{{ url_for('programs') }}">Programs</a>
+<a href="{{ url_for('publiclibrary') }}">Public Library</a>
 {% endblock content %}

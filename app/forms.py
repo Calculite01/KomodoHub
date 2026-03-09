@@ -1,6 +1,6 @@
 from app import bcrypt
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, EmailField, TelField, SelectField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, EmailField, TelField, SelectField, TextAreaField, MultipleFileField
 from wtforms.validators import InputRequired, Length, ValidationError, Email, EqualTo, Regexp, DataRequired
 from app.models import User
 
@@ -65,3 +65,11 @@ class ResetPasswordForm(FlaskForm):
 class UniqueAccessCodeForm(FlaskForm):
     uniqueAccessCode = StringField(label= "Unique Access Code", validators=[InputRequired(), Length(min=8, max=8)])
     submit = SubmitField('Set Up')
+
+class TaskForm(FlaskForm):
+    task_type = SelectField(label= 'Task Type', choices = ['Reading','Submission'], validate_choice=[InputRequired()])
+    readingContent = SelectField(label= 'Reading Content', choices = ['RhinoInfo','RhinoThreat'])
+    text = TextAreaField("Text",validators=[Length(max=1000)])
+    images = MultipleFileField('Images')
+    submit = SubmitField('Create')
+    
