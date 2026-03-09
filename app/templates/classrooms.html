@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Classrooms - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+{% for classroom in classrooms %}
+    <a href="{{ url_for('classroom',orgid=current_user.organization_id,classid=classroom.classroom_id) }}">{{ classroom.classroom.name }}</a></h1>    
+{% endfor %}
+{% endblock content %}

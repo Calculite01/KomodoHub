@@ -3,5 +3,13 @@
     <title>Home - Komodo Hub</title>
 {% endblock head%}
 {% block content %}
-<div>home page or something idk <a href="{{ url_for('logout') }}">Logout</a></div>
+<div>home page or something idk</div>
+<a href="{{ url_for('profilepage') }}">Temporary profile page location to be moved to navbar later</a>
+{% if current_user.organization %}
+    <a href="{{ url_for('organization',orgid=current_user.organization_id) }}">Organization Page</a>
+{% else %}
+    <div>ur part of no organization bum</div>
+{% endif %}
+<a href="">Programs</a>
+<a href="">Public Library</a>
 {% endblock content %}

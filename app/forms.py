@@ -14,8 +14,9 @@ class RegistrationForm(FlaskForm):
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
-        if user and user.is_verified or user.organization != "None":
-            raise ValidationError('Email already in use.')
+        if user:
+            if user.is_verified or user.organization:
+                raise ValidationError('Email already in use.')
 
 
 class LoginForm(FlaskForm):

@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
-from app.models import User, Organization, ContactMessage, OTP
+from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask
 from datetime import datetime, timedelta
 import secrets      # for otp generation
 from flask_login import login_user, login_required, logout_user, current_user
@@ -80,6 +80,7 @@ def index():
 @app.route('/home')
 @login_required
 def home():
+    print(url_for('organization',orgid=1),flush=False)
     return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -103,6 +104,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    flash("Logged out successfully", "notification")
     return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -122,9 +124,7 @@ def register():
         new_user = User(email= email,
                         first_name= form.first_name.data.strip(),
                         last_name= form.last_name.data.strip(),
-                        password= hashed_password,
-                        acc_type= "Individual",
-                        is_verified= False)
+                        password= hashed_password)
         session['verify_registration_email'] = email
         db.session.add(new_user)
         db.session.commit()
@@ -272,3 +272,30 @@ def orglogin():
             flash('An email has been sent with instructions to set your password.', 'notification')
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
+
+@app.route("/profilepage",methods=["GET"])
+def profilepage():
+    return render_template("profilepage.html")
+
+@app.route("/organization/<orgid>",methods=["GET"])
+def organization(orgid):
+    return render_template("organisationpage.html")
+
+@app.route("/tasks/<orgid>",methods=["GET"])
+def tasks(orgid):
+    tasks = UserTask.query.filter_by(user_id=current_user.id)
+    return render_template("tasks.html",tasks=tasks)
+
+@app.route("/classrooms/<orgid>",methods=["GET"])
+def classrooms(orgid):
+    classrooms = UserClassroom.query.filter_by(user_id=current_user.id)
+    return render_template("classrooms.html",classrooms=classrooms)
+
+@app.route("/class/<orgid>/<classid>",methods=["GET"])
+def classroom(orgid,classid):
+    return render_template("classroom.html")
+
+@app.route("/announcements/<orgid>",methods=["GET"])
+def announcements(orgid):
+    announcements = Announcement.query.filter_by(organization_id=current_user.organization_id)
+    return render_template("announcements.html", announcements=announcements)

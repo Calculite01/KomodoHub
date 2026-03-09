@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Announcements - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+{% for announcement in announcements %}
+    <h1>{{ announcement.title }}</h1>    
+    <p>{{ announcement.text }}</p>
+    <h1>IMAGE TO BE ADDED SOON</h1>
+{% endfor %}
+{% endblock content %}
