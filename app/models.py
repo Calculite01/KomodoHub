@@ -4,29 +4,42 @@ from datetime import datetime
 import os
 from itsdangerous import URLSafeTimedSerializer as Serializer
 
-user_classroom = db.Table('user_classroom',
-    db.Column('user_id',db.Integer,db.ForeignKey('classroom.id')),
-    db.Column('classroom_id',db.Integer,db.ForeignKey('user.id'))
-)
+class UserClassroom(db.Model):
+    __tablename__ = "user_classroom"
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    classroom_id = db.Column(db.Integer, db.ForeignKey("classroom.id"))
 
-user_task = db.Table('user_task',
-    db.Column('user_id',db.Integer,db.ForeignKey('task.id')),
-    db.Column('task_id',db.Integer,db.ForeignKey('user.id')),
-    db.Column('submitted',db.Boolean())
-)
+
+    user = db.relationship("User", backref="userclassrooms")
+    classroom = db.relationship("Classroom", backref="userclassrooms")
+
+class UserTask(db.Model):
+    __tablename__ = "user_task"
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    task_id = db.Column(db.Integer, db.ForeignKey("task.id"))
+
+    submitted = db.Column(db.Boolean, default=False)
+
+    user = db.relationship("User", backref="usertasks")
+    task = db.relationship("Task", backref="usertasks")
 
 class User(db.Model,UserMixin):
+    __tablename__ = "user"
+
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     acc_type = db.Column(db.String(20), nullable=False, default="Standard")
-    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable=False ,default="None")
+    organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
     role = db.Column(db.String(20), nullable=False, default="None")
     contributions = db.relationship("Contribution", backref="user", lazy=True)
-    classrooms = db.relationship('Classroom', secondary=user_classroom, backref='user')
-    tasks = db.relationship('Task', secondary=user_task, backref='user')
+    #classrooms = db.relationship('UserClassroom', backref='user')
+    #tasks = db.relationship('UserTask', backref='user', secondary="user_task")
     announcements = db.relationship('Announcement', backref='user', lazy=True)
     is_verified = db.Column(db.Boolean(), nullable=False, default=False)
     uniqueAccessCode = db.Column(db.String(8), nullable=False, default="None")
@@ -52,7 +65,7 @@ class Organization(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     org_type = db.Column(db.String(20), nullable=False)
-    users = db.relationship('Organization', backref='organization', lazy=True)
+    users = db.relationship('User', backref='organization', lazy=True)
     classrooms = db.relationship('Classroom', backref='organization', lazy=True)
     announcements = db.relationship('Announcement', backref='organization', lazy=True)
 
@@ -93,15 +106,21 @@ class OTP(db.Model):
     expiration_time = db.Column(db.DateTime, nullable = False)
 
 class Classroom(db.Model):
+    __tablename__ = "classroom"
+
     id = db.Column(db.Integer, nullable = False, primary_key= True)
+    name = db.Column(db.String(50))
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'), nullable = False)
-    users = db.relationship('User', secondary=user_classroom, backref='classroom')
+    #users = db.relationship('UserClassroom', backref='classroom', secondary="user_classroom")
     tasks = db.relationship('Task', backref='classroom', lazy=True)
 
 class Task(db.Model):
+    __tablename__ = "task"
+
     id = db.Column(db.Integer, nullable = False, primary_key= True)
-    classroom_id = db.Column(db.Integer, db.ForeignKey('task.id'), nullable=False)
-    users = db.relationship('User', secondary=user_task, backref='task')
+    name = db.Column(db.String(50))
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classroom.id'), nullable=False)
+    #users = db.relationship('UserTask', backref='task')
     due_date = db.Column(db.DateTime)
 
 
