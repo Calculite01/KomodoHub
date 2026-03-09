@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block head %}This is the default page title{% endblock %}</title>
     <link rel="stylesheet" href="/static/styles/layout.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    {% block head %}{% endblock head%}
 </head>
 <body>
     <div class="flashes">
@@ -16,6 +17,19 @@
             {% endif %}
         {% endwith %}
     </div>
+    <header class="navbar">
+        <div class="logo-group">
+            <i class="fa-solid fa-paw" style="color: #228B22;font-size: 24px;"></i>
+            <h1>Komodo Hub</h1>
+        </div>
+
+        <nav class="nav-links">
+            <a href="#">About</a>
+            <a href="/contact">Contact</a>
+            <a href="{{ url_for('login') }}"><button class="sign-in">Sign in</button></a>
+        </nav>
+    </header>
+    <div id="navbar-placeholder"></div>
     {% block content %}{% endblock content %}
 </body>
 </html>

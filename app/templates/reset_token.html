@@ -5,21 +5,6 @@
 
 
 {% block content %}
-    <div>
-        <header class="navbar">
-            <div class="logo-group">
-                <i class="fa-solid fa-paw" style="color: #228B22;font-size: 24px;"></i>
-                <a href="#">Komodo Hub</a>
-            </div>
-
-            <nav class="nav-links">
-                <a href="#">About</a>
-                <a href="{{ url_for('contact') }}">Contact</a>
-                <a href="{{ url_for('login') }}"><button class="sign-in">Sign in</button></a>
-            </nav>
-        </header>
-    </div>
-
     <form action="" method="POST">
         {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
 
