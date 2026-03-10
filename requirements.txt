@@ -22,6 +22,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 librt==0.8.1
 MarkupSafe==3.0.3
+python-dotenv==1.2.2
 mypy==1.19.1
 mypy_extensions==1.1.0
 pathspec==1.0.4
@@ -30,7 +31,6 @@ python-engineio==4.13.1
 python-socketio==5.16.1
 simple-websocket==1.1.0
 SQLAlchemy==2.0.46
-sqlalchemy-stubs==0.4
 typing_extensions==4.15.0
 urllib3==2.6.3
 Werkzeug==3.1.5
