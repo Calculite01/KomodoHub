@@ -315,6 +315,36 @@ def send_pvt_message(data):
     # send data to the receiver only
     emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to= room_name)
 
+# REST API that returns chat history
+@app.route('/api/messages/<int:friend_id>', methods= ['GET'])
+@login_required
+def get_chat_history(friend_id):
+    my_id = current_user.id
+
+    # fetch the chats between 2 specific people
+    chat_history = Messages.query.filter(
+        or_(
+            (Messages.sender_id == my_id) & (Messages.receiver_id == friend_id),
+            (Messages.sender_id == friend_id) & (Messages.receiver_id == my_id)
+        )
+    ).order_by(Messages.timestamp.asc()).all()
+
+    all_chats = []
+
+    # packaging only required chat data from chats history
+    for chat in chat_history:
+        chat_data = {
+            'id': chat.id,
+            'sender_name': f"{chat.sender.first_name} {chat.sender.last_name}",
+            'receiver_name': f"{chat.receiver.first_name} {chat.receiver.last_name}",
+            'message_content': chat.text,
+            'sender_id': chat.sender_id,
+            'receiver_id': chat.receiver_id
+        }
+        all_chats.append(chat_data)
+
+    # return the chats as a JSON object
+    return jsonify({'messages': all_chats})
 
 @app.route("/profilepage",methods=["GET"])
 def profilepage():
