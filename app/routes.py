@@ -2,11 +2,16 @@ from flask import render_template, url_for, redirect, flash, session, request
 from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, TaskForm
 from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask
+from flask import render_template, url_for, redirect, flash, session
+from app import app, login_manager, mail, bcrypt, db, socketio
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
+from app.models import User, Organization, ContactMessage, OTP
 from datetime import datetime, timedelta
 import secrets      # for otp generation
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 import os
+from flask_socketio import emit, join_room, leave_room, close_room, rooms
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -272,6 +277,38 @@ def orglogin():
             flash('An email has been sent with instructions to set your password.', 'notification')
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
+
+@app.route('/chat')
+@login_required        # chat feature available only to logged in users
+def chat():
+    # fetch all uses from the database
+    all_users = User.query.all()
+    return render_template('chat.html', users= all_users)
+
+@socketio.on('join_private_chat')
+def handle_join(data):
+    """Triggered when a user selects another user to chat with"""
+    friend_id = data['friend_id']
+    my_id = current_user.id
+    room_name = f"Room_{min(friend_id, my_id)}{max(friend_id, my_id)}"
+
+    # add the selected user to the room
+    join_room(room_name)
+    print(f"User {friend_id} joined {room_name}")
+
+# Defining event listener
+@socketio.on('send_private_message')        # listen for 'send_private_message' event from JavaScript side
+def handle_pvt_message(data):
+    """Triggered when the user hits 'Send' button"""
+    friend_id = data['friend_id']
+    my_id = current_user.id
+    room_name = f"Room_{min(friend_id, my_id)}{max(friend_id, my_id)}"
+
+    # save data to SQLite DB here
+
+    # send data to the receiver only
+    emit('receive_private_message', data, to= room_name)
+
 
 @app.route("/profilepage",methods=["GET"])
 def profilepage():
