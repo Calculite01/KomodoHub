@@ -1,12 +1,18 @@
-from flask import render_template, url_for, redirect, flash, session, request
+from flask import render_template, url_for, redirect, flash, session, request, jsonify
 from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, TaskForm
 from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask
+from flask import render_template, url_for, redirect, flash, session
+from app import app, login_manager, mail, bcrypt, db, socketio
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
+from app.models import User, Organization, ContactMessage, OTP, Messages
 from datetime import datetime, timedelta
 import secrets      # for otp generation
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 import os
+from flask_socketio import emit, join_room, leave_room, close_room, rooms
+from sqlalchemy import or_
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -91,7 +97,6 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.strip()).first()
         if user.is_verified:
-            flash('User not verified. Enter valid OTP', 'failure')
             flash(f"Logged in as {user.first_name} {user.last_name}", 'success')
             login_user(user)
             return redirect(url_for('home'))
@@ -272,6 +277,74 @@ def orglogin():
             flash('An email has been sent with instructions to set your password.', 'notification')
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
+
+@app.route('/home/chat')
+@login_required        # chat feature available only to logged in users
+def chat():
+    all_users = User.query.all()        # fetch all uses from the database
+    return render_template('chat.html', users= all_users)
+
+@socketio.on('join_private_chat')
+def handle_join(data):
+    """Triggered when a user selects another user to chat with"""
+    friend_id = int(data['friend_id'])
+    my_id = current_user.id
+    room_name = f"Room_{min(friend_id, my_id)}_{max(friend_id, my_id)}"
+
+    # add the selected user to the room
+    join_room(room_name)
+    print(f"User {my_id} joined {room_name}")
+
+# Defining event listener
+@socketio.on('send_private_message')        # listen for 'send_private_message' event from JavaScript side
+def send_pvt_message(data):
+    """Triggered when the user hits 'Send' button"""
+    friend_id = int(data['friend_id'])
+    my_id = current_user.id
+    room_name = f"Room_{min(friend_id, my_id)}_{max(friend_id, my_id)}"
+
+    # save data to SQLite DB here
+    txt_msg = data.get('text', None)
+    if txt_msg and friend_id:
+        new_message = Messages(text= txt_msg,
+                              sender_id= my_id,
+                              receiver_id= friend_id)
+        db.session.add(new_message)
+        db.session.commit()
+
+    # send data to the receiver only
+    emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to= room_name)
+
+# REST API that returns chat history
+@app.route('/api/messages/<int:friend_id>', methods= ['GET'])
+@login_required
+def get_chat_history(friend_id):
+    my_id = current_user.id
+
+    # fetch the chats between 2 specific people
+    chat_history = Messages.query.filter(
+        or_(
+            (Messages.sender_id == my_id) & (Messages.receiver_id == friend_id),
+            (Messages.sender_id == friend_id) & (Messages.receiver_id == my_id)
+        )
+    ).order_by(Messages.timestamp.asc()).all()
+
+    all_chats = []
+
+    # packaging only required chat data from chats history
+    for chat in chat_history:
+        chat_data = {
+            'id': chat.id,
+            'sender_name': f"{chat.sender.first_name} {chat.sender.last_name}",
+            'receiver_name': f"{chat.receiver.first_name} {chat.receiver.last_name}",
+            'message_content': chat.text,
+            'sender_id': chat.sender_id,
+            'receiver_id': chat.receiver_id
+        }
+        all_chats.append(chat_data)
+
+    # return the chats as a JSON object
+    return jsonify({'messages': all_chats})
 
 @app.route("/profilepage",methods=["GET"])
 def profilepage():
