@@ -1,21 +1,30 @@
 {% extends "layout.html" %}
 
 {% block head %}
+<title>Organisation Login - Komodo Hub</title>
+<link rel="stylesheet" href="/static/styles/org_login.css">
 {% endblock head %}
 
 
 {% block content %}
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
+    <div class="body">
+        <div class="bird-side"></div>
 
-        <div class="input-group">
-            {{ form.uniqueAccessCode.label }}
-            {{ form.uniqueAccessCode(id="uniqueAccessCode", placeholder="ageOfUltron@avengers.com") }}
-            {% for error in form.uniqueAccessCode.errors %}
-                <div class="errors">{{ error }}</div>
-            {% endfor %}
-        </div>       
+        <div class="right-side">
+            <div class="login-container">
+                <h2>Organisation Login</h2>
+            
+                <form action="" method="POST">
+                    {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
 
-        {{ form.submit(id="register-btn", class="register-btn") }}
-    </form>
+                    <div class="input-group">
+                        {{ form.uniqueAccessCode.label }}
+                        {{ form.uniqueAccessCode(id="uniqueAccessCode", placeholder="ageOfUltron@avengers.com") }}
+                        {% for error in form.uniqueAccessCode.errors %}
+                            <div class="errors">{{ error }}</div>
+                        {% endfor %}
+                    </div>       
+
+                    {{ form.submit(id="register-btn", class="login-btn") }}
+                </form>
 {% endblock content %}
