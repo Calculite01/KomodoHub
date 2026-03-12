@@ -6,6 +6,8 @@ const messageList = document.getElementById('messages');
 const message = document.getElementById('entered-message');
 const sendButton = document.getElementById('send-btn');
 const chatName = document.getElementById('chat-name');
+const searchInput = document.getElementById('search-contact')
+const contactItems = document.getElementsByClassName('contact-item')
 
 // Global variable to track who you are talking to
 let activeRecipientID = null;
@@ -65,16 +67,31 @@ sendButton.addEventListener('click', () => {
     }
 });
 
+
+//Listen for the search event
+searchInput.addEventListener('input', ()=>{
+    const userInput = searchInput.value.toLowerCase();
+    for (let i = 0; i < contactItems.length; i++) {
+        let currentContact = contactItems[i];
+        let contactName = currentContact.textContent.toLowerCase();
+
+        if (contactName.includes(userInput))
+            currentContact.style.display = "";
+        else
+            currentContact.style.display = "none";
+    }
+});
+
 // when user gets a message from the server,
 socket.on('receive_private_message', (data) => {
     const msgBox = document.createElement('li');     // create a list item
-    if (data.sender_id === activeRecipientID) {
+    if (data.sender_id === Number(activeRecipientID)) {
         let currentFriendName = chatName.innerHTML.replace('Chatting with ', '');
         msgBox.textContent = currentFriendName + ': ' + data.text;
     }
-    else
+    else {
         msgBox.textContent = 'You: ' + data.text;
-
+    }
     messageList.appendChild(msgBox);
     // auto scroll to bottom of the message screen
     document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;

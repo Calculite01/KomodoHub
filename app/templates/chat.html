@@ -26,10 +26,11 @@
 
     <div class="contact_sidebar">
         <h3>Contacts</h3>
+        <input type="text" id="search-contact" placeholder="Search contact" style="width: 90%; padding: 8px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ccc;">
         <ul style="list-style-type: none; padding: 0;">
             {% for u in users %}
             {% if u.id != current_user.id %}
-            <li onclick="chatWith('{{ u.id }}', '{{ u.first_name }} {{ u.last_name }}')"
+            <li class="contact-item" onclick="chatWith('{{ u.id }}', '{{ u.first_name }} {{ u.last_name }}')"
                 style="cursor: pointer; padding: 10px; border-bottom: 1px solid #eee;">
                 {{ u.first_name }} {{ u.last_name }}
             </li>
