@@ -278,9 +278,9 @@ def orglogin():
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
 
-@app.route('/home/chat')
+@app.route('/chat/<int:orgid>')
 @login_required        # chat feature available only to logged in users
-def chat():
+def chat(orgid):
     my_id = current_user.id
     my_msgs = Messages.query.filter(        # filter all messages that the current user has been a part of
         or_(Messages.sender_id == my_id, Messages.receiver_id == my_id)
@@ -290,10 +290,10 @@ def chat():
     for msg in my_msgs:
         if msg.sender_id != my_id:
             active_contact_ids.add(msg.sender_id)
-        if msg.sender_id != my_id:
+        if msg.receiver_id != my_id:
             active_contact_ids.add(msg.receiver_id)
 
-    active_contacts = User.query.filter(User.id.in_(active_contact_ids)).all()        # fetch only users in contact with the current user
+    active_contacts = User.query.filter(User.id.in_(active_contact_ids), ).all()        # fetch only users in contact with the current user
     return render_template('chat.html', users=active_contacts)
 
 @socketio.on('join_private_chat')
@@ -358,7 +358,7 @@ def get_chat_history(friend_id):
     # return the chats as a JSON object
     return jsonify({'messages': all_chats})
 
-@app.route('/api/search_db/', methods=['GET'])
+@app.route('/api/search_db', methods=['GET'])
 @login_required
 def search_database():
     search_query = request.args.get('q', '').lower()
