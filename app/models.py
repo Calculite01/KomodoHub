@@ -155,7 +155,7 @@ class Messages(db.Model):
     receiver = db.relationship('User', foreign_keys= [receiver_id], backref= 'received_messages')       # backref allows u to see the messages each 'User' instance has sent
 
     def __repr__(self):
-        print(f"Sender {self.sender_id} sent {self.receiver_id} the text:\n{self.txt}")
+        print(f"Sender {self.sender_id} sent {self.receiver_id} the text:\n{self.text}")
 
 with app.app_context():
     if not os.path.exists('komodohub.db'):
