@@ -22,12 +22,16 @@
     </header>
 </div>
 
-<div class="chat-container">
+<div id="chat-container">
 
-    <div class="contact_sidebar">
-        <h3>Contacts</h3>
-        <input type="text" id="search-contact" placeholder="Search contact" style="width: 90%; padding: 8px; margin-bottom: 15px; border-radius: 4px; border: 1px solid #ccc;">
-        <ul style="list-style-type: none; padding: 0;">
+    <div id="contact-sidebar">
+        <div class="sidebar-header">
+            <h3>Contacts</h3>
+            <button id="add-contact-btn" class="brand-btn">+ New</button>
+        </div>
+
+        <input type="text" id="search-contact" placeholder="Search active contacts.." class="search-field">
+        <ul id="active-contacts-list" style="list-style-type: none; padding: 0;">
             {% for u in users %}
             {% if u.id != current_user.id %}
             <li class="contact-item" onclick="chatWith('{{ u.id }}', '{{ u.first_name }} {{ u.last_name }}')"
@@ -40,17 +44,30 @@
     </div>
 
     <div class="chat-area">
-        <h2 id="chat-name">Select a contact to start chatting</h2>
-
+        <div class="chat-header">
+            <h2 id="chat-name">Select a contact to start chatting</h2>
+        </div>
         <div id="chat-window">
             <ul id="messages"></ul>
         </div>
 
-        <input type="text" id="entered-message" placeholder="Enter message" required>
-        <button id="send-btn">Send</button>
+        <div class="chat-input-area">
+            <input type="text" id="entered-message" placeholder="Enter message" required>
+            <button id="send-btn" class="brand-btn">Send</button>
+        </div>
     </div>
 </div>
 
+<div id="new-msg-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Find a User</h3>
+            <button id="close-modal-btn" class="close-btn">x</button>
+        </div>
+        <input type="text" id="global-search-input" placeholder="Search for a new user..." class="search-field">
+        <ul id="global-search-results"></ul>
+    </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script src="{{ url_for('static', filename='scripts/chat.js') }}"></script>
 
