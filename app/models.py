@@ -149,13 +149,20 @@ class Messages(db.Model):
     id = db.Column(db.Integer, nullable= False, primary_key= True)
     text = db.Column(db.String(500), nullable= False)
     timestamp = db.Column(db.DateTime, default= datetime.now)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable= False)        # link message to sender (user)
-    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable= False)      # link message to recipient (user)
-    sender = db.relationship('User', foreign_keys= [sender_id], backref= 'sent_messages')       # backref allows u to see the messages each 'User' instance has sent
-    receiver = db.relationship('User', foreign_keys= [receiver_id], backref= 'received_messages')       # backref allows u to see the messages each 'User' instance has sent
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable= False)            # link message to sender (user)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable= False)          # link message to recipient (user)
+    sender = db.relationship('User', foreign_keys= [sender_id], backref= 'sent_messages')               # backref allows u to see the messages each 'User' instance has sent
+    receiver = db.relationship('User', foreign_keys= [receiver_id], backref= 'received_messages')       # backref allows u to see the messages each 'User' instance has received
 
     def __repr__(self):
-        print(f"Sender {self.sender_id} sent {self.receiver_id} the text:\n{self.text}")
+        print(f"Sender {self.sender_id} sent {self.receiver_id} the text:\n{self.text} to {self.receiver_id}")
+
+class GlobalMesssages(db.Model):
+    id = db.Column(db.Integer, nullable= False, primary_key= True)
+    text = db.Column(db.String(500), nullable= False)
+    timestamp = db.Column(db.DateTime, default= datetime.now)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable= False)
+    sender = db.relationship('User', backref= db.backref('messages', lazy= True))
 
 with app.app_context():
     if not os.path.exists('komodohub.db'):
