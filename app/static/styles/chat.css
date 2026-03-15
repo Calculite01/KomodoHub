@@ -79,10 +79,13 @@
     flex-direction: column;
 }
 
-#chat-area {
+#private-chat-area {
     flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+    background-color: #ffffff;
+}
+
+#global-chat-area {
+    flex-grow: 1;
     background-color: #ffffff;
 }
 
@@ -141,4 +144,34 @@
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+}
+
+.chat-mode-selection {
+    text-align: center;
+    justify-content: center;
+    padding: 1.2rem;
+    background-color: #f8f9fa;
+    border: 0.3px hidden rgb(40, 106, 40);
+}
+
+.view-section {
+    display: none !important;
+}
+
+.view-section.active {
+    display: flex !important;
+    flex-direction: column;
+}
+
+.chat-btn {
+    margin: 0 10px;
+    padding: 0.26rem 0.35rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+#chat-name {
+    text-align: center;
+    font-size: 25px;
+    padding: 1%;
 }

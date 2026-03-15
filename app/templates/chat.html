@@ -22,9 +22,15 @@
     </header>
 </div>
 
-<div id="chat-container">
+<div class="chat-mode-selection">
+    <h3 id="select-chat-type-header">Select chat mode</h3>
+    <button id="pvt-chat-btn" class="chat-btn">Private Chats</button>
+    <button id="global-chat-btn" class="chat-btn">Global Chats</button>
+</div>
 
-    <div id="contact-sidebar">
+<div id="chat-container" data-user-id="{{ current_user.id }}">
+
+    <div id="contact-sidebar" class="view-section"> <!-- only for private chat -->
         <div class="sidebar-header">
             <h3>Contacts</h3>
             <button id="add-contact-btn" class="brand-btn">+ New</button>
@@ -43,10 +49,8 @@
         </ul>
     </div>
 
-    <div class="chat-area">
-        <div class="chat-header">
-            <h2 id="chat-name">Select a contact to start chatting</h2>
-        </div>
+    <div id="private-chat-area" class="view-section">
+        <h2 id="chat-name">Select a contact to start chatting</h2>
         <div id="chat-window">
             <ul id="messages"></ul>
         </div>
@@ -54,6 +58,18 @@
         <div class="chat-input-area">
             <input type="text" id="entered-message" placeholder="Enter message" required>
             <button id="send-btn" class="brand-btn">Send</button>
+        </div>
+    </div>
+
+    <div id="global-chat-area" class="view-section">
+        <h2 id="global-chatroom">Welcome to global chatroom</h2>
+        <div id="global-chat-window">
+            <ul id="global-messages"></ul>
+        </div>
+
+        <div class="global-chat-input-area">
+            <input type="text" id="global-entered-message" placeholder="Enter message" required>
+            <button id="global-send-btn" class="brand-btn">Send</button>
         </div>
     </div>
 </div>
