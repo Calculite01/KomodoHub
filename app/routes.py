@@ -368,13 +368,14 @@ def search_database():
 
     results = User.query.filter(
         User.id != current_user.id,
+        User.organization_id == current_user.organization_id,
         or_(
             User.first_name.ilike(f"%{search_query}%"),
             User.last_name.ilike(f"%{search_query}%")
         )
     ).limit(10).all()
 
-    user_data = [{'id':u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results]
+    user_data = [{'id': u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results]
     return jsonify({'users': user_data})
 
 @app.route("/profilepage",methods=["GET"])
