@@ -281,9 +281,14 @@ def orglogin():
 @app.route('/chat/<int:orgid>')
 @login_required        # chat feature available only to logged in users
 def chat(orgid):
+    if current_user.organization_id != orgid:
+        flash("You do not have access to this organization's chat.", "failure")
+        return redirect(url_for('home'))
+    
     my_id = current_user.id
     my_msgs = Messages.query.filter(        # filter all messages that the current user has been a part of
-        or_(Messages.sender_id == my_id, Messages.receiver_id == my_id)
+        or_(Messages.sender_id == my_id, 
+            Messages.receiver_id == my_id)
     ).all()
 
     active_contact_ids = set()      # set of all user ids who have been in contact with the current user
@@ -293,7 +298,10 @@ def chat(orgid):
         if msg.receiver_id != my_id:
             active_contact_ids.add(msg.receiver_id)
 
-    active_contacts = User.query.filter(User.id.in_(active_contact_ids), ).all()        # fetch only users in contact with the current user
+    active_contacts = User.query.filter(        # fetch only users in contact with the current user from the same organization
+        User.organization_id == orgid,
+        User.id.in_(active_contact_ids), ).all()  
+          
     return render_template('chat.html', users=active_contacts)
 
 @socketio.on('join_private_chat')
