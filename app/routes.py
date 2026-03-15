@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, flash, session, request, jsonify
 from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, TaskForm
-from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask
+from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask, GlobalMesssages
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db, socketio
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
@@ -385,6 +385,21 @@ def search_database():
 
     user_data = [{'id': u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results]
     return jsonify({'users': user_data})
+
+@socketio.on('send_global_message')
+def handle_global_msgs(data):
+    print(f"Server received: {data}")
+    
+    text = data.get('text', None)
+    sender_id = data.get('sender_id', None)
+    if text and sender_id:
+        global_msg = GlobalMesssages(text = text,
+                                     sender_id = sender_id)
+        db.session.add(global_msg)
+        db.commit()
+
+    # broadcast the same recived message to everyone in the global chatroom
+    emit('receive_global_message', broadcast= True)
 
 @app.route("/profilepage",methods=["GET"])
 def profilepage():

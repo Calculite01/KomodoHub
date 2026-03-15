@@ -5,6 +5,7 @@ const socket = io();
 const messageList = document.getElementById('messages');
 const message = document.getElementById('entered-message');
 const sendButton = document.getElementById('send-btn');
+const globalSendBtn = document.getElementById('global-send-btn');
 const chatName = document.getElementById('chat-name');
 const searchInput = document.getElementById('search-contact')
 const contactItems = document.getElementsByClassName('contact-item');
@@ -14,6 +15,8 @@ const closeModalBtn = document.getElementById('close-modal-btn');
 const globalSearchInput = document.getElementById('global-search-input');
 const globalSearchResults = document.getElementById('global-search-results');
 const activeContactsList = document.getElementById('active-contacts-list');
+const chatContainer = document.getElementById('chat-container')
+const currentUserId = chatContainer.getAttribute('data-user-id');
 
 // Global variable to track who you are talking to
 let activeRecipientID = null;
@@ -62,9 +65,9 @@ function chatWith(friendID, friendName) {
 // when user clicks send,
 sendButton.addEventListener('click', () => {
     const textMsg = message.value;
-    message.textContent = '';
+    message.textContent = '';   // empty the message box
 
-    if (textMsg.trim() !== "" && activeRecipientID !== null) {
+    if (textMsg.trim() !== "" && activeRecipientID !== null) {      // ono-to-one chat
 
         // emit the message to backend server
         socket.emit('send_private_message', {
@@ -78,7 +81,6 @@ sendButton.addEventListener('click', () => {
         alert("Select a user to chat with!");
     }
 });
-
 
 //Listen for the search event
 searchInput.addEventListener('input', () => {
@@ -155,3 +157,23 @@ globalSearchInput.addEventListener('input', () => {
             });
         });
 });
+
+// global message
+sendButton.addEventListener('click', () => {
+    const msg = message.value;
+    message.textContent = '';
+
+    if (msg.trim() !== "") {
+        socket.emit('send_global_message', {
+            text: msg,
+            sender_id: currentUserId
+        })
+    }
+});
+
+socket.on('receive_global_message', (data) => {
+    const li = document.createElement(li);
+    li.textContent = data.text;
+    messageList.appendChild(li);
+    document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+})
