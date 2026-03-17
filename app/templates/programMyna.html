@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Myna - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<h1>Myna tweet</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='MynaThreat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Info</h2>
+<p>
+   The Bali myna (also called the Bali starling) is a rare white bird with black wing and tail tips and bright blue skin around its eyes.
+    It was discovered in 1912 and is found only on the Indonesian island of Bali. Bali mynas usually live in small flocks in mountain regions and build nests in tree holes using leaves, grass, and feathers. 
+    They are mostly monogamous, meaning one male and one female form a pair and raise their chicks together. During the breeding season, usually between November and April, they may lay two to three clutches of bluish-green eggs. 
+    Both parents incubate the eggs and feed the chicks until they are able to leave the nest. Bali mynas eat a variety of foods, including insects, fruit, worms, and small reptiles. Because of their beauty and rarity, they are an important cultural symbol in Bali and are carefully protected in places like West Bali National Park.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Threats and that</h2>
+<p>
+   The Bali myna is endangered mainly because of human activity. Its beauty makes it valuable in the illegal cage-bird trade, where people capture and sell the birds as pets, especially in markets in Denpasar, the capital of Bali.
+    Habitat loss has also reduced their population as tourism and human development have expanded on the island. Conservation groups are working to protect the birds in West Bali National Park, breeding them in zoos and reintroducing them into the wild, including on the nearby island of Nusa Penida.
+    People can help protect Bali mynas by not buying wild-caught birds and supporting conservation efforts.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>How you can help</h2>
+<ul>
+    <li>Sightings</li>
+    <li>Conservation Acts</li>
+    <li>Information</li>
+</ul>
+</div>
+
+<div>Link to game somewhere lol!!!</div>
+{% endblock content %}

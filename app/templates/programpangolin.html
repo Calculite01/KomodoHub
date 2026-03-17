@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Pangolin - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<h1>Pangolin scales</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='PangolinThreat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Info</h2>
+<p>
+    The Sunda pangolin is a critically endangered species mainly because it is heavily poached for its meat and scales, which are used in traditional medicine despite no scientific proof they work.
+     Pangolins are covered in hard keratin scales that protect them from predators, and when threatened they curl into a ball, which unfortunately makes them easier for humans to capture. 
+     They use their long snout and tongue to eat ants and termites and are usually shy, solitary, and nocturnal animals.
+     Sunda pangolins live across Southeast Asia, sometimes climbing trees to find food. Because of heavy illegal wildlife trafficking, pangolins are now considered the most trafficked mammals in the world, although international trade was banned in 2016 to help protect them.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Threats and that</h2>
+<p>
+    The Sunda pangolin is heavily threatened by poaching and habitat loss.
+     Since 2000, more than one million pangolins have been killed for their scales and meat. Their scales are used in traditional medicine, while their meat is considered a luxury food in parts of Southeast Asia and China. 
+     Large amounts of pangolin scales and frozen meat have been seized, showing how widespread illegal wildlife trade is. At the same time, deforestation in places like Malaysia is destroying the pangolin’s natural habitat. 
+     These combined threats are rapidly reducing the population and putting the species at serious risk of extinction.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>How you can help</h2>
+<ul>
+    <li>Sightings</li>
+    <li>Conservation Acts</li>
+    <li>Information</li>
+</ul>
+</div>
+
+<div>Link to game somewhere lol!!!</div>
+{% endblock content %}
