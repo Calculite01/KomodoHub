@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block head %}
-    <title>Organisation - Komodo Hub</title>
+<title>Organisation - Komodo Hub</title>
 {% endblock head%}
 {% block content %}
 <h1>{{ current_user.organization.name }}</h1>
-<a href="">Chat</a>
+<a href="{{ url_for('chat', orgid=current_user.organization_id) }}">Chat</a>
 <a href="{{ url_for('tasks',orgid=current_user.organization_id) }}">Tasks</a>
 <a href="{{ url_for('classrooms',orgid=current_user.organization_id) }}">Classrooms</a>
 <a href="{{ url_for('announcements',orgid=current_user.organization_id) }}">Announcements</a>

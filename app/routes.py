@@ -1,7 +1,7 @@
 from flask import render_template, url_for, redirect, flash, session, request, jsonify
 from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, TaskForm
-from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask
+from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask, GlobalMesssages
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db, socketio
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
@@ -278,22 +278,30 @@ def orglogin():
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
 
-@app.route('/home/chat')
+@app.route('/chat/<int:orgid>')
 @login_required        # chat feature available only to logged in users
-def chat():
+def chat(orgid):
+    if current_user.organization_id != orgid:
+        flash("You do not have access to this organization's chat.", "failure")
+        return redirect(url_for('home'))
+    
     my_id = current_user.id
     my_msgs = Messages.query.filter(        # filter all messages that the current user has been a part of
-        or_(Messages.sender_id == my_id, Messages.receiver_id == my_id)
+        or_(Messages.sender_id == my_id, 
+            Messages.receiver_id == my_id)
     ).all()
 
     active_contact_ids = set()      # set of all user ids who have been in contact with the current user
     for msg in my_msgs:
         if msg.sender_id != my_id:
             active_contact_ids.add(msg.sender_id)
-        if msg.sender_id != my_id:
+        if msg.receiver_id != my_id:
             active_contact_ids.add(msg.receiver_id)
 
-    active_contacts = User.query.filter(User.id.in_(active_contact_ids)).all()        # fetch only users in contact with the current user
+    active_contacts = User.query.filter(        # fetch only users in contact with the current user from the same organization
+        User.organization_id == orgid,
+        User.id.in_(active_contact_ids), ).all()  
+          
     return render_template('chat.html', users=active_contacts)
 
 @socketio.on('join_private_chat')
@@ -358,7 +366,7 @@ def get_chat_history(friend_id):
     # return the chats as a JSON object
     return jsonify({'messages': all_chats})
 
-@app.route('/api/search_db/', methods=['GET'])
+@app.route('/api/search_db', methods=['GET'])
 @login_required
 def search_database():
     search_query = request.args.get('q', '').lower()
@@ -368,14 +376,30 @@ def search_database():
 
     results = User.query.filter(
         User.id != current_user.id,
+        User.organization_id == current_user.organization_id,
         or_(
             User.first_name.ilike(f"%{search_query}%"),
             User.last_name.ilike(f"%{search_query}%")
         )
     ).limit(10).all()
 
-    user_data = [{'id':u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results]
+    user_data = [{'id': u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results]
     return jsonify({'users': user_data})
+
+@socketio.on('send_global_message')
+def handle_global_msgs(data):
+    print(f"Server received: {data}")
+    
+    text = data.get('text', None)
+    sender_id = data.get('sender_id', None)
+    if text and sender_id:
+        global_msg = GlobalMesssages(text = text,
+                                     sender_id = sender_id)
+        db.session.add(global_msg)
+        db.commit()
+
+    # broadcast the same recived message to everyone in the global chatroom
+    emit('receive_global_message', broadcast= True)
 
 @app.route("/profilepage",methods=["GET"])
 def profilepage():
