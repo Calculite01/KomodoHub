@@ -64,7 +64,18 @@
     <div id="global-chat-area" class="view-section">
         <h2 id="global-chatroom">Welcome to global chatroom</h2>
         <div id="global-chat-window">
-            <ul id="global-messages"></ul>
+            <ul id="global-messages">
+                {% for msg in global_msgs %}
+                <li class="message-bubble {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                    {% if msg.sender_id != current_user.id %}
+                        <span style="font-size: 0.8nem; color: #555; display: block; margin-bottom: 4px; font-weight: bold;">
+                            {{ msg.sender.first_name }} {{ msg.sender.last_name }}
+                        </span>
+                    {% endif %}
+                    {{ msg.text }}
+                </li>
+                {% endfor %}
+            </ul>
         </div>
 
         <div class="global-chat-input-area">
@@ -81,6 +92,9 @@
             <button id="close-modal-btn" class="close-btn">x</button>
         </div>
         <input type="text" id="global-search-input" placeholder="Search for a new user..." class="search-field">
+        <div>
+            <button id="add-new-contact-btn">Add</button>
+        </div>
         <ul id="global-search-results"></ul>
     </div>
 </div>

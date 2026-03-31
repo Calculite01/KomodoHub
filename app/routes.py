@@ -12,7 +12,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 import os
 from flask_socketio import emit, join_room, leave_room, close_room, rooms
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -163,7 +163,7 @@ def register():
 
 @app.route('/contact', methods= ['GET', 'POST'])
 def contact():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated:   
         return redirect(url_for('home'))
     form = ContactForm()
     if form.validate_on_submit():
@@ -278,6 +278,49 @@ def orglogin():
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
 
+def get_allowed_contacts(current_user_object, search_query=""):
+    # gives a list of users the current user can message
+
+    # all user from the same organisation except the current user
+    base_query = User.query.filter(
+        User.organization_id == current_user_object.organization_id,
+        User.id != current_user_object.id
+    )
+
+    if search_query:
+        base_query = base_query.filter(
+            or_(
+                User.first_name.ilike(f"%{search_query}%"),
+                User.last_name.ilike(f"%{search_query}%")
+                )
+        )
+
+    if current_user_object.role == "Admin":     # Admin can see all the user in the organisation
+        return base_query.all()     
+
+    my_classrooms_ids = [classroom.classroom_id for classroom in current_user_object.userclassrooms]    # all the classrooms the current user is part of
+
+    if current_user_object.role == "Teacher":       # Teacher must see all students and admins
+        return base_query.join(UserClassroom).filter(
+            or_(
+                and_(
+                    UserClassroom.classroom_id.in_(my_classrooms_ids), 
+                    User.role == "Student"
+                ),
+                User.role == "Admin"
+            )
+        ).all()
+
+    if current_user_object.role =="Student":    # Student must see all Teachers from the classes they belong to
+        return base_query.filter(
+            or_(
+                User.role == "Teacher",
+                UserClassroom.classroom_id.in_(my_classrooms_ids)
+            )
+        ).all()
+    
+    return []
+
 @app.route('/chat/<int:orgid>')
 @login_required        # chat feature available only to logged in users
 def chat(orgid):
@@ -285,35 +328,21 @@ def chat(orgid):
         flash("You do not have access to this organization's chat.", "failure")
         return redirect(url_for('home'))
     
-    my_id = current_user.id
-    my_msgs = Messages.query.filter(        # filter all messages that the current user has been a part of
-        or_(Messages.sender_id == my_id, 
-            Messages.receiver_id == my_id)
-    ).all()
-
-    active_contact_ids = set()      # set of all user ids who have been in contact with the current user
-    for msg in my_msgs:
-        if msg.sender_id != my_id:
-            active_contact_ids.add(msg.sender_id)
-        if msg.receiver_id != my_id:
-            active_contact_ids.add(msg.receiver_id)
-
-    active_contacts = User.query.filter(        # fetch only users in contact with the current user from the same organization
-        User.organization_id == orgid,
-        User.id.in_(active_contact_ids), ).all()  
+    active_contacts = get_allowed_contacts(current_user)
+    global_history = GlobalMesssages.query.join(User).filter(
+        User. organization_id == orgid
+    ).order_by(GlobalMesssages.timestamp.asc()).all()
           
-    return render_template('chat.html', users=active_contacts)
+    return render_template('chat.html', users=active_contacts, global_msgs= global_history)
 
-@socketio.on('join_private_chat')
-def handle_join(data):
-    """Triggered when a user selects another user to chat with"""
-    friend_id = int(data['friend_id'])
-    my_id = current_user.id
-    room_name = f"Room_{min(friend_id, my_id)}_{max(friend_id, my_id)}"
-
-    # add the selected user to the room
-    join_room(room_name)
-    print(f"User {my_id} joined {room_name}")
+@socketio.on('connect')
+def handle_join():
+    if current_user.is_authenticated:
+        # join private room for each user
+        join_room(f"User_{current_user.id}")
+        # join organisation global chatroom
+        join_room(f"Organisation_global_{current_user.organization_id}")
+        print(f"\nUser {current_user.id} can chat in private & organisation rooms\n")
 
 # Defining event listener
 @socketio.on('send_private_message')        # listen for 'send_private_message' event from JavaScript side
@@ -321,19 +350,46 @@ def send_pvt_message(data):
     """Triggered when the user hits 'Send' button"""
     friend_id = int(data['friend_id'])
     my_id = current_user.id
-    room_name = f"Room_{min(friend_id, my_id)}_{max(friend_id, my_id)}"
 
     # save data to SQLite DB here
     txt_msg = data.get('text', None)
     if txt_msg and friend_id:
         new_message = Messages(text= txt_msg,
-                              sender_id= my_id,
-                              receiver_id= friend_id)
+                               sender_id= my_id,
+                               receiver_id= friend_id)
         db.session.add(new_message)
         db.session.commit()
 
-    # send data to the receiver only
-    emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to= room_name)
+        print(f"Sending message [{txt_msg}] from [{my_id}] to [{friend_id}]")
+        # send data to sender and receiver's frontend
+        emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to=f"User_{current_user.id}")
+        emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to=f"User_{friend_id}")
+    else:
+        print(f"Failed to send [{txt_msg}].")
+
+@socketio.on('send_global_message')
+def handle_global_msgs(data):
+    if current_user.role == "Student":  # Students not allowed to message globally
+        return
+    
+    # Teachers and Admins can message globally
+    print(f"Server received: {data}")
+    
+    text = data.get('text', None)
+    sender_id = current_user.id
+    
+    if text and sender_id:
+        global_msg = GlobalMesssages(text=text, sender_id=sender_id)
+        db.session.add(global_msg)
+        db.session.commit()
+        # broadcast received msg to everyone in the same organisation
+        emit('receive_global_message', 
+            {
+                'text': text, 
+                'sender': f"{current_user.first_name} {current_user.last_name}",
+                'sender_id': sender_id
+            }, 
+            to=f"Organisation_global_{current_user.organization_id}", broadcast= True)
 
 # REST API that returns chat history
 @app.route('/api/messages/<int:friend_id>', methods= ['GET'])
@@ -374,32 +430,10 @@ def search_database():
     if not search_query:
         return jsonify({'users': []})
 
-    results = User.query.filter(
-        User.id != current_user.id,
-        User.organization_id == current_user.organization_id,
-        or_(
-            User.first_name.ilike(f"%{search_query}%"),
-            User.last_name.ilike(f"%{search_query}%")
-        )
-    ).limit(10).all()
+    results = get_allowed_contacts(current_user, search_query)
+    user_data = [{'id': u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results[:10]]
 
-    user_data = [{'id': u.id, 'name': f"{u.first_name} {u.last_name}"} for u in results]
     return jsonify({'users': user_data})
-
-@socketio.on('send_global_message')
-def handle_global_msgs(data):
-    print(f"Server received: {data}")
-    
-    text = data.get('text', None)
-    sender_id = data.get('sender_id', None)
-    if text and sender_id:
-        global_msg = GlobalMesssages(text = text,
-                                     sender_id = sender_id)
-        db.session.add(global_msg)
-        db.commit()
-
-    # broadcast the same recived message to everyone in the global chatroom
-    emit('receive_global_message', broadcast= True)
 
 @app.route("/profilepage",methods=["GET"])
 def profilepage():

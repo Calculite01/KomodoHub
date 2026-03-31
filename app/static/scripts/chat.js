@@ -21,6 +21,8 @@ const chatContainer = document.getElementById('chat-container')
 const currentUserId = chatContainer.getAttribute('data-user-id');
 const globalChatBtn = document.getElementById('global-chat-btn');
 const privateChatBtn = document.getElementById('pvt-chat-btn');
+const addNewContactBtn = document.getElementById("add-new-contact-btn")
+
 // chat window regions/areas
 const globalChatArea = document.getElementById('global-chat-area');
 const privateChatArea = document.getElementById('private-chat-area');
@@ -69,11 +71,11 @@ function chatWith(friendID, friendName) {
                 listItem.classList.add('message-bubble');   // msg box shape
 
                 if (msg.sender_name !== friendName) {
-                    listItem.textContent = 'You: ' + msg.message_content;
+                    listItem.textContent = msg.message_content;
                     listItem.classList.add('sent');
                 }
                 else {
-                    listItem.textContent = msg.sender_name + ': ' + msg.message_content;
+                    listItem.textContent = msg.message_content;
                     listItem.classList.add('received');
                 }
                 messageList.append(listItem);
@@ -134,7 +136,7 @@ socket.on('receive_private_message', (data) => {
         msgBox.classList.add('received');
     }
     else {
-        msgBox.textContent = 'You: ' + data.text;
+        msgBox.textContent = data.text;
         msgBox.classList.add('sent');
     }
 
@@ -143,7 +145,9 @@ socket.on('receive_private_message', (data) => {
 });
 
 // new user add and close btns
-addContactBtn.addEventListener('click', () => modal.style.display = 'flex');
+addContactBtn.addEventListener('click', () => { 
+    modal.style.display = 'flex';
+});
 closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
 
 // searching global DB to add a new contact
@@ -175,6 +179,7 @@ globalSearchInput.addEventListener('input', () => {
                     // add new contact to sidebar
                     const newContactLi = document.createElement('li');
                     newContactLi.className = 'contact-item';
+                    newContactLi.textContent = user.name;
                     newContactLi.onclick = () => chatWith(user.id, user.name);
                     activeContactsList.append(newContactLi);
 
@@ -200,7 +205,41 @@ globalSendBtn.addEventListener('click', () => {
 
 socket.on('receive_global_message', (data) => {
     const li = document.createElement('li');
-    li.textContent = data.text;
-    messageList.appendChild(li);
-    document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
-})
+    li.classList.add('message-bubble');
+
+    if (data.sender_id == currentUserId)
+    {
+        li.classList.add('sent');
+        li.innerHTML = `${data.text}`;
+    }
+    else
+    {
+        li.classList.add('received');
+        li.innerHTML = `
+            <span style="font-size: 0.8em; color: #555; display: block; margin-bottom: 4px; font-weight: bold;">
+                ${data.sender}
+            </span>
+            ${data.text}
+        `;
+    }
+    globalMessageList.appendChild(li);
+    
+    const globalChatWindow = document.getElementById('global-chat-window');
+    if (globalChatWindow) {
+        globalChatWindow.scrollTop = globalChatWindow.scrollHeight;
+    }
+});
+
+// Listener for Private Chat Enter Key
+message.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendButton.click();
+    }
+});
+
+// Listener for Global Chat Enter Key
+globalMessage.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        globalSendBtn.click();
+    }
+});

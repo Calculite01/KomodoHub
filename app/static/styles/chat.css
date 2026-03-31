@@ -1,23 +1,40 @@
 #chat-window {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 15px;
-}
-
-.chat-container {
-    display: flex;
-    gap: 20px;
     padding: 20px;
+    background-color: #f0f2f5;
+    display: flex;
+    flex-direction: column;
 }
 
-#messages {
+#chat-container {
+    display: flex;
+    justify-content: center;
+    height: calc(100vh - 120px); 
+    margin: 0 auto;
+    max-width: 1200px; 
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; 
+    background-color: #fff;
+}
+
+#messages, #global-messages {
     list-style-type: none;
     padding: 0;
     display: flex;
-    flex-direction: column;
-    list-style-type: none;
-    padding: 10px;
+    flex-direction: column;;
     margin: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#global-entered-message {
+    flex-grow: 1;
+    padding: 10px;    
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
 }
 
 /* shape for ALL chat bubbles */
@@ -35,6 +52,8 @@
     background-color: #0084ff;
     color: white;
     border-bottom-right-radius: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 /* class for messages YOU receive */
@@ -43,6 +62,8 @@
     background-color: #e4e6eb;
     color: black;
     border-bottom-left-radius: 2px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .new-msg-btn {
@@ -79,14 +100,11 @@
     flex-direction: column;
 }
 
-#private-chat-area {
+#private-chat-area, #global-chat-area {
     flex-grow: 1;
     background-color: #ffffff;
-}
-
-#global-chat-area {
-    flex-grow: 1;
-    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-header {
@@ -107,6 +125,15 @@
     display: flex;
     padding: 15px;
     border-top: 15px solid #e0e0e0;
+    background-color: #fff;
+}
+
+.global-chat-input-area {
+    display: flex;
+    padding: 20px;
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    width: 100%;
 }
 
 #entered-message {
@@ -148,10 +175,9 @@
 
 .chat-mode-selection {
     text-align: center;
-    justify-content: center;
-    padding: 1.2rem;
-    background-color: #f8f9fa;
-    border: 0.3px hidden rgb(40, 106, 40);
+    padding: 10px;
+    background-color: #ffffff;
+    border: 0.3px hidden #e0e0e0;
 }
 
 .view-section {
@@ -161,6 +187,8 @@
 .view-section.active {
     display: flex !important;
     flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
 .chat-btn {
@@ -174,4 +202,19 @@
     text-align: center;
     font-size: 25px;
     padding: 1%;
+}
+
+#global-chat-window {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20;
+    background-color: #f0f2f5; 
+    display: flex;
+    flex-direction: column;
+}
+
+#global-chatroom {
+    text-align: center;
+    padding: 1.2rem;
+    background-color: rgba(rgb(233, 100, 100), rgb(120, 253, 120), 0, alpha);
 }

@@ -155,7 +155,7 @@ class Messages(db.Model):
     receiver = db.relationship('User', foreign_keys= [receiver_id], backref= 'received_messages')       # backref allows u to see the messages each 'User' instance has received
 
     def __repr__(self):
-        print(f"Sender {self.sender_id} sent {self.receiver_id} the text:\n{self.text} to {self.receiver_id}")
+        return f"Sender {self.sender_id} sent {self.receiver_id} the text:\n{self.text} to {self.receiver_id}"
 
 class GlobalMesssages(db.Model):
     id = db.Column(db.Integer, nullable= False, primary_key= True)
