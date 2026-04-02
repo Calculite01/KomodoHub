@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Green Sea Turtle - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<h1>Turtle Scoot</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='Green Sea Turtle Threat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Info</h2>
+<p>
+    The green sea turtle (Chelonia mydas) is a large, herbivorous marine reptile found in tropical and subtropical oceans worldwide. 
+    It is the only primarily plant-eating species among sea turtles and plays an essential ecological role in maintaining healthy seagrass beds.
+    The species is classified as endangered due to human exploitation and habitat loss.Green sea turtles have smooth, heart-shaped shells colored brown, olive, or gray with lighter undersides.
+    Their name derives from the green hue of their body fat, caused by a diet of algae and seagrasses. Equipped with powerful flippers, they can migrate thousands of miles between feeding and nesting areas. 
+    Adults are mostly herbivorous, while juveniles may also consume jellyfish and small invertebrates.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Threats and that</h2>
+<p>
+    Green sea turtles are protected under the U.S. Endangered Species Act and listed in CITES Appendix I. 
+    Principal threats include entanglement in fishing gear, poaching for meat and eggs, coastal development, pollution, and climate-driven changes to nesting beaches. 
+    Global conservation programs—such as marine protected areas and turtle-friendly fishing practices—are helping populations recover, though declines persist in many regions.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>How you can help</h2>
+<ul>
+    <li>Sightings</li>
+    <li>Conservation Acts</li>
+    <li>Information</li>
+</ul>
+</div>
+
+<div>Link to game somewhere lol!!!</div>
+{% endblock content %}

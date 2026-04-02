@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Sumatran Tiger - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<h1>Tiger snarl</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='Sumatran Tiger Threat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Info</h2>
+<p>
+    The Sumatran tiger (Panthera tigris sumatrae) is the smallest and rarest living tiger subspecies, found only on the Indonesian island of Sumatra.
+     Critically endangered, it represents the last surviving population of the Sunda Island tigers after the extinction of the Javan tiger and Bali tiger. 
+     Its survival is vital to the ecological balance of Sumatra’s rainforests. The Sumatran tiger has darker orange fur and more closely spaced black stripes than mainland tigers, a camouflage adaptation to dense jungle environments. 
+     Males feature a short mane and longer cheek fur. Webbing between the toes allows strong swimming ability—a trait rarely seen in other tiger subspecies. 
+     Each tiger’s stripe pattern is unique, functioning much like a fingerprint. 
+
+
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Threats and that</h2>
+<p>
+    These tigers inhabit about 88,000 km² of fragmented forest across Sumatra, including protected areas such as Kerinci Seblat National Park and Gunung Leuser National Park. 
+    Rampant deforestation for palm oil, pulp, and acacia plantations, combined with poaching and human–tiger conflict, has devastated their numbers.
+     Illegal wildlife trade remains a major danger—tiger bones, skins, and teeth are sold despite strict national protection laws.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>How you can help</h2>
+<ul>
+    <li>Sightings</li>
+    <li>Conservation Acts</li>
+    <li>Information</li>
+</ul>
+</div>
+
+<div>Link to game somewhere lol!!!</div>
+{% endblock content %}

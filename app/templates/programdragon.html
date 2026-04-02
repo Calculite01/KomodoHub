@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Komodo Dragon - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<h1>Dragon Scales</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='Dragon Threat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Info</h2>
+<p>
+    The Komodo dragon is the largest living species of lizard, native to a few islands in Indonesia’s Lesser Sunda chain, including Komodo, Rinca, Flores, and Gili Motang. As an apex predator with a venomous bite and immense size, it plays a key ecological and cultural role in its limited island habitats.
+    Komodo dragons have muscular bodies, thick tails, and rough gray-brown skin armored with bony scales called osteoderms. Their forked yellow tongue samples air particles for the Jacobson’s organ, allowing them to detect carrion from several miles away. Adults can sprint briefly up to 20 km/h (13 mph) and swim between islands.
+    Their serrated teeth and jaw muscles deliver deep wounds; venom secretions prevent clotting and induce shock, weakening prey that may later be tracked and consumed.
+    Komodo dragons use ambush tactics to hunt deer, pigs, and sometimes water buffalo or smaller dragons. Females lay 15–30 eggs in burrows or abandoned mound-bird nests, often making decoy nests to deter predators.
+
+
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Threats and that</h2>
+<p>
+    With fewer than 6,000 individuals remaining, the Komodo dragon faces threats from habitat loss, human encroachment, declining prey, and rising sea levels that may submerge low-lying habitat by 2040. 
+    Indonesia enforces legal protection and manages breeding programs in zoos worldwide. Sustained conservation and climate resilience efforts are vital for the survival of this iconic reptile.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>How you can help</h2>
+<ul>
+    <li>Sightings</li>
+    <li>Conservation Acts</li>
+    <li>Information</li>
+</ul>
+</div>
+
+<div>Link to game somewhere lol!!!</div>
+{% endblock content %}
