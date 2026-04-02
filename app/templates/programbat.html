@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Talaud fruit bat - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<h1>Fruit Bat!</h1>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="get">
+        <input type="hidden" name="readingContent" value='Bat Threat'>
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Info</h2>
+<p>
+    The Talaud fruit bat (Acerodon humilis) is a large fruit bat species in the family Pteropodidae, endemic to the Talaud Islands of Indonesia. 
+    It is notable for its limited range and vulnerability to habitat loss, making it one of the lesser-known but conservation-concerned megabats in Southeast Asia.
+    This species is confined to the Talaud Islands, located between northern Sulawesi and the Philippines. It inhabits lowland tropical forests and coastal woodlands, with populations declining due to extensive deforestation for agriculture and logging. 
+    Its dependence on primary forest makes it especially sensitive to habitat fragmentation.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>Threats and that</h2>
+<p>
+    Acerodon humilis is listed as Vulnerable because of its restricted range and ongoing habitat degradation. Hunting for bushmeat and disturbance of roost sites further threaten its survival. 
+    Conservation priorities include protecting remaining forest habitats on the Talaud Islands, raising local awareness, and monitoring population trends to prevent further decline.
+</p>
+</div>
+
+<div>
+{% if taskcreate %}
+    <form action="{{ url_for( 'createtask' ) }}" method="post">
+        <button type="submit">Add Content</button>
+    </form>
+{% endif %}
+<h2>How you can help</h2>
+<ul>
+    <li>Sightings</li>
+    <li>Conservation Acts</li>
+    <li>Information</li>
+</ul>
+</div>
+
+<div>Link to game somewhere lol!!!</div>
+{% endblock content %}
