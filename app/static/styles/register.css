@@ -156,3 +156,11 @@ h1 {
     font-size: small;
     color: red;
 }
+
+.otp-container {
+    width: 350px;
+    padding: 40px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
