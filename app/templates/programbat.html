@@ -1,33 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "layout.html" %}
+
+{% block head %}
     <title>Fruit Bat - Komodo Hub</title>
-    <link rel="stylesheet" href="Animalsstyle.css">
-    <script src="carousel.js"></script>
-</head>
-<body>
- 
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
+
     <h1>Fruit Bat</h1>
- 
+
     <div class="carousel-wrapper">
         <div class="carousel">
-    <div class="carousel-track" id="track">
-        <img src="C:/Users/cristiano/OneDrive - Middle East College/Desktop/komodohubgit/ABCS_Komodo_Hub/app/templates/Acerodon_celebensis.jpg" alt="Fruit Bat 1" />
-        <img src="C:/Users/cristiano/OneDrive - Middle East College/Desktop/komodohubgit/ABCS_Komodo_Hub/app/templates/Fruit-bat-pic1.jpg" alt="Fruit Bat 2" />
-        <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Bat4.jpeg" alt="Fruit Bat 4" />
-    </div>
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/Acerodon_celebensis.jpg') }}" alt="Fruit Bat 1" />
+                <img src="{{ url_for('static', filename='images/Fruit-bat-pic1.jpg') }}" alt="Fruit Bat 2" />
+                <img src="{{ url_for('static', filename='images/Bat4.jpeg') }}" alt="Fruit Bat 3" />
+            </div>
         </div>
         <div class="carousel-controls">
             <button id="prev" class="carousel-btn">&#8249;</button>
             <button id="next" class="carousel-btn">&#8250;</button>
         </div>
     </div>
- 
-    <!-- Info Section -->
+
     <section class="animal-section">
-        <h2>Information</h2>
+        <h2>Info</h2>
         <div class="section-body">
             <p>
                 The Talaud fruit bat (Acerodon humilis) is a large fruit bat species.
@@ -38,10 +42,9 @@
             </p>
         </div>
     </section>
- 
-    <!-- Dangers Section -->
+
     <section class="animal-section">
-        <h2>Reasons for Extinction</h2>
+        <h2>Threats</h2>
         <div class="section-body">
             <p>
                 Acerodon humilis is listed as Vulnerable because of its restricted range.
@@ -51,15 +54,16 @@
             </p>
         </div>
     </section>
- 
-    <!-- How Can You Help Section -->
+
     <section class="animal-section">
-        <h2>How can you help</h2>
+        <h2>How you can help</h2>
         <ul>
             <li>Report Sightings</li>
             <li>Support Conservation Acts</li>
-            <li>Share Information</li>
+            <li>Spread Information</li>
         </ul>
     </section>
- 
-</body>
+</div>
+</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
+{% endblock content %}
