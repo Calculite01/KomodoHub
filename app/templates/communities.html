@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Communities Directory - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/schools.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
+{% block content %}
+<div class="schools-container">
+    <nav class="schools-nav" style="margin-bottom: 20px;">
+        <a href="{{ url_for('home') }}" class="back-link">
+            <i class="fa-solid fa-house"></i> Back to Home
+        </a>
+    </nav>
+    <header class="schools-header">
+        <h1>Discover Communities</h1>
+        <p>Explore our diverse ecosystem of private communities and the expertise and collaborations that define our Hub.</p>
+    </header>
+
+    <div class="schools-grid">
+        {% for community in communities %}
+        <div class="school-card">
+            <div class="school-logo-box">
+                <img src="{{ url_for('static', filename='images/' + (community.icon or 'default_org.jpg')) }}" 
+                     class="school-logo-img" 
+                     alt="{{ community.name }} Logo"
+                     href = "{{ url_for('static', filename='images/default_org.jpg') }}">
+            </div>
+
+            <h2 class="school-name">{{ community.name }}</h2>
+            
+            <p class="school-description">
+                {{ community.description or "This institution provides a variety of digital learning resources and interactive courses through Komodo Hub." }}
+            </p>
+
+            <a href="{{ url_for('organization', orgid=community.id) }}" class="btn-enter">
+                View Community <i class="fa-solid fa-chevron-right" style="margin-left: 8px; font-size: 0.8rem;"></i>
+            </a>
+        </div>
+        {% else %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px;">
+            <i class="fa-solid fa-school-circle-exclamation" style="font-size: 4rem; color: #cbd5e1; margin-bottom: 20px;"></i>
+            <h3 style="color: #64748b;">No communities found.</h3>
+            <p style="color: #94a3b8;">Check back later or contact an administrator.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

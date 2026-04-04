@@ -1,0 +1,131 @@
+.schools-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.schools-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.schools-header h1 {
+    font-size: 2.5rem;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.schools-header p {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+/* Grid Layout */
+.schools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+/* School Card */
+.school-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.school-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+    border-color: #228B22;
+}
+
+/* School Logo Container */
+.school-logo-box {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+}
+
+.school-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.school-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.school-description {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    /* Limits description to 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Action Button */
+.btn-enter {
+    margin-top: auto;
+    background: #228B22;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.btn-enter:hover {
+    background: #1a6b1a;
+}
+
+/* Navigation Link Styles */
+.schools-nav {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #64748b; /* Subtle Slate */
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease-in-out;
+    padding: 5px 0;
+}
+
+.back-link i {
+    font-size: 0.85rem;
+    color: #228B22; /* Komodo Green icon */
+}
+
+.back-link:hover {
+    color: #228B22; /* Text turns green on hover */
+    transform: translateX(-4px); /* Subtle slide left */
+}
