@@ -1,7 +1,8 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #020617, #0f172a);
+  background:url('retro_thingy.png') no-repeat center center fixed;
+  background-size: cover;
   color: white;
   display: flex;
   justify-content: center;
@@ -65,4 +66,36 @@ button:hover {
 #result {
   margin-top: 10px;
   font-weight: bold;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;           
+  padding: 20px 40px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background-color: #9fea4a;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+#navbar-placeholder {
+    position: static;
+    background-color: black;
+    height: 76.8px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px; 
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #228B22;
+  font-weight: bold;
+  font-family: sans-serif;
 }

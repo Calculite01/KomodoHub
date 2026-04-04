@@ -1,7 +1,8 @@
 body{
 font-family:Arial;
 text-align:center;
-background:#121213;
+background:url('retro_thingy.png') no-repeat center center fixed;
+background-size: cover;
 color:white;
 }
 
@@ -73,4 +74,36 @@ cursor:pointer;
 
 .flip{
 animation:flip 0.5s ease;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;           
+  padding: 20px 40px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background-color: #9fea4a;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+#navbar-placeholder {
+    position: static;
+    background-color: black;
+    height: 76.8px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 30px; 
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #228B22;
+  font-weight: bold;
+  font-family: sans-serif;
 }
