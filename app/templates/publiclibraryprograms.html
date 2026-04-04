@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Conservation Programs - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/programs.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
+{% block content %}
+<div class="programs-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibrary') }}" class="btn-home" style="text-decoration:none; color:#64748b; margin-bottom:20px; display:inline-block;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Library
+        </a>
+    </div>
+
+    <header class="programs-header">
+        <h1>Conservation Programs</h1>
+        <p>Explore our active initiatives dedicated to protecting Sumatra's most vulnerable species.</p>
+    </header>
+
+    <div class="programs-grid">
+        {% set animal_list = [
+            ('tiger', 'Sumatran Tiger', 'Protecting the last Sunda Island tigers through habitat preservation.', 'Tiger.jpg'),
+            ('seaturtle', 'Green Sea Turtle', 'Monitoring nesting beaches and reducing marine plastic pollution.', 'Turtle1.jpg'),
+            ('rhino', 'Sumatran Rhino', 'Critical breeding programs for the world\'s rarest rhinoceros.', 'Rihno1.jpg'),
+            ('pangolin', 'Sunda Pangolin', 'Combatting illegal wildlife trade and restoring forest habitats.', 'Pangolin1.jpeg'),
+            ('myna', 'Bali Myna', 'Reintroduction programs for one of the world\'s rarest birds.', 'myna1.jpg'),
+            ('macaque', 'Macaque', 'Studying social behaviors and protecting forest corridors.', 'macaque1.jpg'),
+            ('leopard', 'Clouded Leopard', 'Monitoring the elusive predators of the canopy.', 'leopard.jpg'),
+            ('gibbon', 'Siamang Gibbon', 'Protecting the singing primates of the Sumatran rainforest.', 'gibbon1.jpeg'),
+            ('dragon', 'Komodo Dragon', 'Habitat management for the world\'s largest lizard.', 'komod1.jpeg'),
+            ('deer', 'Bawean Deer', 'Specialized conservation for endemic island species.', 'deer1.jpeg'),
+            ('bear', 'Sun Bear', 'Rescuing and rehabilitating the world\'s smallest bear species.', 'sunbear1.jpg'),
+            ('bat', 'Fruit Bat', 'Highlighting the essential role of bats in seed dispersal.', 'Acerodon_celebensis.jpg')
+        ] %}
+
+        {% for id, name, desc, file in animal_list %}
+        <a href="{{ url_for('program' ~ id) }}" class="program-card">
+            <img src="{{ url_for('static', filename='images/' + file) }}" alt="{{ name }}" class="program-image">
+            <div class="program-info">
+                <h3>{{ name }}</h3>
+                <p>{{ desc }}</p>
+                <span class="btn-learn">
+                    View Program <i class="fa-solid fa-chevron-right"></i>
+                </span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+
+    <section class="sightings-display">
+        <h2 style="color: #1e293b; margin-bottom: 25px; margin-top: 30px;">Sightings</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+            {% for sighting in sightings %}
+            <div class="sighting-card" style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
+                <img src="{{ url_for('static', filename='images/' + sighting.image) }}" 
+                     style="width: 100%; height: 150px; object-fit: cover;">
+                <div style="padding: 12px;">
+                    <strong style="display: block; color: #228B22;">{{ sighting.title }}</strong>
+                    <small style="color: #94a3b8;">{{ sighting.date_posted.strftime('%b %d, %Y') }}</small>
+                </div>
+            </div>
+            {% else %}
+            <p style="color: #94a3b8; font-style: italic;">No sightings reported yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="report-box" style="margin-top: 50px; background: #f0fdf4; padding: 40px; border-radius: 20px; border: 2px dashed #228B22;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <h3 style="color: #166534; margin-bottom: 10px;"><i class="fa-solid fa-camera"></i> Have you seen something?</h3>
+            <p style="color: #166534; margin-bottom: 25px; opacity: 0.8;">Contribute to our conservation efforts by uploading a photo and title of your sighting.</p>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div style="margin-bottom: 15px;">
+                    {{ form.title(placeholder="What species did you see?", style="width:100%; padding:12px; border-radius:8px; border:1px solid #bbf7d0;") }}
+                </div>
+                <div style="margin-bottom: 15px;">
+                    {{ form.image(style="width:100%; color: #166534;") }}
+                    <small style="display:block; margin-top:5px; color: #166534;">Allowed: JPG, PNG, JPEG</small>
+                </div>
+                {{ form.submit(class="btn-learn", style="background:#228B22; color:white; border:none; padding:12px 30px; border-radius:8px; cursor:pointer; width:100%; font-size:1rem;") }}
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock content %}

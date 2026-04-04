@@ -1,6 +1,40 @@
 {% extends "layout.html" %}
+
 {% block head %}
     <title>Public Library - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/publiclibrary.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
 {% block content %}
+<div class="library-container">
+    <div class="nav-top">
+        <a href="{{ url_for('home') }}" class="btn-home">
+            <i class="fa-solid fa-house"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <header class="library-header">
+        <h1>Public Library</h1>
+        <p>Explore curated knowledge, member contributions, and environmental initiatives.</p>
+    </header>
+
+    <div class="library-grid">
+        <a href="{{ url_for('publiclibrarycontributions') }}" class="library-card">
+            <div class="card-icon">
+                <i class="fa-solid fa-hand-holding-heart"></i>
+            </div>
+            <h3>Contributions</h3>
+            <p>View resources, research, and papers shared by our community members.</p>
+        </a>
+
+        <a href="{{ url_for('publiclibraryprograms') }}" class="library-card">
+            <div class="card-icon">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            <h3>Conservation Programs</h3>
+            <p>Learn about our active environmental projects and how you can get involved.</p>
+        </a>
+    </div>
+</div>
 {% endblock content %}
