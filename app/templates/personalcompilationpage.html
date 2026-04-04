@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>My Compilation - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/compilation.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+{% endblock head %}
+
+{% block content %}
+<div class="compilation-wrapper">
+    
+    <nav class="compilation-nav" style="margin-bottom: 20px;">
+        <a href="{{ url_for('profilepage') }}" class="back-link" style="text-decoration: none; color: #166534; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-arrow-left" style="color: #228B22;"></i> Back to Profile
+        </a>
+    </nav>
+
+    <header class="compilation-header">
+        <div class="header-info">
+            <h1>My Personal Compilation</h1>
+            <p>A collection of your contributions and wildlife encounters.</p>
+        </div>
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-count">{{ contributions.count() }}</span>
+                <span class="stat-label">Contributions</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-count">{{ sightings.count() }}</span>
+                <span class="stat-label">Sightings</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="openTab(event, 'sightings-tab')">
+            <i class="fa-solid fa-camera"></i> My Sightings
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'contributions-tab')">
+            <i class="fa-solid fa-book"></i> My Contributions
+        </button>
+    </div>
+
+    <div id="sightings-tab" class="tab-content active">
+        <div class="items-grid">
+            {% for sighting in sightings %}
+            <div class="item-card">
+                <div class="card-image">
+                    <img src="{{ url_for('static', filename='images/' + sighting.image) }}" alt="Sighting">
+                </div>
+                <div class="card-body">
+                    <h3>{{ sighting.title }}</h3>
+                    <p class="date"><i class="fa-regular fa-calendar"></i> {{ sighting.date_posted.strftime('%d %B %Y') }}</p>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state" style="text-align: center; padding: 40px;">
+                <i class="fa-solid fa-leaf" style="color: green; font-size: 3rem; margin-bottom: 10px;"></i>
+                <p>You haven't reported any sightings yet.</p>
+                <a href="{{ url_for('publiclibraryprograms') }}" class="btn-action">Report a Sighting</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="contributions-tab" class="tab-content">
+        <div class="items-grid">
+            {% for contribution in contributions %}
+            <div class="item-card">
+                <div class="card-body">
+                    <div class="type-tag" style="background: #f0fdf4; color: #166534; display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 10px;">Research</div>
+                    
+                    <h3>{{ contribution.title }}</h3>
+                    
+                    <p style="color: #475569; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px;">
+                        {{ contribution.text }}
+                    </p>
+
+                    {% if contribution.images %}
+                    <div class="contribution-images-preview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                        {% for img in contribution.images %}
+                            <a href="{{ url_for('static', filename='images/' + img.file) }}" target="_blank" title="View Full Image">
+                                <img src="{{ url_for('static', filename='images/' + img.file) }}" 
+                                    alt="Contribution Image" 
+                                    style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; transition: transform 0.2s, border-color 0.2s; cursor: pointer;"
+                                    onmouseover="this.style.transform='scale(1.1)'; this.style.borderColor='#228B22';"
+                                    onmouseout="this.style.transform='scale(1)'; this.style.borderColor='#e2e8f0';">
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="card-footer" style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 15px; font-size: 0.8rem; color: #94a3b8;">
+                        <i class="fa-regular fa-clock"></i> {{ contribution.time_of_creation.strftime('%d %B %Y') }}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state" style="text-align: center; padding: 40px;">
+                <i class="fa-solid fa-folder-open" style="color: green; font-size: 3rem; margin-bottom: 10px;"></i>
+                <p>No research contributions found.</p>
+                <a href="{{ url_for('publiclibrarycontributions') }}" class="btn-action">Submit a Contribution</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/compilation.js') }}"></script>
+{% endblock content %}
