@@ -1,54 +1,64 @@
-{% extends "layout.html" %}
-{% block head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Green Sea Turtle - Komodo Hub</title>
-{% endblock head%}
-{% block content %}
-<h1>Turtle Scoot</h1>
+    <link rel="stylesheet" href="Animalsstyle.css">
+</head>
+<body>
+ 
+    <h1>Green Sea Turtle</h1>
+ 
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Turtle1.jpg" alt="Green Sea Turtle 1" />
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Turtle2.jpg" alt="Green Sea Turtle 2" />
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Turtle3.jpg" alt="Green Sea Turtle 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+ 
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The green sea turtle (Chelonia mydas) is a large, herbivorous marine reptile found in tropical and subtropical oceans worldwide.
+                It is the only primarily plant-eating species among sea turtles and plays an essential ecological role in maintaining healthy seagrass beds.
+                The species is classified as endangered due to human exploitation and habitat loss. Green sea turtles have smooth, heart-shaped shells colored brown, olive, or gray with lighter undersides.
+                Their name derives from the green hue of their body fat, caused by a diet of algae and seagrasses. Equipped with powerful flippers, they can migrate thousands of miles between feeding and nesting areas.
+                Adults are mostly herbivorous, while juveniles may also consume jellyfish and small invertebrates.
+            </p>
+        </div>
+    </section>
+ 
+    <section class="animal-section">
+        <h2>Threats and that</h2>
+        <div class="section-body">
+            <p>
+                Green sea turtles are protected under the U.S. Endangered Species Act and listed in CITES Appendix I.
+                Principal threats include entanglement in fishing gear, poaching for meat and eggs, coastal development, pollution, and climate-driven changes to nesting beaches.
+                Global conservation programs—such as marine protected areas and turtle-friendly fishing practices—are helping populations recover, though declines persist in many regions.
+            </p>
+        </div>
+    </section>
+ 
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Sightings</li>
+            <li>Conservation Acts</li>
+            <li>Information</li>
+        </ul>
+    </section>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Green Sea Turtle Threat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The green sea turtle (Chelonia mydas) is a large, herbivorous marine reptile found in tropical and subtropical oceans worldwide. 
-    It is the only primarily plant-eating species among sea turtles and plays an essential ecological role in maintaining healthy seagrass beds.
-    The species is classified as endangered due to human exploitation and habitat loss.Green sea turtles have smooth, heart-shaped shells colored brown, olive, or gray with lighter undersides.
-    Their name derives from the green hue of their body fat, caused by a diet of algae and seagrasses. Equipped with powerful flippers, they can migrate thousands of miles between feeding and nesting areas. 
-    Adults are mostly herbivorous, while juveniles may also consume jellyfish and small invertebrates.
-</p>
-</div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    Green sea turtles are protected under the U.S. Endangered Species Act and listed in CITES Appendix I. 
-    Principal threats include entanglement in fishing gear, poaching for meat and eggs, coastal development, pollution, and climate-driven changes to nesting beaches. 
-    Global conservation programs—such as marine protected areas and turtle-friendly fishing practices—are helping populations recover, though declines persist in many regions.
-</p>
-</div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
-{% endblock content %}
+ 
+    <script src="carousel.js"></script>
+ 
+</body>
+</html>
