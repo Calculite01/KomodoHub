@@ -1,53 +1,68 @@
 {% extends "layout.html" %}
+
 {% block head %}
     <title>Tapanuli Orangutan - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>Great Ape</h1>
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Orangutan Threat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The Tapanuli orangutan (Pongo tapanuliensis) is a critically endangered great ape species native to the Indonesian island of Sumatra.
-    Recognized as a distinct species in 2017, it is the rarest of all great apes, with an estimated population of fewer than 800 individuals surviving in the wild.
-    The species was originally thought to inhabit only the Batang Toru forest ecosystem in South Tapanuli, North Sumatra. 
-    Tapanuli orangutans display dense, curly orange hair and males possess flatter cheek pads with fine blond hair.
-    Their long, high-pitched calls differ from those of other orangutan species. They are primarily arboreal, feeding on fruit, leaves, bark, and occasionally insects or conifer cones, and rarely descend to the ground due to predation risk from Sumatran tiger and other carnivores
-</p>
+    <h1>Tapanuli Orangutan</h1>
+
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/orangutan1.jpeg') }}" alt="Tapanuli Orangutan 1" />
+                <img src="{{ url_for('static', filename='images/orangutan2.jpeg') }}" alt="Tapanuli Orangutan 2" />
+                <img src="{{ url_for('static', filename='images/orangutan3.jpg') }}" alt="Tapanuli Orangutan 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Tapanuli orangutan (Pongo tapanuliensis) is a critically endangered great ape species native to the Indonesian island of Sumatra.
+                Recognized as a distinct species in 2017, it is the rarest of all great apes, with an estimated population of fewer than 800 individuals surviving in the wild.
+                The species was originally thought to inhabit only the Batang Toru forest ecosystem in South Tapanuli, North Sumatra.
+                Tapanuli orangutans display dense, curly orange hair and males possess flatter cheek pads with fine blond hair.
+                Their long, high-pitched calls differ from those of other orangutan species. They are primarily arboreal, feeding on fruit, leaves, bark, and occasionally insects or conifer cones, and rarely descend to the ground due to predation risk from Sumatran tiger and other carnivores.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>Threats</h2>
+        <div class="section-body">
+            <p>
+                Habitat loss from hydropower construction, mining, agricultural expansion, and oil-palm plantations poses severe threats.
+                Fragmentation has left the remaining populations genetically and geographically isolated, jeopardizing long-term viability.
+                Conservation groups and Indonesian authorities are working to secure forest protection, limit land conversion, and explore options such as habitat corridors or managed relocations to preserve this critically endangered species.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
+        </ul>
+    </section>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    Habitat loss from hydropower construction, mining, agricultural expansion, and oil-palm plantations poses severe threats. 
-    Fragmentation has left the remaining populations genetically and geographically isolated, jeopardizing long-term viability. 
-    Conservation groups and Indonesian authorities are working to secure forest protection, limit land conversion, and explore options such as habitat corridors or managed relocations to preserve this critically endangered species
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
 {% endblock content %}

@@ -1,52 +1,69 @@
 {% extends "layout.html" %}
+
 {% block head %}
-    <title>Talaud fruit bat - Komodo Hub</title>
-{% endblock head%}
+    <title>Fruit Bat - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>Fruit Bat!</h1>
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Bat Threat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The Talaud fruit bat (Acerodon humilis) is a large fruit bat species in the family Pteropodidae, endemic to the Talaud Islands of Indonesia. 
-    It is notable for its limited range and vulnerability to habitat loss, making it one of the lesser-known but conservation-concerned megabats in Southeast Asia.
-    This species is confined to the Talaud Islands, located between northern Sulawesi and the Philippines. It inhabits lowland tropical forests and coastal woodlands, with populations declining due to extensive deforestation for agriculture and logging. 
-    Its dependence on primary forest makes it especially sensitive to habitat fragmentation.
-</p>
+    <h1>Fruit Bat</h1>
+
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/Acerodon_celebensis.jpg') }}" alt="Fruit Bat 1" />
+                <img src="{{ url_for('static', filename='images/Fruit-bat-pic1.jpg') }}" alt="Fruit Bat 2" />
+                <img src="{{ url_for('static', filename='images/Bat4.jpeg') }}" alt="Fruit Bat 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Talaud fruit bat (Acerodon humilis) is a large fruit bat species.
+                It is notable for its limited range and vulnerability to habitat loss.
+                This species is confined to the Talaud Islands, located between northern
+                Sulawesi and Mindanao. Its dependence on primary forest makes it especially
+                sensitive to habitat changes.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>Threats</h2>
+        <div class="section-body">
+            <p>
+                Acerodon humilis is listed as Vulnerable because of its restricted range.
+                Deforestation for agriculture is the primary threat, combined with hunting
+                pressure. Conservation priorities include protecting remaining forest habitats
+                and enforcing hunting restrictions across the Talaud Islands.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
+        </ul>
+    </section>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    Acerodon humilis is listed as Vulnerable because of its restricted range and ongoing habitat degradation. Hunting for bushmeat and disturbance of roost sites further threaten its survival. 
-    Conservation priorities include protecting remaining forest habitats on the Talaud Islands, raising local awareness, and monitoring population trends to prevent further decline.
-</p>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
 {% endblock content %}

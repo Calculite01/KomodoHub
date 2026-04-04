@@ -1,53 +1,66 @@
 {% extends "layout.html" %}
+
 {% block head %}
     <title>Bawean Deer - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>Deerss!</h1>
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Deer Threat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The Bawean deer (Axis kuhlii), also known as the Kuhl’s hog deer or Bawean hog deer, is a small and critically endangered deer species native to Bawean Island, north of Java. 
-    It is notable for its extreme rarity, limited range, and ecological importance as the island’s only native large herbivore. This deer inhabits the dry and mixed evergreen forests of Bawean Island, typically at low to mid elevations. It is crepuscular, feeding mainly at dawn and dusk on grasses, leaves, and fruits.
-    Social structure is typically limited to small family groups or solitary individuals, reflecting adaptation to the island’s constrained habitat and predator-free environment. The Bawean deer is a small-bodied deer, with males typically standing around 65–70 cm at the shoulder. 
-    Males possess short, three-tined antlers, while females lack antlers. Its coat is dark brown with a lighter underbelly, and it has relatively short legs adapted for movement through dense forest undergrowth.
+    <h1>Bawean Deer</h1>
 
-</p>
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/deer1.jpeg') }}" alt="Bawean Deer 1" />
+                <img src="{{ url_for('static', filename='images/deer22.jpeg') }}" alt="Bawean Deer 2" />
+                <img src="{{ url_for('static', filename='images/deer3.jpeg') }}" alt="Bawean Deer 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Bawean deer (Axis kuhlii), also known as the Kuhl's hog deer or Bawean hog deer, is a small and critically endangered deer species native to Bawean Island, north of Java.
+                It is notable for its extreme rarity, limited range, and ecological importance as the island's only native large herbivore. This deer inhabits the dry and mixed evergreen forests of Bawean Island, typically at low to mid elevations. It is crepuscular, feeding mainly at dawn and dusk on grasses, leaves, and fruits.
+                Social structure is typically limited to small family groups or solitary individuals, reflecting adaptation to the island's constrained habitat and predator-free environment. The Bawean deer is a small-bodied deer, with males typically standing around 65–70 cm at the shoulder.
+                Males possess short, three-tined antlers, while females lack antlers. Its coat is dark brown with a lighter underbelly, and it has relatively short legs adapted for movement through dense forest undergrowth.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>Threats</h2>
+        <div class="section-body">
+            <p>
+                The Bawean deer's limited distribution makes it highly vulnerable to habitat loss and human disturbance. Major threats include deforestation for agriculture, habitat fragmentation, and poaching.
+                Conservation measures led by the Indonesian government and NGOs include habitat protection, anti-poaching patrols, and population monitoring within Bawean Island Nature Reserve. Captive breeding efforts have been minimal due to the species' restricted range.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
+        </ul>
+    </section>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    The Bawean deer’s limited distribution makes it highly vulnerable to habitat loss and human disturbance. Major threats include deforestation for agriculture, habitat fragmentation, and poaching. 
-    Conservation measures led by the Indonesian government and NGOs include habitat protection, anti-poaching patrols, and population monitoring within Bawean Island Nature Reserve. Captive breeding efforts have been minimal due to the species’ restricted range.
-</p>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
 {% endblock content %}

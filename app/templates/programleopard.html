@@ -1,51 +1,65 @@
 {% extends "layout.html" %}
+
 {% block head %}
     <title>Javan Leopard - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>leopard spot</h1>
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Leopard'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The Javan leopard (Panthera pardus melas) is a critically endangered subspecies of leopard found only on the Indonesian island of Java. It represents one of the last surviving large carnivores on the island and plays a key role in maintaining Java’s forest ecosystem balance.
-    The Javan leopard is smaller than mainland leopard subspecies, adapted to Java’s dense forests and rugged terrain. Adults typically weigh 50–70 kilograms. Its coat varies from golden-yellow with black rosettes to completely black in melanistic individuals.
-    It is solitary and nocturnal, preying mainly on deer, wild boar, and smaller mammals. Once widespread across Java, the subspecies is now confined to fragmented forest habitats in national parks such as Ujung Kulon National Park, Gunung Halimun Salak National Park, and Meru Betiri National Park.
-</p>
+    <h1>Javan Leopard</h1>
+
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/leopard.jpg') }}" alt="Javan Leopard 1" />
+                <img src="{{ url_for('static', filename='images/leopard22.jpg') }}" alt="Javan Leopard 2" />
+                <img src="{{ url_for('static', filename='images/leopard3.jpg') }}" alt="Javan Leopard 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Javan leopard (Panthera pardus melas) is a critically endangered subspecies of leopard found only on the Indonesian island of Java. It represents one of the last surviving large carnivores on the island and plays a key role in maintaining Java's forest ecosystem balance.
+                The Javan leopard is smaller than mainland leopard subspecies, adapted to Java's dense forests and rugged terrain. Adults typically weigh 50–70 kilograms. Its coat varies from golden-yellow with black rosettes to completely black in melanistic individuals.
+                It is solitary and nocturnal, preying mainly on deer, wild boar, and smaller mammals. Once widespread across Java, the subspecies is now confined to fragmented forest habitats in national parks such as Ujung Kulon National Park, Gunung Halimun Salak National Park, and Meru Betiri National Park.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>Threats</h2>
+        <div class="section-body">
+            <p>
+                Major threats include habitat loss, poaching, and human–wildlife conflict. The Javan leopard is protected under Indonesian law, and several conservation programs—such as camera-trap monitoring, anti-poaching patrols, and community outreach—are underway to support population recovery.
+                Captive breeding efforts exist but are limited by genetic diversity and habitat constraints.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
+        </ul>
+    </section>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    Major threats include habitat loss, poaching, and human–wildlife conflict. The Javan leopard is protected under Indonesian law, and several conservation programs—such as camera-trap monitoring, anti-poaching patrols, and community outreach—are underway to support population recovery. 
-    Captive breeding efforts exist but are limited by genetic diversity and habitat constraints.
-</p>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
 {% endblock content %}

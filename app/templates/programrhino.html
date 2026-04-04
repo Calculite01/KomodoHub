@@ -1,55 +1,69 @@
 {% extends "layout.html" %}
+
 {% block head %}
-    <title>Rhinos - Komodo Hub</title>
-{% endblock head%}
+    <title>Javan Rhino - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>Rhinossss yayyy</h1>
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='RhinoThreat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-   The Javan rhinoceros (Rhinoceros sondaicus), also known as the lesser one-horned rhino, is one of the rarest large mammals in the world.
-     Historically, this species lived across large parts of Southeast Asia, including areas of Myanmar, Thailand, Cambodia, Vietnam, Sumatra, and the island of Java.  However, due to hunting and habitat loss, its range has dramatically decreased. Today, the main remaining population lives in Ujung Kulon National Park, located on the southwestern tip of Java, where about 50 individuals survive. 
-     A very small group, with fewer than ten rhinos, has also been reported in Cat Tien National Park, although this population is extremely vulnerable.
-     The Javan rhino is physically distinctive compared with other rhino species. Adult males have a single horn that is relatively small, usually around 25 cm long, while females typically do not have a visible horn. The horn is not directly attached to the skull bone and is made of keratin, similar to human fingernails. The rhino’s body is covered in grey skin with thick folds that create plate-like sections around the shoulders, back, and hindquarters. These folds give the animal an armour-like appearance. Javan rhinos grow to about 1.7 metres tall at the shoulder and can measure between 2 and 4 metres in length. Their body weight typically ranges from 1,500 to 2,000 kilograms.
-</p>
+    <h1>Javan Rhino</h1>
+
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/Rihno1.jpg') }}" alt="Javan Rhino 1" />
+                <img src="{{ url_for('static', filename='images/Rihno2.jpeg') }}" alt="Javan Rhino 2" />
+                <img src="{{ url_for('static', filename='images/Rihno3.jpg') }}" alt="Javan Rhino 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Javan rhinoceros (Rhinoceros sondaicus), also known as the lesser one-horned rhino, is one of the rarest large mammals in the world.
+                Historically, this species lived across large parts of Southeast Asia, including areas of Myanmar, Thailand, Cambodia, Vietnam, Sumatra, and the island of Java. However, due to hunting and habitat loss, its range has dramatically decreased. Today, the main remaining population lives in Ujung Kulon National Park, located on the southwestern tip of Java, where about 50 individuals survive.
+                A very small group, with fewer than ten rhinos, has also been reported in Cat Tien National Park, although this population is extremely vulnerable.
+                The Javan rhino is physically distinctive compared with other rhino species. Adult males have a single horn that is relatively small, usually around 25 cm long, while females typically do not have a visible horn. The horn is not directly attached to the skull bone and is made of keratin, similar to human fingernails. The rhino's body is covered in grey skin with thick folds that create plate-like sections around the shoulders, back, and hindquarters. These folds give the animal an armour-like appearance. Javan rhinos grow to about 1.7 metres tall at the shoulder and can measure between 2 and 4 metres in length. Their body weight typically ranges from 1,500 to 2,000 kilograms.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>Threats</h2>
+        <div class="section-body">
+            <p>
+                The Javan rhinoceros (Rhinoceros sondaicus) faces several serious threats that have caused its population to become extremely small.
+                One of the biggest threats is poaching, as rhino horns are illegally hunted and sold on the black market for traditional medicine and as luxury items. Although strong protection now exists, poaching historically reduced their numbers drastically.
+                Another major threat is habitat loss, as forests and grasslands where rhinos once lived have been cleared for farming, settlements, and development. This has left the remaining rhinos living in a very small and isolated area, mainly in Ujung Kulon National Park.
+                Because the population is so small and concentrated in one location, the species is also vulnerable to diseases, natural disasters, and inbreeding, which could quickly affect the entire population.
+                Additionally, the spread of invasive plants in their habitat reduces the availability of food that rhinos need to survive. These threats combined make the Javan rhino one of the most endangered mammals in the world and highlight the importance of conservation efforts to protect the remaining population.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
+        </ul>
+    </section>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-   The Javan rhinoceros (Rhinoceros sondaicus) faces several serious threats that have caused its population to become extremely small.
-     One of the biggest threats is poaching, as rhino horns are illegally hunted and sold on the black market for traditional medicine and as luxury items. Although strong protection now exists, poaching historically reduced their numbers drastically. 
-     Another major threat is habitat loss, as forests and grasslands where rhinos once lived have been cleared for farming, settlements, and development. This has left the remaining rhinos living in a very small and isolated area, mainly in Ujung Kulon National Park.
-     Because the population is so small and concentrated in one location, the species is also vulnerable to diseases, natural disasters, and inbreeding, which could quickly affect the entire population. 
-     Additionally, the spread of invasive plants in their habitat reduces the availability of food that rhinos need to survive. These threats combined make the Javan rhino one of the most endangered mammals in the world and highlight the importance of conservation efforts to protect the remaining population.
-</p>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
 {% endblock content %}

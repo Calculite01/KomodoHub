@@ -1,53 +1,67 @@
 {% extends "layout.html" %}
+
 {% block head %}
-    <title>Myna - Komodo Hub</title>
-{% endblock head%}
+    <title>Bali Myna - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
 {% block content %}
-<h1>Myna tweet</h1>
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='MynaThreat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-   The Bali myna (also called the Bali starling) is a rare white bird with black wing and tail tips and bright blue skin around its eyes.
-    It was discovered in 1912 and is found only on the Indonesian island of Bali. Bali mynas usually live in small flocks in mountain regions and build nests in tree holes using leaves, grass, and feathers. 
-    They are mostly monogamous, meaning one male and one female form a pair and raise their chicks together. During the breeding season, usually between November and April, they may lay two to three clutches of bluish-green eggs. 
-    Both parents incubate the eggs and feed the chicks until they are able to leave the nest. Bali mynas eat a variety of foods, including insects, fruit, worms, and small reptiles. Because of their beauty and rarity, they are an important cultural symbol in Bali and are carefully protected in places like West Bali National Park.
-</p>
+    <h1>Bali Myna</h1>
+
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="{{ url_for('static', filename='images/myna11.jpeg') }}" alt="Bali Myna 1" />
+                <img src="{{ url_for('static', filename='images/myna2.jpg') }}" alt="Bali Myna 2" />
+                <img src="{{ url_for('static', filename='images/myna4.jpg') }}" alt="Bali Myna 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Bali myna (also called the Bali starling) is a rare white bird with black wing and tail tips and bright blue skin around its eyes.
+                It was discovered in 1912 and is found only on the Indonesian island of Bali. Bali mynas usually live in small flocks in mountain regions and build nests in tree holes using leaves, grass, and feathers.
+                They are mostly monogamous, meaning one male and one female form a pair and raise their chicks together. During the breeding season, usually between November and April, they may lay two to three clutches of bluish-green eggs.
+                Both parents incubate the eggs and feed the chicks until they are able to leave the nest. Bali mynas eat a variety of foods, including insects, fruit, worms, and small reptiles. Because of their beauty and rarity, they are an important cultural symbol in Bali and are carefully protected in places like West Bali National Park.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>Threats</h2>
+        <div class="section-body">
+            <p>
+                The Bali myna is endangered mainly because of human activity. Its beauty makes it valuable in the illegal cage-bird trade, where people capture and sell the birds as pets, especially in markets in Denpasar, the capital of Bali.
+                Habitat loss has also reduced their population as tourism and human development have expanded on the island. Conservation groups are working to protect the birds in West Bali National Park, breeding them in zoos and reintroducing them into the wild, including on the nearby island of Nusa Penida.
+                People can help protect Bali mynas by not buying wild-caught birds and supporting conservation efforts.
+            </p>
+        </div>
+    </section>
+
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
+        </ul>
+    </section>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-   The Bali myna is endangered mainly because of human activity. Its beauty makes it valuable in the illegal cage-bird trade, where people capture and sell the birds as pets, especially in markets in Denpasar, the capital of Bali.
-    Habitat loss has also reduced their population as tourism and human development have expanded on the island. Conservation groups are working to protect the birds in West Bali National Park, breeding them in zoos and reintroducing them into the wild, including on the nearby island of Nusa Penida.
-    People can help protect Bali mynas by not buying wild-caught birds and supporting conservation efforts.
-</p>
 </div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
 {% endblock content %}
