@@ -1,21 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "layout.html" %}
+
+{% block head %}
     <title>Sumatran Tiger - Komodo Hub</title>
-    <link rel="stylesheet" href="Animalsstyle.css">
-</head>
-<body>
- 
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="animal-page-wrapper">
+<div class="animal-container">
+    <div class="nav-top">
+        <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Programs
+        </a>
+    </div>
+
     <h1>Sumatran Tiger</h1>
- 
+
     <div class="carousel-wrapper">
         <div class="carousel">
             <div class="carousel-track" id="track">
-                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Tiger1.jpg" alt="Sumatran Tiger 1" />
-                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Tiger.jpg" alt="Sumatran Tiger 2" />
-                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Tiger3.jpg" alt="Sumatran Tiger 3" />
+                <img src="{{ url_for('static', filename='images/Tiger1.jpg') }}" alt="Sumatran Tiger 1" />
+                <img src="{{ url_for('static', filename='images/Tiger.jpg') }}" alt="Sumatran Tiger 2" />
+                <img src="{{ url_for('static', filename='images/Tiger3.jpg') }}" alt="Sumatran Tiger 3" />
             </div>
         </div>
         <div class="carousel-controls">
@@ -23,41 +29,37 @@
             <button id="next" class="carousel-btn">&#8250;</button>
         </div>
     </div>
- 
+
     <section class="animal-section">
         <h2>Info</h2>
         <div class="section-body">
             <p>
-                The Sumatran tiger (Panthera tigris sumatrae) is the smallest and rarest living tiger subspecies, found only on the Indonesian island of Sumatra.
-                Critically endangered, it represents the last surviving population of the Sunda Island tigers after the extinction of the Javan tiger and Bali tiger.
-                Its survival is vital to the ecological balance of Sumatra's rainforests. The Sumatran tiger has darker orange fur and more closely spaced black stripes than mainland tigers, a camouflage adaptation to dense jungle environments.
-                Males feature a short mane and longer cheek fur. Webbing between the toes allows strong swimming ability—a trait rarely seen in other tiger subspecies.
-                Each tiger's stripe pattern is unique, functioning much like a fingerprint.
+                The Sumatran tiger (Panthera tigris sumatrae) is the smallest and rarest living tiger subspecies, found only on the Indonesian island of Sumatra. 
+                Critically endangered, it represents the last surviving population of the Sunda Island tigers.
+                The Sumatran tiger has darker orange fur and more closely spaced black stripes than mainland tigers, a camouflage adaptation to dense jungle environments.
             </p>
         </div>
     </section>
- 
+
     <section class="animal-section">
-        <h2>Threats and that</h2>
+        <h2>Threats</h2>
         <div class="section-body">
             <p>
-                These tigers inhabit about 88,000 km² of fragmented forest across Sumatra, including protected areas such as Kerinci Seblat National Park and Gunung Leuser National Park.
-                Rampant deforestation for palm oil, pulp, and acacia plantations, combined with poaching and human–tiger conflict, has devastated their numbers.
+                Rampant deforestation for palm oil, pulp, and acacia plantations, combined with poaching and human–tiger conflict, has devastated their numbers. 
                 Illegal wildlife trade remains a major danger—tiger bones, skins, and teeth are sold despite strict national protection laws.
             </p>
         </div>
     </section>
- 
+
     <section class="animal-section">
         <h2>How you can help</h2>
         <ul>
-            <li>Sightings</li>
-            <li>Conservation Acts</li>
-            <li>Information</li>
+            <li>Report Sightings</li>
+            <li>Support Conservation Acts</li>
+            <li>Spread Information</li>
         </ul>
     </section>
-
-    <script src="carousel.js"></script>
- 
-</body>
-</html>
+</div>
+</div>
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
+{% endblock content %}

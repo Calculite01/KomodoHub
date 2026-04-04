@@ -1,64 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "layout.html" %}
+
+{% block head %}
     <title>Green Sea Turtle - Komodo Hub</title>
-    <link rel="stylesheet" href="Animalsstyle.css">
-</head>
-<body>
- 
-    <h1>Green Sea Turtle</h1>
- 
-    <div class="carousel-wrapper">
-        <div class="carousel">
-            <div class="carousel-track" id="track">
-                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Turtle1.jpg" alt="Green Sea Turtle 1" />
-                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Turtle2.jpg" alt="Green Sea Turtle 2" />
-                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\Turtle3.jpg" alt="Green Sea Turtle 3" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/Animalsstyle.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="animal-page-wrapper">
+    <div class="animal-container">
+        
+        <div class="nav-top">
+            <a href="{{ url_for('publiclibraryprograms') }}" class="btn-home" style="text-decoration: none; color: #5a7a5a; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                 <i class="fa-solid fa-arrow-left"></i> Back to Programs
+            </a>
+        </div>
+
+        <h1>Green Sea Turtle</h1>
+
+        <div class="carousel-wrapper">
+            <div class="carousel">
+                <div class="carousel-track" id="track">
+                    <img src="{{ url_for('static', filename='images/Turtle1.jpg') }}" alt="Green Sea Turtle 1" />
+                    <img src="{{ url_for('static', filename='images/Turtle2.jpg') }}" alt="Green Sea Turtle 2" />
+                    <img src="{{ url_for('static', filename='images/Turtle3.jpg') }}" alt="Green Sea Turtle 3" />
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button id="prev" class="carousel-btn">&#8249;</button>
+                <button id="next" class="carousel-btn">&#8250;</button>
             </div>
         </div>
-        <div class="carousel-controls">
-            <button id="prev" class="carousel-btn">&#8249;</button>
-            <button id="next" class="carousel-btn">&#8250;</button>
-        </div>
-    </div>
- 
-    <section class="animal-section">
-        <h2>Info</h2>
-        <div class="section-body">
-            <p>
-                The green sea turtle (Chelonia mydas) is a large, herbivorous marine reptile found in tropical and subtropical oceans worldwide.
-                It is the only primarily plant-eating species among sea turtles and plays an essential ecological role in maintaining healthy seagrass beds.
-                The species is classified as endangered due to human exploitation and habitat loss. Green sea turtles have smooth, heart-shaped shells colored brown, olive, or gray with lighter undersides.
-                Their name derives from the green hue of their body fat, caused by a diet of algae and seagrasses. Equipped with powerful flippers, they can migrate thousands of miles between feeding and nesting areas.
-                Adults are mostly herbivorous, while juveniles may also consume jellyfish and small invertebrates.
-            </p>
-        </div>
-    </section>
- 
-    <section class="animal-section">
-        <h2>Threats and that</h2>
-        <div class="section-body">
-            <p>
-                Green sea turtles are protected under the U.S. Endangered Species Act and listed in CITES Appendix I.
-                Principal threats include entanglement in fishing gear, poaching for meat and eggs, coastal development, pollution, and climate-driven changes to nesting beaches.
-                Global conservation programs—such as marine protected areas and turtle-friendly fishing practices—are helping populations recover, though declines persist in many regions.
-            </p>
-        </div>
-    </section>
- 
-    <section class="animal-section">
-        <h2>How you can help</h2>
-        <ul>
-            <li>Sightings</li>
-            <li>Conservation Acts</li>
-            <li>Information</li>
-        </ul>
-    </section>
 
- 
-    <script src="carousel.js"></script>
- 
-</body>
-</html>
+        <section class="animal-section">
+            <h2>Info</h2>
+            <div class="section-body">
+                <p>
+                    The green sea turtle (Chelonia mydas) is a large, herbivorous marine reptile found in tropical and subtropical oceans worldwide.
+                    It is the only primarily plant-eating species among sea turtles and plays an essential ecological role in maintaining healthy seagrass beds.
+                    The species is classified as endangered due to human exploitation and habitat loss.
+                </p>
+            </div>
+        </section>
+
+        <section class="animal-section">
+            <h2>Threats</h2>
+            <div class="section-body">
+                <p>
+                    Principal threats include entanglement in fishing gear, poaching for meat and eggs, coastal development, pollution, and climate-driven changes to nesting beaches.
+                    Global conservation programs are helping populations recover, though declines persist in many regions.
+                </p>
+            </div>
+        </section>
+
+        <section class="animal-section">
+            <h2>How you can help</h2>
+            <ul>
+                <li>Report Sightings</li>
+                <li>Support Conservation Acts</li>
+                <li>Spread Information</li>
+            </ul>
+        </section>
+
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/carousel.js') }}"></script>
+{% endblock content %}
