@@ -1,55 +1,65 @@
-{% extends "layout.html" %}
-{% block head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sun Bear - Komodo Hub</title>
-{% endblock head%}
-{% block content %}
-<h1>Sun Bear</h1>
+    <link rel="stylesheet" href="Animalsstyle.css">
+</head>
+<body>
+ 
+    <h1>Sun Bear</h1>
+ 
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\sunbear1.jpg" alt="Sun Bear 1" />
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\sunbear2.jpg" alt="Sun Bear 2" />
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\sunbear3.jpg" alt="Sun Bear 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+ 
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The sun bear (Helarctos malayanus), also known as the Malayan sun bear or honey bear, is the smallest living bear species.
+                Native to the tropical forests of Southeast Asia, it is distinguished by a short, sleek black coat and a golden or orange crescent on its chest that resembles a rising sun.
+                It plays a key ecological role as an omnivore and seed disperser but faces serious threats from deforestation and poaching. Sun bears have compact, muscular bodies adapted for climbing, with long, curved claws and bare soles that provide grip on tree bark.
+                Their tongues—up to 25 cm long—help extract honey and insects from crevices. Males are roughly one-third larger than females. Despite their small size, sun bears possess strong jaws and a powerful bite for tearing open logs and termite nests.
+                Sun bears inhabit lowland tropical and subtropical rainforests across mainland and insular Southeast Asia—from northeastern India and southern China to Sumatra and Borneo. They prefer dense, undisturbed forests but occasionally enter plantations or farms in search of food.
+            </p>
+        </div>
+    </section>
+ 
+    <section class="animal-section">
+        <h2>Threats and that</h2>
+        <div class="section-body">
+            <p>
+                Listed as Vulnerable by the International Union for Conservation of Nature (IUCN) and protected under CITES Appendix I, sun bear populations have declined by more than 30 percent in three decades.
+                Principal threats include habitat loss from logging and palm-oil plantations, illegal hunting for bile and meat, and capture for the pet trade.
+                Conservation groups such as the Bornean Sun Bear Conservation Centre and World Wide Fund for Nature (WWF) support habitat protection, rehabilitation, and public education efforts to safeguard this elusive tropical bear.
+            </p>
+        </div>
+    </section>
+ 
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Sightings</li>
+            <li>Conservation Acts</li>
+            <li>Information</li>
+        </ul>
+    </section>
 
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Bear Threat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The sun bear (Helarctos malayanus), also known as the Malayan sun bear or honey bear, is the smallest living bear species. 
-    Native to the tropical forests of Southeast Asia, it is distinguished by a short, sleek black coat and a golden or orange crescent on its chest that resembles a rising sun. 
-    It plays a key ecological role as an omnivore and seed disperser but faces serious threats from deforestation and poaching.Sun bears have compact, muscular bodies adapted for climbing, with long, curved claws and bare soles that provide grip on tree bark. 
-    Their tongues—up to 25 cm long—help extract honey and insects from crevices. Males are roughly one-third larger than females. Despite their small size, sun bears possess strong jaws and a powerful bite for tearing open logs and termite nests.
-    Sun bears inhabit lowland tropical and subtropical rainforests across mainland and insular Southeast Asia—from northeastern India and southern China to Sumatra and Borneo. They prefer dense, undisturbed forests but occasionally enter plantations or farms in search of food.
-
-</p>
-</div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    Listed as Vulnerable by the International Union for Conservation of Nature (IUCN) and protected under CITES Appendix I, sun bear populations have declined by more than 30 percent in three decades. 
-    Principal threats include habitat loss from logging and palm-oil plantations, illegal hunting for bile and meat, and capture for the pet trade. 
-    Conservation groups such as the Bornean Sun Bear Conservation Centre and World Wide Fund for Nature (WWF) support habitat protection, rehabilitation, and public education efforts to safeguard this elusive tropical bear.
-</p>
-</div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
-{% endblock content %}
+ 
+    <script src="carousel.js"></script>
+ 
+</body>
+</html>
+ 

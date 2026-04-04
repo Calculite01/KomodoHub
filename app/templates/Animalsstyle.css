@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+ 
+:root {
+  --clr-bg:          #F4FAF4;
+  --clr-surface:     #ffffff;
+  --clr-border:      #c6ebc6;
+  --clr-accent:      #3a8f3a;
+  --clr-accent-warm: #000000;
+  --clr-text:        #1a2e1a;
+  --clr-muted:       #5a7a5a;
+  --font-display:    'Inter', sans-serif;
+  --font-body:       'Inter', sans-serif;
+  --radius:          8px;
+  --max-width:       860px;
+}
+ 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  background: linear-gradient(180deg, #F4FAF4 0%, #c6ebc6 100%);
+  min-height: 100vh;
+  color: var(--clr-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  padding: 2rem 1.5rem 4rem;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+ 
+/* ---------- Page Title ---------- */
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 900;
+  color: var(--clr-accent);
+  margin-bottom: 1.5rem;
+}
+ 
+h1::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: var(--clr-accent-warm);
+  border-radius: 2px;
+  margin-top: 0.5rem;
+}
+ 
+/* ---------- Carousel ---------- */
+.carousel-wrapper {
+    margin-bottom: 2rem;
+}
+ 
+.carousel {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 1px solid var(--clr-border);
+    background: var(--clr-surface);
+}
+ 
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+ 
+.carousel-track img {
+    width: 100%;
+    min-width: 100%;
+    height: 600px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+ 
+.carousel-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+ 
+.carousel-btn {
+    background: transparent;
+    color: #228B22;
+    border: 1px solid #228B22;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+ 
+.carousel-btn:hover {
+    background: #228B22;
+    color: white;
+}
+ 
+/* ---------- Animal Sections ---------- */
+.animal-section {
+  border-top: 2px solid var(--clr-border);
+  padding: 1.5rem 0;
+  margin-bottom: 0.5rem;
+}
+ 
+.animal-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  font-weight: 700;
+  color: var(--clr-accent-warm);
+  margin-bottom: 1rem;
+}
+ 
+/* Text + image side by side */
+.section-body {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+ 
+.section-body p {
+  flex: 1;
+  color: var(--clr-text);
+}
+ 
+.section-img {
+  flex-shrink: 0;
+  width: 140px;
+}
+ 
+.section-img img {
+  width: 100%;
+  border-radius: var(--radius);
+  border: 1px solid var(--clr-border);
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+ 
+/* ---------- Lists ---------- */
+ul {
+  padding-left: 1.4rem;
+}
+ 
+li {
+  margin-bottom: 0.4rem;
+  color: var(--clr-text);
+}
+ 
+li::marker {
+  color: var(--clr-accent);
+}
+ 
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .section-body  { flex-direction: column; }
+  .section-img   { width: 100%; }
+  .carousel-btn  { width: 36px; height: 36px; font-size: 1.2rem; }
+}
+ 

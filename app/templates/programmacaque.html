@@ -1,54 +1,61 @@
-{% extends "layout.html" %}
-{% block head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentawai Macaque - Komodo Hub</title>
-{% endblock head%}
-{% block content %}
-<h1>Macaquess!</h1>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="get">
-        <input type="hidden" name="readingContent" value='Macaque Threat'>
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Info</h2>
-<p>
-    The Mentawai macaque (Macaca pagensis) is an endangered primate species native to the Mentawai Islands off the west coast of Sumatra, Indonesia.
-    This arboreal monkey is known for its dark fur, expressive face, and vital role in its island forest ecosystem. Endemic to the Mentawai archipelago—particularly North and South Pagai and Sipora—the species occupies primary and secondary lowland forests. 
-    It spends most of its time in the canopy but may descend to the ground for foraging. Its restricted range makes it especially vulnerable to habitat disturbances.
-    It lives in multi-male, multi-female social groups, exhibiting complex social hierarchies and vocal communication. Its diet is largely frugivorous, supplemented by leaves, seeds, and small animals.
-
-</p>
-</div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>Threats and that</h2>
-<p>
-    Habitat loss from logging, oil palm expansion, and hunting for bushmeat have sharply reduced populations. The species is listed as Endangered by the IUCN, with continuing population decline.
-    Conservation efforts focus on habitat protection, anti-poaching initiatives, and research on population monitoring within Mentawai nature reserves.
-
-
-</div>
-
-<div>
-{% if taskcreate %}
-    <form action="{{ url_for( 'createtask' ) }}" method="post">
-        <button type="submit">Add Content</button>
-    </form>
-{% endif %}
-<h2>How you can help</h2>
-<ul>
-    <li>Sightings</li>
-    <li>Conservation Acts</li>
-    <li>Information</li>
-</ul>
-</div>
-
-<div>Link to game somewhere lol!!!</div>
-{% endblock content %}
+    <link rel="stylesheet" href="Animalsstyle.css">
+</head>
+<body>
+ 
+    <h1>Mentawai Macaque</h1>
+ 
+    <div class="carousel-wrapper">
+        <div class="carousel">
+            <div class="carousel-track" id="track">
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\macaque1.jpg" alt="Mentawai Macaque 1" />
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\macaque2.jpg" alt="Mentawai Macaque 2" />
+                <img src="C:\Users\cristiano\OneDrive - Middle East College\Desktop\komodohubgit\ABCS_Komodo_Hub\app\templates\macaque3.jpeg" alt="Mentawai Macaque 3" />
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button id="prev" class="carousel-btn">&#8249;</button>
+            <button id="next" class="carousel-btn">&#8250;</button>
+        </div>
+    </div>
+ 
+    <section class="animal-section">
+        <h2>Info</h2>
+        <div class="section-body">
+            <p>
+                The Mentawai macaque (Macaca pagensis) is an endangered primate species native to the Mentawai Islands off the west coast of Sumatra, Indonesia.
+                This arboreal monkey is known for its dark fur, expressive face, and vital role in its island forest ecosystem. Endemic to the Mentawai archipelago—particularly North and South Pagai and Sipora—the species occupies primary and secondary lowland forests.
+                It spends most of its time in the canopy but may descend to the ground for foraging. Its restricted range makes it especially vulnerable to habitat disturbances.
+                It lives in multi-male, multi-female social groups, exhibiting complex social hierarchies and vocal communication. Its diet is largely frugivorous, supplemented by leaves, seeds, and small animals.
+            </p>
+        </div>
+    </section>
+ 
+    <section class="animal-section">
+        <h2>Threats and that</h2>
+        <div class="section-body">
+            <p>
+                Habitat loss from logging, oil palm expansion, and hunting for bushmeat have sharply reduced populations. The species is listed as Endangered by the IUCN, with continuing population decline.
+                Conservation efforts focus on habitat protection, anti-poaching initiatives, and research on population monitoring within Mentawai nature reserves.
+            </p>
+        </div>
+    </section>
+ 
+    <section class="animal-section">
+        <h2>How you can help</h2>
+        <ul>
+            <li>Sightings</li>
+            <li>Conservation Acts</li>
+            <li>Information</li>
+        </ul>
+    </section>
+ 
+    <script src="carousel.js"></script>
+ 
+</body>
+</html>
