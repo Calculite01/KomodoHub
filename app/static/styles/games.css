@@ -1,0 +1,112 @@
+.games-hub-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* Navigation */
+.games-nav {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #166534;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.back-link:hover {
+    color: #22c55e;
+}
+
+/* Header */
+.games-header h1 {
+    font-size: 2.5rem;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.games-header p {
+    color: #64748b;
+    margin-bottom: 40px;
+}
+
+/* Grid & Cards */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.game-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.game-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #22c55e;
+}
+
+/* Icon Styling */
+.card-icon {
+    width: 70px;
+    height: 70px;
+    background: #f0fdf4;
+    color: #22c55e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    transition: 0.3s;
+}
+
+.game-card:hover .card-icon {
+    background: #22c55e;
+    color: white;
+}
+
+/* Text Content */
+.card-info h3 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: #1e293b;
+}
+
+.card-info p {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.play-label {
+    font-weight: 700;
+    color: #22c55e;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* Responsive Tweak */
+@media (max-width: 600px) {
+    .games-header h1 { font-size: 1.8rem; }
+    .game-card { padding: 20px; }
+}

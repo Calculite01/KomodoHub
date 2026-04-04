@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Game Center - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/games.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="games-hub-wrapper">
+    
+    <nav class="games-nav">
+        <a href="{{ url_for('home') }}" class="back-link">
+            <i class="fa-solid fa-house"></i> Back to Dashboard
+        </a>
+    </nav>
+
+    <header class="games-header">
+        <h1>Komodo Game Center</h1>
+        <p>Test your wildlife knowledge and sharpen your mind.</p>
+    </header>
+
+    <div class="games-grid">
+        <a href="{{ url_for('wordle') }}" class="game-card">
+            <div class="card-icon">
+                <i class="fa-solid fa-table-cells"></i>
+            </div>
+            <div class="card-info">
+                <h3>Endangered Wordle</h3>
+                <p>Guess the hidden animal name in 6 tries. Use the clues to save the species!</p>
+                <span class="play-label">Play Now <i class="fa-solid fa-chevron-right"></i></span>
+            </div>
+        </a>
+
+        <a href="{{ url_for('riddler') }}" class="game-card">
+            <div class="card-icon">
+                <i class="fa-solid fa-mask"></i>
+            </div>
+            <div class="card-info">
+                <h3>Animal Riddler</h3>
+                <p>"Riddle me this!" Solve cryptic clues about the animal kingdom to boost your score.</p>
+                <span class="play-label">Play Now <i class="fa-solid fa-chevron-right"></i></span>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock content %}
