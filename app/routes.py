@@ -504,6 +504,402 @@ def publiclibrary():
     contributions = Contribution.query.all()
     return render_template("publiclibrary.html", contributions=contributions)
 
+@app.route("/material/<int:material_id>/delete", methods=["POST"])
+def delete_material(material_id):
+    material = Material.query.get_or_404(material_id)
+    course_id = material.course_id
+    
+    # 1. Delete Physical Image Files
+    for img in material.images:
+        image_path = os.path.join(current_app.root_path, 'static/images', img.file)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        # The database record for 'img' will be deleted via cascade or manual delete
+        db.session.delete(img)
+
+    # 2. Delete Physical Document Files
+    for doc in material.files:
+        # Adjust 'images' to 'files' if you stored documents in a different subfolder
+        file_path = os.path.join(current_app.root_path, 'static/uploads', doc.file)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        db.session.delete(doc)
+    
+    # 3. Delete the Material itself
+    db.session.delete(material)
+    db.session.commit()
+    
+    flash("Material and all associated files deleted.", "notification")
+    return redirect(url_for('materials', orgid=current_user.organization_id, courseid=course_id))
+
+@app.route("/announcements/<orgid>",methods=["GET"])
+def announcements(orgid):
+    announcements = Announcement.query.filter_by(organization_id=current_user.organization_id)
+    return render_template("announcements.html", announcements=announcements)
+
+@app.route("/commonroom/<orgid>/<courseid>", methods=["GET", "POST"])
+def commonroom(orgid, courseid):
+    if request.method == "GET":
+        track_visit("common_room_visits")
+    form = CommonRoomMessageForm()
+    reply_form = CommonRoomReplyForm()
+    
+    if form.validate_on_submit():
+        # 1. Create the Main Message
+        new_msg = CommonRoomMessage(
+            user_id=current_user.id,
+            text=form.text.data,
+            course_id=courseid
+        )
+        db.session.add(new_msg)
+        db.session.commit()
+
+        if form.images.data:
+            for file in form.images.data:
+                if file.filename: # Ensure a file was actually uploaded
+                    filename = save_file(file, 'static/images')
+                    img_record = Image(file=filename, parent_id=new_msg.id, parent_type="common_room_message")
+                    db.session.add(img_record)
+
+        db.session.commit()
+        flash('Message posted!', 'success')
+        return redirect(url_for('commonroom', orgid=orgid, courseid=courseid))
+
+    # Fetch messages (Newest first)
+    messages = CommonRoomMessage.query.order_by(CommonRoomMessage.time_of_creation.desc()).all()
+    
+    return render_template("commonroom.html", 
+                           messages=messages, 
+                           form=form, 
+                           reply_form=reply_form,
+                           orgid=orgid, 
+                           courseid=courseid)
+
+@app.route("/commonroom/<int:msg_id>/delete", methods=["POST"])
+def delete_common_room_msg(msg_id):
+    msg = CommonRoomMessage.query.get_or_404(msg_id)
+    course_id = msg.course_id
+    
+    # 1. Delete Physical Image Files
+    for img in msg.images:
+        image_path = os.path.join(current_app.root_path, 'static/images', img.file)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        # The database record for 'img' will be deleted via cascade or manual delete
+        db.session.delete(img)
+
+    # 2. Delete Physical Document Files
+    for reply in msg.replies:
+        db.session.delete(reply)
+    
+    # 3. Delete the Material itself
+    db.session.delete(msg)
+    db.session.commit()
+    
+    flash("Post deleted.", "notification")
+    return redirect(url_for('commonroom', orgid=current_user.organization_id, courseid=course_id))
+
+@app.route("/commonroom/<int:msg_id>/deletereply", methods=["POST"])
+@login_required
+def delete_common_room_reply(msg_id):
+    reply = CommonRoomMessageReply.query.get_or_404(msg_id)
+    
+    # Get course info from the parent message for the redirect
+    course_id = reply.message.course_id
+    
+    db.session.delete(reply)
+    db.session.commit()
+    
+    flash("Reply deleted.", "notification")
+    return redirect(url_for('commonroom', orgid=current_user.organization_id, courseid=course_id))
+
+@app.route("/members/<orgid>/<courseid>", methods=["GET", "POST"])
+def members(orgid, courseid):
+    form = AddUserCourseForm()
+    course = Course.query.get_or_404(courseid)
+
+    # Handle Form Submission
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        
+        # Check if user is already enrolled
+        existing_enrollment = UserCourse.query.filter_by(user_id=user.id, course_id=courseid).first()
+        
+        if existing_enrollment:
+            flash('User is already enrolled in this course.', 'failure')
+        else:
+            new_enrollment = UserCourse(user_id=user.id, course_id=courseid)
+            db.session.add(new_enrollment)
+            db.session.commit()
+            flash(f'{user.first_name} has been added to the course.', 'success')
+            return redirect(url_for('members', orgid=orgid, courseid=courseid))
+    elif form.is_submitted():
+        flash("Could not add user. Please check the email and try again.", "failure")
+
+    # Standard Queries for display
+    students = User.query.join(UserCourse).filter(
+        UserCourse.course_id == courseid,
+        User.organization_id == orgid,
+        User.role == "Student"
+    ).all()
+    
+    teachers = User.query.join(UserCourse).filter(
+        UserCourse.course_id == courseid,
+        User.organization_id == orgid,
+        User.role == "Teacher"
+    ).all()
+
+    return render_template("members.html", 
+                           students=students, 
+                           teachers=teachers, 
+                           orgid=orgid, 
+                           course=course, 
+                           form=form) # Don't forget to pass the form!
+
+@app.route("/course/<int:courseid>/remove/<int:userid>", methods=["POST"])
+def remove_participant(courseid, userid):
+    # Find the link between the user and the course
+    enrollment = UserCourse.query.filter_by(course_id=courseid, user_id=userid).first()
+    
+    if enrollment:
+        db.session.delete(enrollment)
+        db.session.commit()
+        flash("Participant removed from course.", "success")
+    
+    return redirect(url_for('members', orgid=Course.query.get(courseid).organization_id, courseid=courseid))
+
+# @app.route("/tasks/<orgid>/<courseid>",methods=["GET"])
+# def coursetasks(orgid,courseid):
+#     tasks = UserTask.query.filter_by(user_id=current_user.id)
+#     return render_template("coursetasks.html", tasks=tasks)
+
+@app.route("/workshop/<orgid>/<courseid>", methods=["GET", "POST"])
+@login_required
+def workshop(orgid, courseid):
+    form = WorkshopActivityForm()
+    
+    if form.validate_on_submit():
+        # 1. Create Activity Entry
+        new_activity = WorkshopActivity(
+            title=form.title.data,
+            text=form.text.data,
+            course_id=courseid # Ensure your model has this field to filter by course
+        )
+        db.session.add(new_activity)
+        db.session.flush()  # Get the ID before committing
+
+        # 2. Handle Universal Image Uploads
+        if form.images.data:
+            for file in form.images.data:
+                if file.filename:
+                    filename = save_file(file, 'static/images')
+                    img_record = Image(
+                        file=filename, 
+                        parent_id=new_activity.id, 
+                        parent_type='workshop'
+                    )
+                    db.session.add(img_record)
+
+        # 3. Handle Universal File Uploads
+        if form.documents.data:
+            for doc in form.documents.data:
+                if doc.filename:
+                    doc_name = save_file(doc, 'static/files')
+                    file_record = File(
+                        file=doc_name, 
+                        parent_id=new_activity.id, 
+                        parent_type='workshop'
+                    )
+                    db.session.add(file_record)
+
+        db.session.commit()
+        flash('Workshop Activity Created!', 'success')
+        return redirect(url_for('workshop', orgid=orgid, courseid=courseid))
+
+    # Fetch activities (filtering by course)
+    activities = WorkshopActivity.query.filter_by(course_id=courseid).order_by(WorkshopActivity.time_of_creation.desc()).all()
+    
+    return render_template("workshop.html", activities=activities, form=form, orgid=orgid, courseid=courseid)
+
+@app.route("/workshop/activity/<int:activity_id>/contributions", methods=["GET", "POST"])
+@login_required
+def view_contributions(activity_id):
+    form = ContributionForm()
+    reply_form = ContributionReplyForm() # Add this
+    if form.validate_on_submit():
+        contribution = Contribution(
+            user_id=current_user.id,
+            title=form.title.data,
+            text=form.text.data,
+            workshop_id=activity_id
+        )
+        db.session.add(contribution)
+        db.session.flush() # Gets the ID so we can link images before the final commit
+
+        if form.images.data:
+            for file in form.images.data:
+                if file.filename: 
+                    filename = save_file(file, 'static/images')
+                    img_record = Image(file=filename, parent_id=contribution.id, parent_type="contribution")
+                    db.session.add(img_record)
+
+        db.session.commit()
+        flash('Contribution Posted!', 'success')
+        # ADD THIS REDIRECT:
+        return redirect(url_for('view_contributions', activity_id=activity_id))
+
+    activity = WorkshopActivity.query.get_or_404(activity_id)
+    # Order by newest first for better UX
+    contributions = Contribution.query.filter_by(workshop_id=activity_id).order_by(Contribution.time_of_creation.desc()).all()
+    
+    return render_template("view_contributions.html", 
+                           activity=activity, 
+                           contributions=contributions,
+                           form=form, reply_form=reply_form)
+
+@app.route("/contribution/delete/<int:con_id>", methods=["POST"])
+@login_required
+def delete_contribution(con_id):
+    contribution = Contribution.query.get_or_404(con_id)
+    
+
+    # 1. Delete physical image files from the server
+    for img in contribution.images:
+        file_path = os.path.join(current_app.root_path, 'static/images', img.file)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+    # 2. Delete from Database (Cascades handle the Image table rows)
+    db.session.delete(contribution)
+    db.session.commit()
+    
+    flash("Contribution deleted.", "notification")
+    return redirect(request.referrer)
+
+@app.route("/workshop/delete/<int:act_id>", methods=["POST"])
+@login_required
+def delete_workshop(act_id):
+    activity = WorkshopActivity.query.get_or_404(act_id)
+    
+    # 1. Delete physical files for both Images and Documents
+    # 1. Delete Physical Image Files
+    for img in activity.images:
+        image_path = os.path.join(current_app.root_path, 'static/images', img.file)
+        if os.path.exists(image_path):
+            os.remove(image_path)
+        # The database record for 'img' will be deleted via cascade or manual delete
+        db.session.delete(img)
+
+    # 2. Database delete (cascades will handle the Image/File rows)
+    db.session.delete(activity)
+    db.session.commit()
+    
+    flash("Workshop activity deleted.", "notification")
+    return redirect(request.referrer)
+
+@app.route("/contribution/<int:con_id>/reply", methods=["POST"])
+@login_required
+def add_reply(con_id):
+    form = ContributionReplyForm()
+    if form.validate_on_submit():
+        reply = ContributionReply(
+            text=form.text.data,
+            user_id=current_user.id,
+            contribution_id=con_id
+        )
+        db.session.add(reply)
+        db.session.commit()
+        flash('Reply added!', 'success')
+    return redirect(request.referrer)
+
+@app.route("/reply/delete/<int:reply_id>", methods=["POST"])
+@login_required
+def delete_reply(reply_id):
+    reply = ContributionReply.query.get_or_404(reply_id)
+    db.session.delete(reply)
+    db.session.commit()
+    flash('Reply deleted.', 'notification')
+    return redirect(request.referrer)
+
+@app.route("/moderate", methods=["GET", "POST"])
+@login_required
+def moderate():
+    form=ContributionForm()
+    if current_user.role != 'Sysadmin':
+        flash('Access denied. Sysadmin privileges required.', 'failure')
+        return redirect(url_for('home'))
+    if request.method == "POST":
+        contribution_id = request.form.get("contribution_id")
+        action = request.form.get("action")
+        contribution = Contribution.query.get_or_404(contribution_id)
+        if action == "approve":
+            contribution.moderated = True
+            db.session.commit()
+            flash(f'Contribution "{contribution.title}" approved!', 'success')   
+        elif action == "delete":
+            db.session.delete(contribution)
+            db.session.commit()
+            flash(f'Contribution "{contribution.title}" has been removed.', 'failure')
+
+        return redirect(url_for('moderate'))
+    pending_contributions = Contribution.query.filter_by(moderated=False).order_by(Contribution.time_of_creation.desc()).all()
+    return render_template("moderate.html", contributions=pending_contributions, form=form)
+# @app.route("/createtask",methods=["GET","POST"])
+# def createtask():
+#     form = TaskForm()
+#     readingContent = request.args.get('readingContent')
+#     if readingContent:
+#         form.readingContent.data = readingContent
+#     return render_template("createtask.html",  form=form)
+
+# @app.route("/programs",methods=["GET"])
+# def programs():
+#     query = request.args.get('taskcreate')
+#     taskcreate = bool(query)  #False if None, True if anything else
+#     return render_template("programs.html", taskcreate=taskcreate)
+
+# @app.route("/programs/rhino",methods=["GET"])
+# def rhino():
+#     query = request.args.get('taskcreate')
+#     taskcreate = bool(query)  #False if None, True if anything else
+#     return render_template("programrhino.html", taskcreate=taskcreate)
+@app.route("/library/<orgid>", methods=["GET", "POST"])
+@login_required
+def library(orgid):
+    form = ContributionForm()
+    reply_form = ContributionReplyForm() # Add this
+    if form.validate_on_submit():
+        contribution = Contribution(
+            user_id=current_user.id,
+            title=form.title.data,
+            text=form.text.data
+        )
+        db.session.add(contribution)
+        db.session.flush() # Gets the ID so we can link images before the final commit
+
+        if form.images.data:
+            for file in form.images.data:
+                if file.filename: 
+                    filename = save_file(file, 'static/images')
+                    img_record = Image(file=filename, parent_id=contribution.id, parent_type="contribution")
+                    db.session.add(img_record)
+
+        db.session.commit()
+        flash('Contribution Posted!', 'success')
+        # ADD THIS REDIRECT:
+        return redirect(url_for('library',orgid=orgid))
+
+    contributions = (Contribution.query
+                     .join(User)
+                     .filter(User.organization_id == orgid)
+                     .order_by(desc(Contribution.time_of_creation))
+                     .all())
+    
+    return render_template("library.html", 
+                           contributions=contributions,
+                           form=form, reply_form=reply_form, orgid=orgid, current_org=Organization.query.get(orgid))
+
+
 @app.route("/schools",methods=["GET"])
 def schools():
     schools = Organization.query.filter_by(org_type="School")
