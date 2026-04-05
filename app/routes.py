@@ -504,7 +504,116 @@ def publiclibrary():
     contributions = Contribution.query.all()
     return render_template("publiclibrary.html", contributions=contributions)
 
+@app.route("/schools",methods=["GET"])
+def schools():
+    schools = Organization.query.filter_by(org_type="School")
+    return render_template("schools.html", schools=schools)
 
+@app.route("/communities",methods=["GET"])
+def communities():
+    communities = Organization.query.filter_by(org_type="Community")
+    return render_template("communities.html", communities=communities)
+
+@app.route("/publiclibrary",methods=["GET"])
+def publiclibrary():
+    return render_template("publiclibrary.html")
+
+@app.route("/publiclibrary/contributions",methods=["GET","POST"])
+def publiclibrarycontributions():
+    form = ContributionForm()
+    reply_form = ContributionReplyForm()
+    if form.validate_on_submit():
+        contribution = Contribution(
+            user_id=current_user.id,
+            title=form.title.data,
+            text=form.text.data
+        )
+        db.session.add(contribution)
+        db.session.flush() # Gets the ID so we can link images before the final commit
+
+        if form.images.data:
+            for file in form.images.data:
+                if file.filename: 
+                    filename = save_file(file, 'static/images')
+                    img_record = Image(file=filename, parent_id=contribution.id, parent_type="contribution")
+                    db.session.add(img_record)
+
+        db.session.commit()
+        flash('Contribution Sent for Moderation!', 'success')
+        # ADD THIS REDIRECT:
+        return redirect(url_for('publiclibrarycontributions'))
+
+    contributions = Contribution.query.all()
+    
+    return render_template("publiclibrarycontributions.html", 
+                           contributions=contributions,
+                           form=form, reply_form=reply_form)
+
+@app.route("/featurepopularity")
+@login_required
+def featurepopularity():
+    if current_user.role != "Manager":
+        flash("Not allowed", "failure")
+        return redirect(url_for('home'))
+        
+    stats = FeatureStat.query.first()
+    return render_template("featurepopularity.html", stats=stats)
+
+@app.route("/subscriptiondata", methods=["GET", "POST"])
+@login_required
+def subscriptiondata():
+    if current_user.role != 'Manager':
+        flash('Access denied.', 'failure')
+        return redirect(url_for('home'))
+
+    organisations = Organization.query.all()
+    return render_template("subscriptiondata.html", organisations=organisations)
+
+@app.route("/publiclibrary/programs", methods=["GET", "POST"])
+def publiclibraryprograms():
+    if request.method == "GET":
+        track_visit("program_visits")
+    form = SightingForm()
+    
+    if form.validate_on_submit():
+        if form.image.data:
+            # Reusing the save function from the previous step
+            picture_file = save_file(form.image.data, 'static/images')
+            new_sighting = Sighting(
+                title=form.title.data, 
+                description=form.description.data, 
+                image=picture_file,
+                user_id=current_user.id
+            )
+            db.session.add(new_sighting)
+            db.session.commit()
+            flash('Sighting successfully reported!', 'success')
+            return redirect(url_for('publiclibraryprograms'))
+
+    # Fetch sightings to display them on the page
+    sightings = Sighting.query.order_by(Sighting.date_posted.desc()).all()
+    return render_template("publiclibraryprograms.html", form=form, sightings=sightings)
+
+
+@app.route("/games",methods=["GET"])
+def games():
+    track_visit("game_visits")
+    return render_template("games.html")
+
+@app.route("/wordle",methods=["GET"])
+def wordle():
+    return render_template("wordle.html")
+
+@app.route("/riddler",methods=["GET"])
+def riddler():
+    return render_template("riddler.html")
+
+
+@app.route("/personalcompilationpage", methods=["GET"])
+def personalcompilationpage():
+    contributions = Contribution.query.filter_by(user_id=current_user.id)
+    sightings = Sighting.query.filter_by(user_id=current_user.id)
+    return render_template("personalcompilationpage.html", contributions=contributions, sightings=sightings)
 @app.route("/publiclibrary/programs/tiger", methods=["GET"])
 def programtiger():
     return render_template("programtiger.html")
