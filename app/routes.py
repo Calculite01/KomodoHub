@@ -1,10 +1,10 @@
-from flask import render_template, url_for, redirect, flash, session, request, jsonify
+from flask import render_template, url_for, redirect, flash, session, request, jsonify, current_app
 from app import app, login_manager, mail, bcrypt, db
-from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, TaskForm
-from app.models import User, ContactMessage, OTP, Organization, Announcement, AnnouncementImage, Classroom, Task, Program, Contribution, ContributionImage, UserClassroom, UserTask, GlobalMesssages
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, ContributionForm, GradeTaskForm, ReplyTaskForm
+from app.models import User, ContactMessage, OTP, Organization, Task, UserTask, Contribution, UserCourse, GlobalMesssages, Course, Material, CommonRoomMessage, CommonRoomMessageReply,Image, File, WorkshopActivity, ContributionReply, Sighting, TaskReply, FeatureStat
 from flask import render_template, url_for, redirect, flash, session
 from app import app, login_manager, mail, bcrypt, db, socketio
-from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm
+from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, MaterialForm, AddUserCourseForm, CommonRoomMessageForm, CommonRoomReplyForm, WorkshopActivityForm, ContributionReplyForm, AddUserOrganisationForm, CreateCourseForm, SightingForm, UpdateProfileForm, CreateTaskForm, SubmissionForm, OrganizationForm
 from app.models import User, Organization, ContactMessage, OTP, Messages
 from datetime import datetime, timedelta
 import secrets      # for otp generation
@@ -12,7 +12,11 @@ from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 import os
 from flask_socketio import emit, join_room, leave_room, close_room, rooms
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, desc
+from PIL import Image as PILImage
+from werkzeug.utils import secure_filename
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -499,3 +503,52 @@ def rhino():
 def publiclibrary():
     contributions = Contribution.query.all()
     return render_template("publiclibrary.html", contributions=contributions)
+
+
+@app.route("/publiclibrary/programs/tiger", methods=["GET"])
+def programtiger():
+    return render_template("programtiger.html")
+
+@app.route("/publiclibrary/programs/seaturtle", methods=["GET"])
+def programseaturtle():
+    return render_template("programseaturtle.html")
+
+@app.route("/publiclibrary/programs/rhino", methods=["GET"])
+def programrhino():
+    return render_template("programrhino.html")
+
+@app.route("/publiclibrary/programs/pangolin", methods=["GET"])
+def programpangolin():
+    return render_template("programpangolin.html")
+
+@app.route("/publiclibrary/programs/myna", methods=["GET"])
+def programmyna():
+    return render_template("programMyna.html")
+
+@app.route("/publiclibrary/programs/macaque", methods=["GET"])
+def programmacaque():
+    return render_template("programmacaque.html")
+
+@app.route("/publiclibrary/programs/leopard", methods=["GET"])
+def programleopard():
+    return render_template("programleopard.html")
+
+@app.route("/publiclibrary/programs/gibbon", methods=["GET"])
+def programgibbon():
+    return render_template("programgibbon.html")
+
+@app.route("/publiclibrary/programs/dragon", methods=["GET"])
+def programdragon():
+    return render_template("programdragon.html")
+
+@app.route("/publiclibrary/programs/deer", methods=["GET"])
+def programdeer():
+    return render_template("programdeer.html")
+
+@app.route("/publiclibrary/programs/bear", methods=["GET"])
+def programbear():
+    return render_template("programbear.html")
+
+@app.route("/publiclibrary/programs/bat", methods=["GET"])
+def programbat():
+    return render_template("programbat.html")
