@@ -13,17 +13,17 @@
             <i class="fa-solid fa-house"></i> Back to Home
         </a>
     </nav>
-    <div class="profile-card">
+
+    <div class="profile-card {{ current_user.profile_pattern if current_user.profile_pattern and current_user.profile_pattern != 'none' }}">
         
         <div class="profile-img-wrapper">
             <img src="{{ url_for('static', filename='images/' + (current_user.image or 'default_profile.jpg')) }}" 
                  alt="Profile Image" 
                  class="profile-header-img"
-                 id="profile-display"
-                 href="{{ url_for('static', filename='images/default_profile.jpg') }}">
+                 id="profile-display">
             
-            <button type="button" class="upload-overlay-btn" id="camera-btn" title="Change Profile Picture">
-                <i class="fa-solid fa-camera"></i>
+            <button type="button" class="upload-overlay-btn" id="camera-btn" title="Edit Profile Settings">
+                <i class="fa-solid fa-pen-to-square"></i>
             </button>
         </div>
 
@@ -31,14 +31,27 @@
             <form method="POST" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 
-                <label class="custom-file-upload">
-                    {{ form.picture(id="actual-file-btn") }}
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Choose Image
-                </label>
-                <span id="file-chosen">No file chosen</span>
+                <div class="settings-section">
+                    <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+                        <label style="font-weight: 600; color: #475569; display: block; margin-bottom: 8px;">
+                            <i class="fa-solid fa-palette"></i> Card Background Style
+                        </label>
+                        {{ form.pattern(class="pattern-select", style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1;") }}
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="custom-file-upload">
+                            {{ form.picture(id="actual-file-btn") }}
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Change Avatar
+                        </label>
+                        <span id="file-chosen">No new file chosen</span>
+                    </div>
+                </div>
 
                 <div class="form-actions">
-                    {{ form.submit(class="btn-save") }}
+                    <button type="submit" class="btn-save">
+                        <i class="fa-solid fa-check"></i> Save Changes
+                    </button>
                     <button type="button" id="cancel-btn" class="btn-cancel">Cancel</button>
                 </div>
             </form>
@@ -69,5 +82,62 @@
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='scripts/profile.js') }}"></script>
+<script>
+    const cameraBtn = document.getElementById('camera-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const formContainer = document.getElementById('upload-form-container');
+    const fileInput = document.getElementById('actual-file-btn');
+    const fileChosenText = document.getElementById('file-chosen');
+    const patternSelect = document.querySelector('.pattern-select');
+    const profileCard = document.querySelector('.profile-card');
+
+    // Variable to store the "Current" pattern in case they hit cancel
+    let originalPattern = "{{ current_user.profile_pattern or 'none' }}";
+
+    // Toggle Form visibility
+    cameraBtn.addEventListener('click', () => {
+        formContainer.style.display = 'block';
+        cameraBtn.style.display = 'none';
+        // Refresh the original pattern tracker in case they saved recently
+        originalPattern = patternSelect.value;
+    });
+
+    cancelBtn.addEventListener('click', () => {
+        formContainer.style.display = 'none';
+        cameraBtn.style.display = 'inline-block';
+        
+        // REVERT: Reset the dropdown value
+        patternSelect.value = originalPattern;
+        
+        // REVERT: Remove all possible pattern classes
+        profileCard.classList.remove('pattern-dots', 'pattern-waves', 'pattern-geo');
+        
+        // REVERT: Re-apply the original class if it wasn't 'none'
+        if (originalPattern !== 'none') {
+            profileCard.classList.add(originalPattern);
+        }
+
+        // Reset file input text
+        fileInput.value = "";
+        fileChosenText.textContent = "No new file chosen";
+    });
+
+    // Show selected filename
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            fileChosenText.textContent = this.files[0].name;
+        }
+    });
+
+    // Real-time Pattern Preview
+    patternSelect.addEventListener('change', (e) => {
+        // Clear existing patterns
+        profileCard.classList.remove('pattern-dots', 'pattern-waves', 'pattern-geo');
+        
+        // Add new one if it's not 'none'
+        if (e.target.value !== 'none') {
+            profileCard.classList.add(e.target.value);
+        }
+    });
+</script>
 {% endblock content %}

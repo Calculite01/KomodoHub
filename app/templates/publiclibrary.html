@@ -9,9 +9,15 @@
 {% block content %}
 <div class="library-container">
     <div class="nav-top">
-        <a href="{{ url_for('home') }}" class="btn-home">
-            <i class="fa-solid fa-house"></i> Back to Dashboard
-        </a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('home') }}" class="btn-home">
+                <i class="fa-solid fa-house"></i> Back to Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('index') }}" class="btn-home">
+                <i class="fa-solid fa-house"></i> Back to Dashboard
+            </a>
+        {% endif %} 
     </div>
 
     <header class="library-header">

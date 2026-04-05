@@ -68,6 +68,7 @@
         </div>
     </section>
 
+    {% if current_user.is_authenticated %}
     <section class="report-box" style="margin-top: 50px; background: #f0fdf4; padding: 40px; border-radius: 20px; border: 2px dashed #228B22;">
         <div style="max-width: 600px; margin: 0 auto;">
             <h3 style="color: #166534; margin-bottom: 10px;"><i class="fa-solid fa-camera"></i> Have you seen something?</h3>
@@ -84,7 +85,8 @@
                 </div>
                 {{ form.submit(class="btn-learn", style="background:#228B22; color:white; border:none; padding:12px 30px; border-radius:8px; cursor:pointer; width:100%; font-size:1rem;") }}
             </form>
-        </div>
+        </div> 
     </section>
+    {% endif %}
 </div>
 {% endblock content %}
