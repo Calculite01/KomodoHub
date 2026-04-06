@@ -36,7 +36,7 @@ A pouch I carry with great care.`,
   {
     riddle: `I wake when most have gone to bed,
 With silent wings above I tread.`,
-    answer: " qowl",
+    answer: "owl",
     hints: ["Night", "Bird", "Big eyes"]
   },
   {
