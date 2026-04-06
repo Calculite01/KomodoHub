@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Workshop - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/workshop.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
+{% block content %}
+<div class="workshop-container" style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+
+    <div class="back-navigation" style="margin-bottom: 20px;">
+        <a href="{{ url_for('course', orgid=orgid, courseid=courseid) }}" class="back-link" style="text-decoration: none; color: #666; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Course
+        </a>
+    </div>
+
+    <div class="workshop-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
+        <div class="header-text">
+            <h1 style="margin: 0; color: #1a1a1a;"><i class="fa-solid fa-person-chalkboard"></i> Workshop Activities</h1>
+            <p class="subtitle" style="color: #888; margin-top: 5px;">View instructions and submit your contributions.</p>
+        </div>
+        
+        <button class="create-btn" onclick="toggleForm()" style="background: #228B22; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <i class="fa-solid fa-plus"></i> <span>New Activity</span>
+        </button>
+    </div>
+
+    <div id="create-area" class="post-card" style="display: none; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 40px; border: 1px solid #e0e0e0;">
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            {{ form.title(placeholder="Activity Title", style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;") }}
+            {{ form.text(placeholder="Instructions...", style="width: 100%; height: 100px; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ddd;") }}
+            
+            <div id="image-preview-container" style="margin-bottom: 10px;"></div>
+            <div id="doc-preview-container" style="margin-bottom: 10px;"></div>
+
+            <div class="upload-row" style="display: flex; gap: 10px; align-items: center;">
+                <label class="custom-file-upload" style="cursor: pointer; padding: 8px 12px; background: #eee; border-radius: 6px;">
+                    <i class="fa-solid fa-image"></i> Images
+                    {{ form.images(id="image-upload", multiple=True, onchange="previewImages()", style="display:none;") }}
+                </label>
+                <label class="custom-file-upload" style="cursor: pointer; padding: 8px 12px; background: #eee; border-radius: 6px;">
+                    <i class="fa-solid fa-file-pdf"></i> Docs
+                    {{ form.documents(id="doc-upload", multiple=True, onchange="previewDocuments()", style="display:none;") }}
+                </label>
+                
+                <div style="margin-left: auto;">
+                    <button type="button" onclick="toggleForm()" style="background: none; border: none; cursor: pointer; color: #888; margin-right: 10px;">Cancel</button>
+                    {{ form.submit(class="add-btn", style="background: #228B22; color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer;") }}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="activity-feed">
+        {% for act in activities %}
+            <div class="activity-card" style="background: white; border-radius: 12px; border: 1px solid #eee; margin-bottom: 25px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                
+                <div class="activity-card-header" style="padding: 20px; background: #fafafa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="title-area">
+                        <span style="color: #228B22; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Workshop Task</span>
+                        <h2 style="margin: 5px 0 0 0; font-size: 1.25rem;">{{ act.title }}</h2>
+                    </div>
+                    
+                    <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+                        <span style="color: #888; font-size: 0.85rem;">
+                            <i class="fa-regular fa-calendar"></i> {{ act.time_of_creation.strftime('%b %d, %Y') }}
+                        </span>
+                        
+                        <button type="button" onclick="openDeleteModal('{{ url_for('delete_workshop', act_id=act.id) }}')" 
+                                style="background: #fff0f0; color: #d9534f; border: 1px solid #ffdada; padding: 8px; border-radius: 6px; cursor: pointer;">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="activity-body" style="padding: 20px;">
+                    <p style="white-space: pre-wrap; line-height: 1.6; color: #444;">{{ act.text }}</p>
+
+                    {% if act.images %}
+                    <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                        {% for img in act.images %}
+                            <img src="{{ url_for('static', filename='images/' + img.file) }}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if act.files %}
+                        <div class="resource-section" style="padding: 15px 20px; background: #f9f9f9; border-top: 1px solid #eee;">
+                            <p style="font-size: 0.8rem; font-weight: 700; color: #777; margin-bottom: 8px;">ATTACHMENTS</p>
+                            {% for f in act.files %}
+                                <a href="{{ url_for('static', filename='documents/' + f.file) }}" download style="display: block; color: #228B22; text-decoration: none; margin-bottom: 5px; font-size: 0.9rem;">
+                                    <i class="fa-solid fa-download"></i> {{ f.file }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="activity-footer" style="padding: 15px 20px; background: #fdfdfd; border-top: 1px solid #eee; text-align: right;">
+                    <a href="{{ url_for('view_contributions', activity_id=act.id) }}" 
+                    style="color: #228B22; font-weight: 600; text-decoration: none; border: 2px solid #228B22; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; transition: all 0.3s;"
+                    onmouseover="this.style.backgroundColor='#228B22'; this.style.color='white';"
+                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#228B22';">
+                        Contribute
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 60px; color: #999;">
+                <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 10px; display: block;"></i>
+                <p>No activities yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 30px; border-radius: 12px; max-width: 400px; width: 90%; text-align: center;">
+        <h3 style="color: #d9534f;">Delete Activity?</h3>
+        <p>This action is permanent and will delete all student contributions.</p>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
+            <button onclick="closeDeleteModal()" style="padding: 10px 20px; border-radius: 6px; border: 1px solid #ddd; background: white; cursor: pointer;">Cancel</button>
+            <form id="confirmDeleteForm" method="POST">
+                {{ form.hidden_tag() }}
+                <button type="submit" style="padding: 10px 20px; border-radius: 6px; border: none; background: #d9534f; color: white; cursor: pointer; font-weight: 600;">Confirm Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/workshop.js') }}"></script>
+<script>
+    // These functions ensure the page works even if the external JS fails to load
+    function toggleForm() {
+        const el = document.getElementById('create-area');
+        el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+    }
+
+    function openDeleteModal(url) {
+        document.getElementById('confirmDeleteForm').action = url;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+</script>
+{% endblock %}
