@@ -1,101 +1,111 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background:url('retro_thingy.png') no-repeat center center fixed;
-  background-size: cover;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+/* Screen Wrapper for sizing */
+.riddler-screen-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    height: calc(100vh - 120px); /* Adjust based on your header height */
+    display: flex;
+    flex-direction: column;
 }
 
-.container {
-  text-align: center;
-  max-width: 600px;
-  padding: 20px;
-  background: #111827;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+/* Nav & Back Link */
+.riddler-nav {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #22c55e;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.2s;
+}
+
+.back-link:hover { opacity: 0.7; }
+
+/* Main Container */
+.riddle-container {
+    text-align: center;
+    background: #111827;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 h1 {
-  color: #22c55e;
+    color: #22c55e;
+    margin: 0 0 10px 0;
+    font-size: 1.8rem;
 }
 
-#riddle {
-  font-size: 20px;
-  margin: 20px 0;
-  line-height: 1.6;
-  white-space: pre-line;
+#score-display {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 20px;
 }
 
-input {
-  padding: 12px;
-  width: 70%;
-  font-size: 16px;
-  border-radius: 6px;
-  border: none;
+.riddle-box {
+    min-height: 100px;
+    margin-bottom: 20px;
 }
 
-.buttons {
-  margin-top: 10px;
+#riddle-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #f8fafc;
+    white-space: pre-line;
 }
 
-button {
-  padding: 10px 15px;
-  margin: 5px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #22c55e;
-  color: black;
-  cursor: pointer;
-  transition: 0.2s;
+/* Input & Buttons */
+input#answer-input {
+    padding: 12px;
+    width: 80%;
+    max-width: 300px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 2px solid #334155;
+    background: #1e293b;
+    color: white;
+    margin-bottom: 15px;
 }
 
-button:hover {
-  background-color: #16a34a;
+input#answer-input:focus {
+    outline: none;
+    border-color: #22c55e;
 }
 
-#hint {
-  margin-top: 15px;
-  color: #facc15;
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
-#result {
-  margin-top: 10px;
-  font-weight: bold;
+.btn-riddle {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    background-color: #22c55e;
+    color: #020617;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.navbar {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;           
-  padding: 20px 40px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  background-color: #9fea4a;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
+.btn-riddle:hover { background-color: #16a34a; transform: translateY(-1px); }
+.btn-riddle.next { background-color: #334155; color: white; }
+.btn-riddle.next:hover { background-color: #475569; }
+
+/* Feedback */
+.feedback-area {
+    margin-top: 20px;
+    min-height: 60px;
 }
 
-#navbar-placeholder {
-    position: static;
-    background-color: black;
-    height: 76.8px;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 30px; 
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #228B22;
-  font-weight: bold;
-  font-family: sans-serif;
-}
+#hint-text { color: #facc15; font-style: italic; margin-bottom: 5px; }
+#result-text { font-weight: bold; font-size: 1.1rem; }

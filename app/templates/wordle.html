@@ -1,27 +1,35 @@
-<head>
-<meta charset="UTF-8">
-<title>Endangered Wordle</title>
-<link rel="stylesheet" href="wordle.css">
-</head>
+{% extends "layout.html" %}
 
-<body>
+{% block head %}
+    <title>Endangered Wordle - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/wordle.css') }}">
+{% endblock head %}
 
-<h1>Endangered Wordle</h1>
+{% block content %}
+<div class="wordle-container">
+    <nav class="wordle-nav">
+        <a href="{{ url_for('games') }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Games
+        </a>
+    </nav>
+    <header class="wordle-header">
+        <h1>Endangered Wordle</h1>
+        <div id="stats" class="wordle-stats">
+            Score: <span id="score">0</span> |
+            Streak: <span id="streak">0</span>
+        </div>
+    </header>
 
-<div id="stats">
-Score: <span id="score">0</span> |
-Streak: <span id="streak">0</span>
+    <div id="board" class="wordle-board"></div>
+
+    <div id="keyboard" class="wordle-keyboard"></div>
+
+    <div class="wordle-feedback">
+        <p id="message" class="status-msg"></p>
+        <p id="fact" class="fact-msg"></p>
+    </div>
 </div>
 
-<div id="board"></div>
-
-<div id="keyboard"></div>
-
-<p id="message"></p>
-<p id="fact"></p>
-
-<script src="animals.js"></script>
-<script src="wordle.js"></script>
-
-</body>
-</html>
+<script src="{{ url_for('static', filename='scripts/animals.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/wordle.js') }}"></script>
+{% endblock content %}

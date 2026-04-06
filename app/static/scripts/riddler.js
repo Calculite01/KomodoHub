@@ -36,7 +36,7 @@ function checkAnswer() {
     updateScore();
 
     document.getElementById("result").innerText =
-      "Correctm (+1 point)";
+      "Correct! 🎉 (+1 point)";
 
     setTimeout(loadRiddle, 1200); // auto next
   } else {

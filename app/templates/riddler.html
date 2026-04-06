@@ -1,32 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Animal Riddle Game</title>
+{% extends "layout.html" %}
 
+{% block head %}
+    <title>Animal Riddler - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/riddler.css') }}">
+{% endblock head %}
 
-  <link rel="stylesheet" href="riddler.css">
-</head>
-<body>
-
-  <div class="container">
-    <h1>Riddle me this Batman</h1>
-    <h2 id="score">Score: 0</h2>
-    <p id="riddle"></p>
-
-    <input type="text" id="answer" placeholder="Type your answer...">
+{% block content %}
+<div class="riddler-screen-wrapper">
     
-    <div class="buttons">
-      <button onclick="checkAnswer()">Submit</button>
-      <button onclick="nextRiddle()">Next</button>
+    <nav class="riddler-nav">
+        <a href="{{ url_for('games') }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Games
+        </a>
+    </nav>
+
+    <div class="riddle-container">
+        <h1>Riddle me this, Batman</h1>
+        <h2 id="score-display">Score: 0</h2>
+        
+        <div class="riddle-box">
+            <p id="riddle-text">Loading riddle...</p>
+        </div>
+
+        <div class="input-section">
+            <input type="text" id="answer-input" placeholder="Type your answer..." autocomplete="off">
+            
+            <div class="button-group">
+                <button class="btn-riddle" onclick="checkAnswer()">Submit</button>
+                <button class="btn-riddle next" onclick="nextRiddle()">Next</button>
+            </div>
+        </div>
+
+        <div class="feedback-area">
+            <p id="hint-text"></p>
+            <p id="result-text"></p>
+        </div>
     </div>
+</div>
 
-    <p id="hint"></p>
-    <p id="result"></p>
-  </div>
-
-  <script src="riddles.js"></script>
-  <script src="riddler.js"></script>
-
-</body>
-</html>
+<script src="{{ url_for('static', filename='scripts/riddles.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/riddler.js') }}"></script>
+{% endblock content %}

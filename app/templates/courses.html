@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>My Courses - {{ current_user.organization.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/organisationpage.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
+{% block content %}
+<div class="org-container">
+    <div class="nav-top">
+        <a href="{{ url_for('home') }}" class="btn-home">
+            <i class="fa-solid fa-house"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <header class="org-header" style="margin-bottom: 40px; border-bottom: 1px solid #e2e8f0; padding-bottom: 30px;">
+        <div class="org-info-block">
+            <h1 class="org-title" style="margin: 0; color: #1e293b;">My Enrolled Courses</h1>
+            <p class="org-description" style="color: #64748b; margin: 12px 0; line-height: 1.6; font-size: 1.1rem;">
+                Access your personal curriculum and track your progress across all active classes.
+            </p>
+        </div>
+    </header>
+
+    <h2 style="margin-bottom: 20px; color: #1e293b;">Active Enrollments</h2>
+    
+    <div class="course-grid">
+        {% for course in courses %}
+        <div class="course-card">
+            <div class="course-banner">
+                <div class="course-icon-wrapper">
+                    <img src="{{ url_for('static', filename='images/' + (course.icon or 'default_course.jpg')) }}" 
+                         class="course-icon-img" alt="Course Icon">
+                </div>
+            </div>
+            
+            <div class="course-content">
+                <h3 class="course-title">{{ course.name }}</h3>
+                <p class="course-description">{{ course.description or "No course description available." }}</p>
+                
+                <div class="material-box">
+                    <span>Recent Resources</span>
+                    <ul class="material-list">
+                        {% for mat in course.materials[:3] %}
+                            <li class="material-item">
+                                <i class="fa-solid fa-file-lines" style="color: #228B22; font-size: 0.8rem;"></i> 
+                                {{ mat.title }}
+                            </li>
+                        {% else %}
+                            <li style="color: #cbd5e1; font-style: italic;">No resources available</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <a href="{{ url_for('course', orgid=current_user.organization_id, courseid=course.id) }}" class="btn-view-course">
+                    View Course <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 50px; background: #f8fafc; border-radius: 15px; border: 2px dashed #e2e8f0;">
+            <i class="fa-solid fa-book-open" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 15px;"></i>
+            <p style="color: #64748b; font-size: 1.1rem;">You aren't currently enrolled in any courses.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

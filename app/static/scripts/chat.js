@@ -112,17 +112,21 @@ sendButton.addEventListener('click', () => {
 });
 
 //Listen for the search event
+// --- Fixed Contact Search ---
 searchInput.addEventListener('input', () => {
-    const userInput = searchInput.value.toLowerCase();
-    for (let i = 0; i < contactItems.length; i++) {
-        let currentContact = contactItems[i];
-        let contactName = currentContact.textContent.toLowerCase();
+    const userInput = searchInput.value.toLowerCase().trim();
+    
+    // Convert HTMLCollection to Array to ensure stable looping
+    Array.from(contactItems).forEach(item => {
+        // This gets all text inside the contact item (First Name, Last Name, etc.)
+        const contactName = item.textContent.toLowerCase();
 
-        if (contactName.includes(userInput))
-            currentContact.style.display = "";
-        else
-            currentContact.style.display = "none";
-    }
+        if (contactName.includes(userInput)) {
+            item.style.setProperty('display', 'flex', 'important'); 
+        } else {
+            item.style.setProperty('display', 'none', 'important');
+        }
+    });
 });
 
 // when user gets a message from the server,
@@ -243,3 +247,5 @@ globalMessage.addEventListener('keypress', (e) => {
         globalSendBtn.click();
     }
 });
+
+

@@ -1,109 +1,93 @@
-body{
-font-family:Arial;
-text-align:center;
-background:url('retro_thingy.png') no-repeat center center fixed;
-background-size: cover;
-color:white;
+/* Container to keep it centered within the layout */
+.wordle-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
 }
 
-#board{
-display:grid;
-gap:6px;
-justify-content:center;
-margin:20px;
+.wordle-header h1 {
+    color: #228B22; /* Matching your Komodo Green theme */
+    margin-bottom: 10px;
 }
 
-.tile{
-width:55px;
-height:55px;
-border:2px solid #3a3a3c;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:26px;
-font-weight:bold;
-text-transform:uppercase;
-background:#121213;
+.wordle-stats {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #031a02;
 }
 
-.correct{
-background:#538d4e;
+#board {
+    display: grid;
+    gap: 6px;
+    justify-content: center;
+    margin: 20px auto;
 }
 
-.present{
-background:#b59f3b;
+/* Wordle Tiles */
+.tile {
+    width: 55px;
+    height: 55px;
+    border: 2px solid #3a3a3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: #121213;
+    color: white;
 }
 
-.absent{
-background:#3a3a3c;
+/* Colors for game logic */
+.correct { background: #538d4e !important; border-color: #538d4e !important; }
+.present { background: #b59f3b !important; border-color: #b59f3b !important; }
+.absent  { background: #3a3a3c !important; border-color: #3a3a3c !important; }
+
+/* Keyboard Styling */
+.key {
+    padding: 15px 10px;
+    margin: 3px;
+    border: none;
+    border-radius: 4px;
+    background: #818384;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.2s;
 }
 
-.flip{
-animation:flip 0.5s ease;
+/* Animations */
+.flip {
+    animation: flip 0.5s ease forwards;
 }
 
-@keyframes flip{
-0%{transform:rotateX(0)}
-50%{transform:rotateX(90deg)}
-100%{transform:rotateX(0)}
+@keyframes flip {
+    0% { transform: rotateX(0); }
+    50% { transform: rotateX(90deg); }
+    100% { transform: rotateX(0); }
 }
 
-#keyboard{
-margin-top:20px;
+.wordle-feedback p {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    line-height: 1.4;
 }
 
-.key{
-padding:10px;
-margin:3px;
-border:none;
-background:#818384;
-color:white;
-font-weight:bold;
-cursor:pointer;
+.wordle-nav {
+    text-align: left;
+    margin-bottom: 5px;
 }
 
-.key.correct{background:#538d4e;}
-.key.present{background:#b59f3b;}
-.key.absent{background:#3a3a3c;}
-
-@keyframes flip{
-0%{transform:rotateX(0)}
-50%{transform:rotateX(90deg)}
-100%{transform:rotateX(0)}
+.back-link {
+    text-decoration: none;
+    color: #228B22;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: 0.2s;
 }
 
-.flip{
-animation:flip 0.5s ease;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between; 
-  align-items: center;           
-  padding: 20px 40px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  background-color: #9fea4a;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-}
-
-#navbar-placeholder {
-    position: static;
-    background-color: black;
-    height: 76.8px;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 30px; 
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #228B22;
-  font-weight: bold;
-  font-family: sans-serif;
+.back-link:hover {
+    opacity: 0.7;
 }
