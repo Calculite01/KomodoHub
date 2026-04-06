@@ -16,17 +16,22 @@ from sqlalchemy import or_, and_, desc
 from PIL import Image as PILImage
 from werkzeug.utils import secure_filename
 
-
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
+def save_file(file, folder):
+    """Helper to give files unique names and save them"""
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(file.filename)
+    filename = random_hex + f_ext
+    filepath = os.path.join(app.root_path, folder, filename)
+    file.save(filepath)
+    return filename
 
 def generate_otp(email):
     otp = f"{secrets.randbelow(1000000):06}"
-    expiration_time = datetime.now() + timedelta(minutes=5)    # OTP stays valid for 5 minutes from time of generation
+    expiration_time = datetime.utcnow() + timedelta(minutes=5)    # OTP stays valid for 5 minutes from time of generation
     otp_object = OTP(email=email,otp=otp,expiration_time=expiration_time)
     db.session.add(otp_object)
     db.session.commit()
@@ -36,7 +41,7 @@ def send_otp_email(recipient_email, otp):
     otp_object = OTP.query.filter_by(email=recipient_email).first()
     if not otp_object:
         return
-    expires_in = int((otp_object.expiration_time - datetime.now()).total_seconds() // 60)
+    expires_in = int((otp_object.expiration_time - datetime.utcnow()).total_seconds() // 60)
     msg = Message(subject="OTP Code for verification",
                   recipients=[recipient_email],
                   body= f"Your OTP is {otp}. It will expire in {expires_in} minutes.",
@@ -81,17 +86,65 @@ def acknowledge_contact_email(email):
                   sender= app.config('MAIL_USERNAME'))
     mail.send(ack_msg)
 
+def track_visit(column_name):
+    stats = FeatureStat.query.first()
+    
+    if not stats:
+        # Manually set to 0 to avoid the NoneType + int error
+        stats = FeatureStat(
+            game_visits=0, 
+            program_visits=0, 
+            common_room_visits=0
+        )
+        db.session.add(stats)
+        db.session.flush() # This pushes the object to the session without a full commit
+    
+    # Check if the attribute exists
+    if hasattr(stats, column_name):
+        current_val = getattr(stats, column_name)
+        
+        # Safety check: if for some reason the DB returned None, treat as 0
+        if current_val is None:
+            current_val = 0
+            
+        setattr(stats, column_name, current_val + 1)
+        db.session.commit()
+
 @app.route('/')
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     return render_template('landing.html')
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    print(url_for('organization',orgid=1),flush=False)
-    return render_template('home.html')
+    form = OrganizationForm()
+    
+    if current_user.role == 'Sysadmin' and form.validate_on_submit():
+        if form.icon.data:
+            icon_file = form.icon.data
+            filename = secure_filename(icon_file.filename)
+            filepath = os.path.join(current_app.root_path, 'static/images', filename)
+            icon_file.save(filepath)
+            db_icon_name = filename
+        else:
+            db_icon_name = 'default_org.jpg'
+
+        # 2. Create and Save the Organization
+        new_org = Organization(
+            name=form.name.data,
+            description=form.description.data,
+            org_type=form.org_type.data,
+            icon=db_icon_name
+        )
+        
+        db.session.add(new_org)
+        db.session.commit()
+        flash(f'Organization "{new_org.name}" created successfully!', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('home.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -198,6 +251,10 @@ def contact():
     else:
         """  show validation errors (in HTML template) in case of form validation failure """
         return render_template('contactForm.html', form=form)
+    
+@app.route('/about', methods= ['GET'])
+def about():
+    return render_template("about.html")
 
 @app.route('/register/verify', methods= ['GET', 'POST'])
 def verify_registration():              # get otp entered by user in the form
@@ -231,10 +288,6 @@ def verify_registration():              # get otp entered by user in the form
             return redirect(url_for('verify_contact_otp'))
 
     return render_template('otp_form.html', form=form)
-
-@app.route('/database')  #This is for testing if you go to this route you can just see the users in the database will remove this at the end
-def database():
-    return f"<h1>Users</h1><br>{User.query.all()}"
 
 
 @app.route("/forgot_password", methods=['GET', 'POST'])
@@ -302,13 +355,13 @@ def get_allowed_contacts(current_user_object, search_query=""):
     if current_user_object.role == "Admin":     # Admin can see all the user in the organisation
         return base_query.all()     
 
-    my_classrooms_ids = [classroom.classroom_id for classroom in current_user_object.userclassrooms]    # all the classrooms the current user is part of
+    my_classrooms_ids = [classroom.classroom_id for classroom in current_user_object.usercourses]    # all the classrooms the current user is part of
 
     if current_user_object.role == "Teacher":       # Teacher must see all students and admins
-        return base_query.join(UserClassroom).filter(
+        return base_query.join(UserCourse).filter(
             or_(
                 and_(
-                    UserClassroom.classroom_id.in_(my_classrooms_ids), 
+                    UserCourse.classroom_id.in_(my_classrooms_ids), 
                     User.role == "Student"
                 ),
                 User.role == "Admin"
@@ -319,7 +372,7 @@ def get_allowed_contacts(current_user_object, search_query=""):
         return base_query.filter(
             or_(
                 User.role == "Teacher",
-                UserClassroom.classroom_id.in_(my_classrooms_ids)
+                UserCourse.classroom_id.in_(my_classrooms_ids)
             )
         ).all()
     
@@ -439,70 +492,362 @@ def search_database():
 
     return jsonify({'users': user_data})
 
-@app.route("/profilepage",methods=["GET"])
+@app.route("/profilepage", methods=["GET", "POST"])
+@login_required
 def profilepage():
-    return render_template("profilepage.html")
+    form = UpdateProfileForm()
+    
+    if form.validate_on_submit():
+        # 1. Update the Pattern (Always)
+        current_user.profile_pattern = form.pattern.data
+        
+        # 2. Update the Picture (Only if provided)
+        if form.picture.data:
+            # Delete old picture logic...
+            if current_user.image and current_user.image != 'default_profile.jpg':
+                old_path = os.path.join(app.root_path, 'static/images', current_user.image)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+            
+            # Save new file
+            picture_file = save_file(form.picture.data, "static/images")
+            current_user.image = picture_file
+        
+        db.session.commit()
+        flash('Your profile has been updated!', 'success')
+        return redirect(url_for('profilepage'))
+    
+    # 3. Populate form with current values on GET request
+    elif request.method == 'GET':
+        form.pattern.data = current_user.profile_pattern
+        
+    return render_template("profilepage.html", form=form) # Make sure this matches your filename
 
-@app.route("/organization/<orgid>",methods=["GET"])
+
+@app.route("/organization/<orgid>", methods=["GET", "POST"])
 def organization(orgid):
-    return render_template("organisationpage.html")
+    form = CreateCourseForm()
+    
+    if form.validate_on_submit():
+        icon_file = 'default.png'
+        if form.icon.data:
+            # Simple unique filename logic
+            random_hex = secrets.token_hex(8)
+            _, f_ext = os.path.splitext(form.icon.data.filename)
+            icon_file = random_hex + f_ext
+            path = os.path.join(app.root_path, 'static/images', icon_file)
+            form.icon.data.save(path)
 
-@app.route("/tasks/<orgid>",methods=["GET"])
-def tasks(orgid):
-    tasks = UserTask.query.filter_by(user_id=current_user.id)
-    return render_template("tasks.html",tasks=tasks)
+        new_course = Course(
+            name=form.name.data,
+            description=form.description.data,
+            icon=icon_file,
+            organization_id=orgid
+        )
+        db.session.add(new_course)
+        db.session.commit()
+        return redirect(url_for('organization', orgid=orgid))
 
-@app.route("/classrooms/<orgid>",methods=["GET"])
-def classrooms(orgid):
-    classrooms = UserClassroom.query.filter_by(user_id=current_user.id)
-    return render_template("classrooms.html",classrooms=classrooms)
+    courses = Course.query.filter_by(organization_id=orgid).all()
+    return render_template("organisationpage.html", courses=courses, form=form, orgid=orgid, current_org=Organization.query.get(orgid))
 
-@app.route("/class/<orgid>/<classid>",methods=["GET"])
-def classroom(orgid,classid):
-    return render_template("classroom.html", classid=classid)
+@app.route("/members/<orgid>", methods=["GET", "POST"])
+def membersorg(orgid):
+    form = AddUserOrganisationForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        hashed_password = bcrypt.generate_password_hash("THEPASSWORDFORUNVERIFIEDORGPEOPLE@P123").decode('utf-8')
+        uniqueAccessCode = f"{secrets.randbelow(100000000):08}"
+        new_user = User(email= email,
+                        first_name= form.first_name.data.strip(),
+                        last_name= form.last_name.data.strip(),
+                        password= hashed_password,
+                        organization_id=orgid,
+                        role=form.role.data,
+                        is_verified=False,
+                        uniqueAccessCode=uniqueAccessCode)
+        db.session.add(new_user)
+        db.session.commit()
+        flash("Added new user", "success")
+    elif form.is_submitted():
+        flash("Could not add user. Please check the email and try again.", "failure")
 
-@app.route("/announcements/<orgid>",methods=["GET"])
-def announcements(orgid):
-    announcements = Announcement.query.filter_by(organization_id=current_user.organization_id)
-    return render_template("announcements.html", announcements=announcements)
+    # Standard Queries for display
+    students = User.query.filter(
+        User.organization_id == orgid,
+        User.role == "Student",
+        User.is_verified == True
+    ).all()
+    
+    teachers = User.query.filter(
+        User.organization_id == orgid,
+        User.role == "Teacher",
+        User.is_verified == True
+    ).all()
 
-@app.route("/commonroom/<orgid>/<classid>",methods=["GET"])
-def commonroom(orgid,classid):
-    return render_template("commonroom.html")
+    unverified_users = []
+    if current_user.role == "Admin":
+        unverified_users = User.query.filter_by(organization_id=orgid, is_verified=False).all()
 
-@app.route("/members/<orgid>/<classid>",methods=["GET"])
-def members(orgid,classid):
-    return render_template("members.html")
+    return render_template("membersorg.html", 
+                           students=students, 
+                           teachers=teachers, 
+                           unverified_users=unverified_users,
+                           orgid=orgid, 
+                           form=form) # Don't forget to pass the form!
 
-@app.route("/tasks/<orgid>/<classid>",methods=["GET"])
-def classtasks(orgid,classid):
-    tasks = UserTask.query.filter_by(user_id=current_user.id)
-    return render_template("classtasks.html", tasks=tasks)
+@app.route("/organisation/<int:orgid>/remove/<int:userid>", methods=["POST"])
+def remove_member(orgid, userid):
+    user = User.query.get(userid)
 
-@app.route("/createtask",methods=["GET","POST"])
-def createtask():
-    form = TaskForm()
-    readingContent = request.args.get('readingContent')
-    if readingContent:
-        form.readingContent.data = readingContent
-    return render_template("createtask.html",  form=form)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        flash("Member's account has been deleted.", "success")
+    
+    return redirect(url_for('membersorg', orgid=orgid))
 
-@app.route("/programs",methods=["GET"])
-def programs():
-    query = request.args.get('taskcreate')
-    taskcreate = bool(query)  #False if None, True if anything else
-    return render_template("programs.html", taskcreate=taskcreate)
+@app.route("/assignments/<int:orgid>/<int:courseid>", methods=["GET", "POST"])
+@login_required
+def tasks(orgid, courseid):
+    create_form = CreateTaskForm()
+    submit_form = SubmissionForm()
+    now = datetime.utcnow()
 
-@app.route("/programs/rhino",methods=["GET"])
-def rhino():
-    query = request.args.get('taskcreate')
-    taskcreate = bool(query)  #False if None, True if anything else
-    return render_template("programrhino.html", taskcreate=taskcreate)
+    if request.method == "POST":
+        # --- CASE A: Teacher creates a new task ---
+        if 'create_task' in request.form and create_form.validate_on_submit():
+            new_task = Task(
+                name=create_form.name.data,
+                due_date=create_form.due_date.data,
+                course_id=courseid
+            )
+            db.session.add(new_task)
+            db.session.flush()
 
-@app.route("/publiclibrary",methods=["GET"])
-def publiclibrary():
-    contributions = Contribution.query.all()
-    return render_template("publiclibrary.html", contributions=contributions)
+            # Assign to all students in the course
+            # (Assuming you have a UserCourse or similar enrollment table)
+            students = User.query.filter_by(organization_id=orgid, role="Student").all()
+            for s in students:
+                assignment = UserTask(user_id=s.id, task_id=new_task.id)
+                db.session.add(assignment)
+            
+            db.session.commit()
+            flash("Task Created!", "success")
+            return redirect(url_for('tasks', orgid=orgid, courseid=courseid))
+
+        # --- CASE B: Student submits a file ---
+        if 'submit_work' in request.form:
+            ut_id = request.form.get('user_task_id')
+            user_task = UserTask.query.get_or_404(ut_id)
+            
+            if submit_form.file.data:
+                file = submit_form.file.data
+                filename = secure_filename(f"user_{current_user.id}_{file.filename}")
+                file.save(os.path.join(app.root_path, 'static/uploads', filename))
+                
+                user_task.submission_file = filename
+                user_task.submitted = True
+                user_task.date_submitted = datetime.utcnow()
+                db.session.commit()
+                flash("Assignment submitted successfully!", "success")
+                return redirect(url_for('tasks', orgid=orgid, courseid=courseid))
+
+    # --- GET LOGIC: Filtered List ---
+    if current_user.role == "Teacher":
+        # Teachers see ALL tasks created for this course, regardless of "UserTask" table
+        tasks_to_show = Task.query.filter_by(course_id=courseid).order_by(Task.due_date.asc()).all()
+        # Note: These are 'Task' objects, not 'UserTask' objects
+    else:
+        # Students see their specific assignments from the UserTask table
+        # We use .all() to get the list of UserTask objects
+        tasks_to_show = UserTask.query.join(Task).filter(
+            UserTask.user_id == current_user.id,
+            Task.due_date >= now
+        ).order_by(Task.due_date.asc()).all()
+
+    return render_template("tasks.html", 
+                           tasks=tasks_to_show, 
+                           create_form=create_form, 
+                           submit_form=submit_form, 
+                           orgid=orgid, 
+                           courseid=courseid,
+                           course=Course.query.get(courseid))
+
+@app.route("/course/<int:courseid>/submissions")
+@login_required
+def view_submissions(courseid):
+    # Security Check: Only Teachers should see this
+    if current_user.role != "Teacher":
+        flash("Access denied. Teachers only.", "failure")
+        return redirect(url_for('home'))
+
+    # Optional: Filter by a specific Task ID (passed via URL args)
+    task_id = request.args.get('task_id', type=int)
+    
+    query = db.session.query(UserTask).join(Task).join(User).filter(
+        Task.course_id == courseid,
+        UserTask.submitted == True
+    )
+
+    if task_id:
+        query = query.filter(UserTask.task_id == task_id)
+
+    submissions = query.order_by(UserTask.date_submitted.desc()).all()
+
+    return render_template("submissions.html", 
+                           submissions=submissions, 
+                           courseid=courseid)
+
+@app.route("/submission/<int:usertask_id>", methods=["GET", "POST"])
+@login_required
+def view_single_submission(usertask_id):
+    usertask = UserTask.query.get_or_404(usertask_id)
+    grade_form = GradeTaskForm()
+    reply_form = ReplyTaskForm()
+
+    # SECURITY: Prevent students from seeing other students' submissions
+    if current_user.role != "Teacher" and usertask.user_id != current_user.id:
+        flash("Access Denied.", "failure")
+        return redirect(url_for('home'))
+
+    # Handle Grading (Teacher Only)
+    if 'grade' in request.form and grade_form.validate_on_submit():
+        if current_user.role == "Teacher":
+            usertask.grade = grade_form.grade.data
+            new_reply = TaskReply(
+                user_id=current_user.id,
+                text=f"GRADED: {grade_form.feedback.data}",
+                usertask_id=usertask.id
+            )
+            db.session.add(new_reply)
+            db.session.commit()
+            flash("Grade and feedback saved!", "success")
+            return redirect(url_for('view_single_submission', usertask_id=usertask.id))
+
+    # Handle Replies
+    if 'text' in request.form and reply_form.validate_on_submit():
+        new_reply = TaskReply(
+            user_id=current_user.id,
+            text=reply_form.text.data,
+            usertask_id=usertask.id
+        )
+        db.session.add(new_reply)
+        db.session.commit()
+        return redirect(url_for('view_single_submission', usertask_id=usertask.id))
+
+    return render_template("view_submission.html", 
+                           usertask=usertask, 
+                           grade_form=grade_form, 
+                           reply_form=reply_form)
+
+@app.route("/course/<orgid>/<courseid>",methods=["GET"])
+def course(orgid,courseid):
+    course = Course.query.get_or_404(courseid)
+    is_enrolled = UserCourse.query.filter_by(
+        user_id=current_user.id, 
+        course_id=courseid
+    ).first()
+
+    if not is_enrolled and current_user.role not in ["Teacher", "Admin"]:
+        flash("You are not enrolled in this course.", "failure")
+        return redirect(url_for('organization', orgid=orgid))
+
+    # 3. Security: Ensure the course actually belongs to the organization in the URL
+    if str(course.organization_id) != str(orgid):
+        return redirect(url_for('organization', orgid=orgid))
+    return render_template("course.html", course=course)
+
+# @app.route("/materials/<orgid>/<courseid>", methods=["GET"])
+# def materials(orgid,courseid):
+#     materials = Material.query.filter_by(course_id=courseid).all()
+#     return render_template("materials.html",materials=materials, courseid=courseid)
+
+@app.route("/courses", methods=["GET"])
+@login_required
+def courses():
+    courses = Course.query.join(UserCourse).filter(UserCourse.user_id == current_user.id).all()
+    return render_template("courses.html", courses=courses)
+
+@app.route("/materials/<orgid>/<courseid>/<int:selected_id>", methods=["GET", "POST"])
+@app.route("/materials/<orgid>/<courseid>", methods=["GET", "POST"])
+def materials(orgid, courseid, selected_id=None):
+    form = MaterialForm()  
+    if form.validate_on_submit():
+        # 1. Create and Save the main Material object
+        new_material = Material(title=form.title.data, text=form.text.data, course_id=courseid)
+        db.session.add(new_material)
+        db.session.commit()  # Commit so we have an ID for the foreign keys below
+
+        # 2. Process Multiple Images
+        if form.images.data:
+            for file in form.images.data:
+                if file.filename: # Ensure a file was actually uploaded
+                    filename = save_file(file, 'static/images')
+                    img_record = Image(file=filename, parent_id=new_material.id, parent_type="material")
+                    db.session.add(img_record)
+
+        # 3. Process Multiple Documents
+        if form.documents.data:
+            for file in form.documents.data:
+                if file.filename:
+                    filename = save_file(file, 'static/uploads')
+                    file_record = File(file=filename, parent_id=new_material.id, parent_type="material")
+                    db.session.add(file_record)
+
+        db.session.commit()
+        flash("Material deleted!", "success")
+        return redirect(url_for('materials', orgid=orgid, courseid=courseid))
+    
+    materials_list = Material.query.filter_by(course_id=courseid).all()
+
+    selected_material = None
+    if selected_id:
+        selected_material = Material.query.get(selected_id)
+    elif materials_list:
+        # Optional: default to the first material if none selected
+        selected_material = materials_list[0]
+
+
+    return render_template("materials.html", 
+                           materials=materials_list, 
+                           form=form, 
+                           courseid=courseid, 
+                           orgid=orgid, selected_material=selected_material)
+
+@app.route("/commonroom/reply/<int:msg_id>", methods=["POST"])
+@login_required
+def post_reply(msg_id):
+    form = CommonRoomReplyForm()
+    
+    # We check if the form is valid (text is present and under character limit)
+    if form.validate_on_submit():
+        # 1. Ensure the parent message actually exists
+        parent_msg = CommonRoomMessage.query.get_or_404(msg_id)
+        
+        # 2. Create the reply object
+        new_reply = CommonRoomMessageReply(
+            text=form.text.data,
+            user_id=current_user.id,
+            common_room_message_id=parent_msg.id
+        )
+        
+        # 3. Save to database
+        db.session.add(new_reply)
+        db.session.commit()
+        return redirect(request.referrer)
+
+    flash("Reply cannot be empty.", "failure")
+    return redirect(request.referrer)
+
+@app.route("/material/<int:material_id>/toggle", methods=["POST"])
+def toggle_visibility(material_id):
+    material = Material.query.get_or_404(material_id)
+    # Check if user is Teacher/Admin before allowing this!
+    material.is_visible = not material.is_visible
+    db.session.commit()
+    flash(f"Visibility updated for {material.title}", "success")
+    return redirect(url_for('materials', orgid=current_user.organization_id, courseid=material.course_id, selected_id=material.id))
 
 @app.route("/material/<int:material_id>/delete", methods=["POST"])
 def delete_material(material_id):
@@ -899,7 +1244,6 @@ def library(orgid):
                            contributions=contributions,
                            form=form, reply_form=reply_form, orgid=orgid, current_org=Organization.query.get(orgid))
 
-
 @app.route("/schools",methods=["GET"])
 def schools():
     schools = Organization.query.filter_by(org_type="School")
@@ -1010,6 +1354,10 @@ def personalcompilationpage():
     contributions = Contribution.query.filter_by(user_id=current_user.id)
     sightings = Sighting.query.filter_by(user_id=current_user.id)
     return render_template("personalcompilationpage.html", contributions=contributions, sightings=sightings)
+
+
+
+
 @app.route("/publiclibrary/programs/tiger", methods=["GET"])
 def programtiger():
     return render_template("programtiger.html")
