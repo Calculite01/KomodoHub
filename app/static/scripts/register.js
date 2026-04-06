@@ -5,46 +5,76 @@ const passwordfeedback2 = document.getElementById("passwordfeedback2");
 
 const fnameField = document.getElementById("first-name");
 const lnameField = document.getElementById("last-name");
-
 const emailField = document.getElementById("Email");
 
 const submitButton = document.getElementById("register-btn");
-submitButton.disabled = true;
 
+// Initial state
+if (submitButton) submitButton.disabled = true;
 
+document.addEventListener("input", () => {
+    if (!submitButton) return; // Prevent errors if on OTP page
 
-document.addEventListener("input",event => {
     const passwordStrength = passwordCheck();
-    console.log(passwordStrength);
-    if (fnameField.value == "" || lnameField.value == "" || passwordStrength < 3 || emailField.value == "" || confirmPasswordField.value == ""){
-    submitButton.disabled = true;
-    }
-    else{
+    
+    // Check if all fields are filled and password is strong
+    const isFormInvalid = (
+        fnameField.value.trim() === "" || 
+        lnameField.value.trim() === "" || 
+        emailField.value.trim() === "" || 
+        passwordStrength < 3 || 
+        passwordField.value !== confirmPasswordField.value ||
+        confirmPasswordField.value === ""
+    );
+
+    if (isFormInvalid) {
+        submitButton.disabled = true;
+        submitButton.style.opacity = "0.6";
+        submitButton.style.cursor = "not-allowed";
+    } else {
         submitButton.disabled = false;
+        submitButton.style.opacity = "1";
+        submitButton.style.cursor = "pointer";
     }
-})
+});
 
-
-function passwordCheck(){
+function passwordCheck() {
     const password = passwordField.value;
     let strength = 0;
-    if (password === ""){
-        passwordfeedback.textContent = "";
+
+    // Reset feedback
+    passwordfeedback.textContent = "";
+    passwordfeedback.style.color = "#ef4444"; // Default Red
+
+    if (password === "") {
+        return 0;
+    }
+
+    if (password.length < 8) {
+        passwordfeedback.textContent = "Password must be at least 8 characters.";
+        return 0;
+    }
+
+    // Complexity check
+    const regex = [/\d/, /[A-Za-z]/, /[^A-Za-z0-9]/];
+    regex.forEach(re => {
+        if (re.test(password)) strength++;
+    });
+
+    if (strength < 3) {
+        passwordfeedback.textContent = "Include letters, numbers, and symbols.";
+    } else {
+        passwordfeedback.textContent = "Strong password!";
+        passwordfeedback.style.color = "#228B22"; // Success Green
+    }
+
+    // Matching check
+    if (confirmPasswordField.value !== "" && password !== confirmPasswordField.value) {
+        passwordfeedback2.textContent = "Passwords do not match.";
+        passwordfeedback2.style.color = "#ef4444";
+    } else {
         passwordfeedback2.textContent = "";
-        return strength;
     }
-    if (password.length < 8){
-        passwordfeedback.textContent = "Password has to be atleast 8 characters";
-        return strength;
-    }
-    const regex = [/\d/,/[A-Za-z]/,/[^A-Za-z0-9]/];
-    for (const re of regex){
-        if (re.test(password)){strength++;}
-    }
-    if (strength < 3){
-        passwordfeedback.textContent = "Password must contain atleast one letter, one number, and one special character"; //Strength: Weak
-        passwordfeedback2.textContent = "";
-    }
-    else{passwordfeedback.textContent = ""; passwordfeedback2.textContent = "";}//Strength: Strong
+
     return strength;
 }

@@ -1,15 +1,140 @@
 {% extends "layout.html" %}
+
 {% block head %}
     <title>Home - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+{% endblock head %}
+
 {% block content %}
-<div>home page or something idk</div>
-<a href="{{ url_for('profilepage') }}">Temporary profile page location to be moved to navbar later</a>
-{% if current_user.organization %}
-    <a href="{{ url_for('organization',orgid=current_user.organization_id) }}">Organization Page</a>
-{% else %}
-    <div>ur part of no organization bum</div>
+<div class="home-container">
+    
+    <header class="home-hero">
+        <div class="hero-content">
+            <div class="hero-header-flex">
+                <h1>Welcome back, <span class="accent">{{ current_user.first_name }}</span></h1>
+                
+                {% if current_user.role == 'Sysadmin' %}
+                    <button id="openModal" class="admin-create-btn">
+                        <i class="fa-solid fa-plus"></i> Create Organization
+                    </button>
+                {% endif %}
+            </div>
+            
+            {% if current_user.organization %}
+                <p class="org-status">
+                    <i class="fa-solid fa-building-shield"></i> 
+                    Member of <strong>{{ current_user.organization.name }}</strong>
+                </p>
+            {% else %}
+                <p class="org-status warning">
+                    <i class="fa-solid fa-circle-exclamation"></i> 
+                    You aren't part of an organization yet.
+                </p>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="hub-grid">
+        {% if current_user.organization %}
+        <a href="{{ url_for('organization', orgid=current_user.organization_id) }}" class="hub-card org-card">
+            <i class="fa-solid fa-sitemap"></i>
+            <span>{{ current_user.organization.name }} Portal</span>
+        </a>
+        {% endif %}
+
+        <a href="{{ url_for('publiclibrary') }}" class="hub-card">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Public Library</span>
+        </a>
+
+        <a href="{{ url_for('schools') }}" class="hub-card">
+            <i class="fa-solid fa-school"></i>
+            <span>Schools</span>
+        </a>
+
+        <a href="{{ url_for('communities') }}" class="hub-card">
+            <i class="fa-solid fa-people-group"></i>
+            <span>Communities</span>
+        </a>
+
+        <a href="{{ url_for('games') }}" class="hub-card">
+            <i class="fa-solid fa-gamepad"></i>
+            <span>Game Center</span>
+        </a>
+        
+        <a href="{{ url_for('courses') }}" class="hub-card">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>My Courses</span>
+        </a>
+
+        {% if current_user.role == 'Sysadmin' %}
+        <a href="{{ url_for('moderate') }}" class="hub-card admin-card">
+            <i class="fa-solid fa-gauge-high" style="color: #eab308;"></i>
+            <span>Moderation Queue</span>
+        </a>
+        {% endif %}
+
+        {% if current_user.role == 'Manager' %}
+            <a href="{{ url_for('featurepopularity') }}" class="hub-card manager-card">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Feature Popularity</span>
+            </a>
+
+            <a href="{{ url_for('subscriptiondata') }}" class="hub-card manager-card">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>Subscription Data</span>
+            </a>
+        {% endif %}
+    </section>
+</div>
+
+{% if current_user.role == 'Sysadmin' %}
+<div id="orgModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>New Organization</h2>
+            <span class="close-modal">&times;</span>
+        </div>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(placeholder="Name of the organization") }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.description.label }}
+                {{ form.description(placeholder="Description...", rows="3") }}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form.org_type.label }}
+                    {{ form.org_type() }}
+                </div>
+                <div class="form-group">
+                    {{ form.icon.label }}
+                    {{ form.icon(placeholder="icon_name.jpg") }}
+                </div>
+            </div>
+
+            {{ form.submit_btn(class="modal-submit-btn") }}
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById("orgModal");
+    const btn = document.getElementById("openModal");
+    const span = document.querySelector(".close-modal");
+
+    btn.onclick = () => modal.style.display = "flex";
+    span.onclick = () => modal.style.display = "none";
+    window.onclick = (event) => {
+        if (event.target == modal) modal.style.display = "none";
+    }
+</script>
 {% endif %}
-<a href="{{ url_for('programs') }}">Programs</a>
-<a href="{{ url_for('publiclibrary') }}">Public Library</a>
+
 {% endblock content %}

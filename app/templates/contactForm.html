@@ -1,104 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Form</title>
+{% block head %}
+    <title>Contact Us - Komodo Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/styles/contactFormStyle.css">
-</head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/contactFormStyle.css') }}">
+    <style>
+        /* Ensuring the form doesn't hide behind your fixed navbar */
+        body { padding-top: 80px; }
+        .contact-form { margin-top: 20px; }
+    </style>
+{% endblock head %}
 
-<!--   FLASK FORM RENDERING     -->
-<body style="min-height: 100vh;">
-    <div class="bg-container"></div>
+{% block content %}
+<div class="bg-container"></div>
 
-    <div class="contact-form" action="{{ url_for('contact') }}">
-        <h3>Fill out the form below and share your queries with us</h3>
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}     <!-- CSRF token for protection -->
-            <div class="name-fields">
-                <div class="input-fields">
-                    {{ form.first_name.label(for="first-name") }}
-                    {{ form.first_name(id="first-name", class="first-name"+ ("input-error" if form.first_name.errors else ""), placeholder="Tony") }}
-
-                    {% if form.first_name.errors %}
-                        <div class="errors-container">
-                            {% for error in form.first_name.errors %}
-                                <span class="errors">{{ error }}</span><br>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="input-fields">
-                    {{ form.last_name.label(for="last-name") }}
-                    {{ form.last_name(id="last-name", class="last-name"+ ("input-error" if form.last_name.errors else ""), placeholder="Stark") }}
-
-                    {% if form.last_name.errors %}
-                        <div class="errors-container">
-                            {% for error in form.last_name.errors %}
-                                <span class="errors">{{ error }}</span><br>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
+<div class="contact-form">
+    <h3>Fill out the form below and share your queries with us</h3>
+    
+    <form method="POST" action="{{ url_for('contact') }}">
+        {{ form.hidden_tag() }} <div class="name-fields">
+            <div class="input-fields">
+                {{ form.first_name.label }}
+                {{ form.first_name(id="first-name", class="first-name" + (" input-error" if form.first_name.errors else ""), placeholder="Tony") }}
+                {% for error in form.first_name.errors %}
+                    <span class="errors" style="color: red; font-size: 0.8rem;">{{ error }}</span>
+                {% endfor %}
             </div>
 
             <div class="input-fields">
-                {{ form.company_email.label(for="company-email") }}
-                {{ form.company_email(id="company-email", class="company-email"+ ("input-error" if form.company_email.errors else ""), placeholder="shieldHydra@avengers.us") }}
-                {% if form.company_email.errors %}
-                    <div class="errors-container">
-                        {% for error in form.company_email.errors %}
-                             <span class="errors">{{ error }}</span><br>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                {{ form.last_name.label }}
+                {{ form.last_name(id="last-name", class="last-name" + (" input-error" if form.last_name.errors else ""), placeholder="Stark") }}
+                {% for error in form.last_name.errors %}
+                    <span class="errors" style="color: red; font-size: 0.8rem;">{{ error }}</span>
+                {% endfor %}
             </div>
+        </div>
 
-            <div class="input-fields">
-                {{ form.ph_number.label(for="phone-number") }}
-                {{ form.ph_number(id="phone-number", class="phone-number"+ ("input-error" if form.ph_number.errors else ""), placeholder="07xxxxxxxxx or 07xxx-xxxxxx") }}
+        <div class="input-fields">
+            {{ form.company_email.label }}
+            {{ form.company_email(id="company-email", class="company-email" + (" input-error" if form.company_email.errors else ""), placeholder="shieldHydra@avengers.us") }}
+            {% for error in form.company_email.errors %}
+                <span class="errors" style="color: red; font-size: 0.8rem;">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-                {% if form.ph_number.errors %}
-                    <div class="errors-container">
-                        {% for error in form.ph_number.errors %}
-                             <span class="errors">{{ error }}</span><br>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+        <div class="input-fields">
+            {{ form.ph_number.label }}
+            {{ form.ph_number(id="phone-number", class="phone-number" + (" input-error" if form.ph_number.errors else ""), placeholder="07xxxxxxxxx") }}
+            {% for error in form.ph_number.errors %}
+                <span class="errors" style="color: red; font-size: 0.8rem;">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-            <!-- select region in Indonesia (for user data behvaiour / distribution purposes) -->
-            <div class="input-fields">
-                {{ form.region.label(for="regions") }}
-                {{ form.region(id="regions") }}
-            </div>
+        <div class="input-fields">
+            {{ form.region.label }}
+            {{ form.region(id="regions") }}
+        </div>
 
-            <div class="input-fields">
-                {{ form.userQuery.label(for="user-query") }}
-                {{ form.userQuery(id="user-query", cols="30", rows="5", placeholder="Enter your query and concerns here.") }}
-            </div>
+        <div class="input-fields">
+            {{ form.userQuery.label }}
+            {{ form.userQuery(id="user-query", cols="30", rows="5", placeholder="Enter your query and concerns here.") }}
+        </div>
 
-            <div class="form-btns">
-                {{ form.submit_btn(id="submit-btn", class="btns") }}
-                <input type="reset" name="reset-btn" id="reset-btn" class="btns" value="Reset Form Fields">
-                <input type="button" name="go-back-btn" id="go-back-btn" class="btns" onclick="window.history.back()" value="Go Back">
-            </div>
-        </form>
-
-<!--   Form Flashed Messages (one-time)  -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul>
-                    {% for category , message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-    </div>
-</body>
-
-</html>
+        <div class="form-btns">
+            {{ form.submit_btn(id="submit-btn", class="btns") }}
+            <input type="reset" class="btns" value="Reset Form" style="background-color: rgb(230, 96, 96);">
+            <input type="button" class="btns" onclick="window.history.back()" value="Go Back">
+        </div>
+    </form>
+</div>
+{% endblock content %}

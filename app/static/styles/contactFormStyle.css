@@ -19,7 +19,7 @@ body {
 
 /* Blurring the background image */
 .bg-container {
-    background-image: url('/static/images/leopard.jpg');
+    background-image: url('/static/images/leopards.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

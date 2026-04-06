@@ -1,31 +1,58 @@
 {% extends "layout.html" %}
 
 {% block head %}
+<title>Reset Password - Komodo Hub</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock head %}
 
-
 {% block content %}
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
-
-        <div class="input-group">
-            {{ form.password.label }}
-            {{ form.password(id="password", placeholder="123456789") }}
-            {% for error in form.password.errors %}
-                <div class="errors">{{ error }}</div>
-            {% endfor %}
-            <div id="passwordfeedback" class="errors"></div>
-            <div id="passwordfeedback2" class="errors"></div>
+    <div class="login-page-container">
+        <div class="bird-side">
+            <div class="overlay-text">
+                <h1>Secure Your Account.</h1>
+                <p>Choose a strong password to keep your data safe and sound.</p>
+            </div>
         </div>
 
-        <div class="input-group">
-            {{ form.confirm_password.label }}
-            {{ form.confirm_password(id="confirm-password", placeholder="123456789") }}
-            {% for error in form.confirm_password.errors %}
-                <div class="errors">{{ error }}</div>
-            {% endfor %}
-        </div>
+        <div class="right-side">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fa-solid fa-lock-open" style="font-size: 2.5rem; color: #228B22; margin-bottom: 15px;"></i>
+                    <h2>Reset Password</h2>
+                    <p>Enter your new credentials below</p>
+                </div>
+            
+                <form action="" method="POST">
+                    {{ form.hidden_tag() }}
 
-        {{ form.submit(id="register-btn", class="register-btn") }}
-    </form>
+                    <div class="input-group">
+                        <label for="password"><i class="fa-solid fa-key"></i> {{ form.password.label.text }}</label>
+                        {{ form.password(id="password", placeholder="••••••••") }}
+                        {% for error in form.password.errors %}
+                            <span class="error-msg">{{ error }}</span>
+                        {% endfor %}
+                        <div id="passwordfeedback" class="error-msg" style="font-weight: 600;"></div>
+                        <div id="passwordfeedback2" class="error-msg"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="confirm-password"><i class="fa-solid fa-check-double"></i> {{ form.confirm_password.label.text }}</label>
+                        {{ form.confirm_password(id="confirm-password", placeholder="••••••••") }}
+                        {% for error in form.confirm_password.errors %}
+                            <span class="error-msg">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit" class="login-btn-styled">
+                        Update Password <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </form>
+
+                <div class="register-footer">
+                    <p><a href="{{ url_for('login') }}" style="color: #64748b; font-weight: normal; font-size: 0.85rem;">Cancel and return to Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

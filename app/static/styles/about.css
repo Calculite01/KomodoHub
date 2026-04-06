@@ -1,0 +1,117 @@
+/* --- ABOUT PAGE SPECIFIC STYLES --- */
+
+/* Hero Section - The big green header */
+.about-hero {
+    padding: 160px 20px 100px;
+    text-align: center;
+    background: linear-gradient(135deg, #064e3b 0%, #14532d 50%, #166534 100%);
+    color: #ffffff;
+    border-radius: 0 0 60px 60px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.about-hero h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.about-hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 700px;
+    margin: 0 auto;
+    font-weight: 300;
+}
+
+/* Main Content Card - Pops up over the hero */
+.about-content-card {
+    max-width: 1000px;
+    margin: -60px auto 100px; /* Pulls the card up into the hero */
+    background: #ffffff;
+    padding: 60px 50px;
+    border-radius: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 10;
+}
+
+.about-content-card h2 {
+    color: #064e3b;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.about-content-card h2::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: #ecfdf5;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    color: #4b5563;
+    line-height: 1.8;
+    margin-bottom: 40px;
+}
+
+/* Mission Grid - Three columns for core values */
+.mission-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-top: 50px;
+}
+
+.mission-card {
+    padding: 35px;
+    background: #f9fafb;
+    border-radius: 25px;
+    border: 1px solid #f3f4f6;
+    transition: all 0.3s ease;
+}
+
+.mission-card:hover {
+    background: #ffffff;
+    border-color: #4ade80;
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+}
+
+.mission-card i {
+    font-size: 2rem;
+    color: #22c55e;
+    background: #f0fdf4;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.mission-card h3 {
+    color: #111827;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+}
+
+.mission-card p {
+    color: #6b7280;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Call to Action Button */
+.about-cta {
+    text-align: center;
+    margin-top: 60px;
+}
