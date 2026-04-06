@@ -1,24 +1,64 @@
 {% extends "layout.html" %}
-{% block head %}Verification - Komodo Hub{% endblock %}
+
+{% block head %}
+<title>Verification - Komodo Hub</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
 
 {% block content %}
-    <h1>OTP Verification</h1>
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}     <!-- CSRF token for protection -->
+    <div class="login-page-container">
+        <div class="bird-side">
+            <div class="overlay-text">
+                <h1>Almost There.</h1>
+                <p>We've sent a 6-digit code to your email to keep your account secure.</p>
+            </div>
+        </div>
 
-        {{ form.user_entered_OTP.label }}
-        {{ form.user_entered_OTP(size=6, maxlength=6) }}
+        <div class="right-side">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: #228B22; margin-bottom: 15px;"></i>
+                    <h2>OTP Verification</h2>
+                    <p>Enter the code sent to your inbox</p>
+                </div>
+            
+                <form method="POST">
+                    {{ form.hidden_tag() }}
 
-        {{ form.submit_btn() }}
-    </form>
+                    <div class="input-group">
+                        <label for="user_entered_OTP" style="text-align: center; display: block;">
+                            Verification Code
+                        </label>
+                        {{ form.user_entered_OTP(class="otp-input", placeholder="000000", style="text-align: center; letter-spacing: 8px; font-size: 1.5rem; font-weight: bold;") }}
+                        
+                        {% for error in form.user_entered_OTP.errors %}
+                            <span class="error-msg">{{ error }}</span>
+                        {% endfor %}
+                    </div> 
 
-    {% with messages=get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <ul>
-                {% for category, message in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
-{% endblock %}
+                    <button type="submit" class="login-btn-styled">
+                        Verify Account <i class="fa-solid fa-check-double"></i>
+                    </button>
+                </form>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages" style="margin-top: 20px;">
+                            {% for category, message in messages %}
+                                <div class="error-msg" style="text-align: center; background: #fee2e2; padding: 10px; border-radius: 8px; color: #b91c1c;">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="register-footer">
+                    <p>Didn't receive a code? <a href="#">Resend Code</a></p>
+                    <p style="margin-top: 10px;"><a href="{{ url_for('login') }}" style="font-weight: normal; font-size: 0.8rem; color: #64748b;">Back to Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

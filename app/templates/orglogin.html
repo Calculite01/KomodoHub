@@ -2,29 +2,50 @@
 
 {% block head %}
 <title>Organisation Login - Komodo Hub</title>
-<link rel="stylesheet" href="/static/styles/org_login.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock head %}
 
-
 {% block content %}
-    <div class="body">
-        <div class="bird-side"></div>
+    <div class="login-page-container" style="position: relative;">
+        
+        <div style="position: absolute; top: 20px; left: 20px; z-index: 10;">
+            <a href="{{ url_for('register') }}" class="back-link-styled" style="text-decoration: none; color: white; background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 50px; font-size: 0.9rem; backdrop-filter: blur(5px); display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-arrow-left"></i> Back to Register
+            </a>
+        </div>
+
+        <div class="bird-side">
+            <div class="overlay-text">
+                <h1>Institution Portal.</h1>
+                <p>Enter your unique access code.</p>
+            </div>
+        </div>
 
         <div class="right-side">
-            <div class="login-container">
-                <h2>Organisation Login</h2>
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fa-solid fa-building-shield" style="font-size: 2.5rem; color: #228B22; margin-bottom: 15px;"></i>
+                    <h2>Organisation Login</h2>
+                    <p>Secure Access Portal</p>
+                </div>
             
                 <form action="" method="POST">
-                    {{ form.hidden_tag() }}         <!-- CSRF token for protection -->
+                    {{ form.hidden_tag() }}
 
                     <div class="input-group">
-                        {{ form.uniqueAccessCode.label }}
-                        {{ form.uniqueAccessCode(id="uniqueAccessCode", placeholder="ageOfUltron@avengers.com") }}
+                        <label for="uniqueAccessCode"><i class="fa-solid fa-key"></i> {{ form.uniqueAccessCode.label.text }}</label>
+                        {{ form.uniqueAccessCode(id="uniqueAccessCode", placeholder="Enter unique code...") }}
                         {% for error in form.uniqueAccessCode.errors %}
-                            <div class="errors">{{ error }}</div>
+                            <span class="error-msg">{{ error }}</span>
                         {% endfor %}
-                    </div>       
+                    </div> 
 
-                    {{ form.submit(id="register-btn", class="login-btn") }}
+                    <button type="submit" class="login-btn-styled">
+                        Access Hub <i class="fa-solid fa-right-to-bracket"></i>
+                    </button>
                 </form>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
