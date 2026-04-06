@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Moderation Queue - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/moderate.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="moderate-container">
+    <header class="mod-header">
+        <h1>Moderation Queue</h1>
+        <p>There are <strong>{{ contributions|length }}</strong> contributions awaiting review.</p>
+    </header>
+
+    {% if contributions %}
+        <div class="mod-list">
+            {% for con in contributions %}
+                <div class="mod-card">
+                    <div class="mod-meta">
+                        <span class="mod-author"><i class="fa-solid fa-user"></i> {{ con.user_id.first_name }} {{ con.user_id.last_name }}</span>
+                        <span class="mod-date"><i class="fa-solid fa-clock"></i> {{ con.time_of_creation.strftime('%Y-%m-%d %H:%M') }}</span>
+                        <span class="mod-id">ID: #{{ con.id }}</span>
+                    </div>
+
+                    <div class="mod-body">
+                        <h2>{{ con.title }}</h2>
+                        <p class="mod-text">{{ con.text }}</p>
+                        
+                        {% if con.images %}
+                            <div class="mod-images">
+                                {% for img in con.images %}
+                                    <img src="{{ url_for('static', filename='images/' + img.file) }}" alt="Contribution Image">
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mod-actions">
+                        <form method="POST" style="display: inline;">
+                            {{ form.hidden_tag() }}
+                            <input type="hidden" name="contribution_id" value="{{ con.id }}">
+                            <button type="submit" name="action" value="approve" class="btn-approve">
+                                <i class="fa-solid fa-check"></i> Approve
+                            </button>
+                            <button type="submit" name="action" value="delete" class="btn-delete">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-circle-check"></i>
+            <p>All caught up! No pending contributions.</p>
+            <a href="{{ url_for('home') }}" class="btn-back">Return Home</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

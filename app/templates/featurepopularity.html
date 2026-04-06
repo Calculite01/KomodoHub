@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Feature Popularity - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="sub-container" style="max-width: 800px; margin: 100px auto; padding: 0 20px;">
+    <a href="{{ url_for('home') }}" class="btn-back">
+        <i class="fa-solid fa-arrow-left"></i> Return Home
+    </a>
+    
+    <header class="sub-header" style="text-align: center; margin: 30px 0;">
+        <h1 style="color: #1e293b;">Feature Popularity</h1>
+        <p style="color: #64748b;">Tracking total engagement across core modules</p>
+    </header>
+
+    {% if stats %}
+    <div class="stats-grid" style="display: grid; gap: 20px;">
+        
+        <div class="pop-card">
+            <div class="pop-info">
+                <span><i class="fa-solid fa-gamepad"></i> Game Center</span>
+                <strong>{{ stats.game_visits }} visits</strong>
+            </div>
+        </div>
+
+        <div class="pop-card">
+            <div class="pop-info">
+                <span><i class="fa-solid fa-code"></i> Programs</span>
+                <strong>{{ stats.program_visits }} visits</strong>
+            </div>
+        </div>
+
+        <div class="pop-card">
+            <div class="pop-info">
+                <span><i class="fa-solid fa-comments"></i> Common Room</span>
+                <strong>{{ stats.common_room_visits }} visits</strong>
+            </div>
+        </div>
+
+    </div>
+    {% else %}
+        <p style="text-align: center; color: #94a3b8;">No data recorded yet.</p>
+    {% endif %}
+</div>
+
+<style>
+    .pop-card {
+        background: white;
+        padding: 25px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        transition: 0.3s;
+    }
+    .pop-card:hover {
+        border-color: #6366f1;
+        transform: translateY(-3px);
+    }
+    .pop-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.1rem;
+    }
+    .pop-info i {
+        margin-right: 10px;
+        color: #6366f1;
+    }
+    .pop-info strong {
+        color: #1e293b;
+        background: #f8faff;
+        padding: 5px 15px;
+        border-radius: 8px;
+    }
+    .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background-color: #ffffff;
+    color: #228B22; /* Komodo Green */
+    border: 2px solid #228B22;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+    .btn-back:hover {
+        background-color: #228B22;
+        color: #ffffff;
+        transform: translateX(-5px);
+        box-shadow: 0 6px 12px rgba(34, 139, 34, 0.2);
+    }
+
+    /* Icon specific sizing */
+    .btn-back i {
+        font-size: 0.85rem;
+        transition: transform 0.3s ease;
+    }
+
+    /* Subtle icon bounce on hover */
+    .btn-back:hover i {
+        transform: scale(1.2);
+    }
+</style>
+{% endblock %}

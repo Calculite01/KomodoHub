@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/workshop.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="contributions-container">
+    
+    <div class="back-navigation">
+        <a href="{{ url_for('organization', orgid=orgid) }}" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Organisation Page
+        </a>
+    </div>
+
+    <div class="workshop-header">
+        {% if current_org.type == "School" %}
+            <h1>School Library</h1>
+        {% else %}
+            <h1>Community Library</h1>
+        {% endif %}
+    </div>
+
+    <div class="post-card">
+        <h3 style="margin-bottom: 15px;">Contribute to Library</h3>
+        
+        <form action="{{ url_for('library', orgid=orgid) }}" 
+            method="POST" 
+            enctype="multipart/form-data">
+            
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form.title(placeholder="Give your contribution a title", 
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;") }}
+            </div>
+
+            <div class="form-group" style="margin-bottom: 15px;">
+                {{ form.text(placeholder="Explain your work or process...", 
+                            style="width: 100%; height: 100px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;") }}
+            </div>
+            
+            <div id="image-preview-container" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;"></div>
+
+            <div class="upload-row" style="display: flex; align-items: center; justify-content: space-between;">
+                <label class="custom-file-upload" style="background: #f1f5f9; padding: 10px 18px; border-radius: 8px; cursor: pointer; border: 1px solid #e2e8f0; font-size: 0.9rem;">
+                    <i class="fa-solid fa-camera" style="color: #228B22; margin-right: 5px;"></i> Add Images
+                    {{ form.images(id="image-upload", class="hidden-file-input", multiple=True, onchange="previewImages()", style="display:none;") }}
+                </label>
+                
+                {{ form.submit(class="add-btn", style="background: #228B22; color: white; border: none; padding: 10px 30px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 1rem;") }}
+            </div>
+        </form>
+    </div>
+
+    <div class="activity-feed">
+        {% for con in contributions %}
+            <div class="activity-card">
+                <div class="activity-card-header">
+                    <div class="user-meta">
+                        {% if con.user == "Student" and current_user.organization_id != current_org.id and current_org.type == "School" %}
+                        <strong>{{ con.user.first_name }} {{ con.user.last_name }}</strong>
+                        {% else %}
+                            <strong>Student at {{ current_org.name  }}</strong>
+                        {% endif %}
+                        <small>{{ con.time_of_creation.strftime('%b %d, %H:%M') }}</small>
+                    </div>
+
+                    {% if con.user_id == current_user.id or current_user.role == 'teacher' %}
+                    <button type="button" class="delete-icon-btn" onclick="openDeleteModal('{{ url_for('delete_contribution', con_id=con.id) }}')">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    {% endif %}
+                </div>
+
+               <div class="activity-body" style="padding: 20px;">
+                    <div class="contribution-title-wrapper" style="margin-bottom: 12px;">
+                        <h3 class="contribution-title" style="margin: 0; color: #1a1a1a; font-size: 1.15rem; font-weight: 700; line-height: 1.3;">
+                            {{ con.title }}
+                        </h3>
+                    </div>
+                    <p style="white-space: pre-wrap; line-height: 1.5; color: #333; margin: 0;">{{ con.text }}</p>
+
+                    {% if con.images %}
+                    <div class="contribution-gallery">
+                        {% for img in con.images %}
+                            <a href="{{ url_for('static', filename='images/' + img.file) }}" target="_blank">
+                                <img src="{{ url_for('static', filename='images/' + img.file) }}" 
+                                    class="contribution-img" 
+                                    alt="Student Work">
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="replies-section" style="background: #fdfdfd; border-top: 1px solid #eee; padding: 15px 20px;">
+                        <h4 style="font-size: 0.8rem; color: #888; margin-bottom: 10px; text-transform: uppercase;">Discussion</h4>
+                        
+                        <div class="reply-list" style="margin-bottom: 15px;">
+                            {% for reply in con.replies %}
+                                <div class="reply-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #f0f0f0;">
+                                    <div style="font-size: 0.9rem;">
+                                        {% if reply.user == "Student" and current_user.organization_id != current_org.id and current_org.type == "School" %}
+                                        <strong style="color: #228B22;">{{ reply.user.first_name }} {{ reply.user.last_name }}:</strong>
+                                        {% else %}
+                                         <strong style="color: #228B22;">Student at {{ current_org.name  }}</strong>
+                                        {% endif %}
+                                        <span style="color: #444;">{{ reply.text }}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <small style="color: #bbb; font-size: 0.75rem;">{{ reply.time_of_creation.strftime('%H:%M') }}</small>
+                                        
+                                        {% if reply.user_id == current_user.id or current_user.role == 'teacher' %}
+                                            <button type="button" onclick="openDeleteModal('{{ url_for('delete_reply', reply_id=reply.id) }}')" 
+                                                    style="background: none; border: none; color: #ffbcbc; cursor: pointer; font-size: 0.8rem;">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <form action="{{ url_for('add_reply', con_id=con.id) }}" method="POST" style="display: flex; gap: 10px;">
+                            {{ reply_form.hidden_tag() }}
+                            <div style="flex-grow: 1;">
+                                {{ reply_form.text(placeholder="Write a reply...", style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; font-size: 0.85rem;") }}
+                            </div>
+                            <button type="submit" style="background: #228B22; color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                                Reply
+                            </button>
+                        </form>
+                    </div>
+                </div>  
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Remove Contribution?</h3>
+        <p>This action cannot be undone.</p>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+            <button onclick="closeDeleteModal()" class="cancel-btn">Cancel</button>
+            <form id="confirmDeleteForm" method="POST">
+                {{ form.hidden_tag() }}
+                <button type="submit" class="confirm-delete-btn">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/workshop.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,115 @@
+.moderate-container {
+    max-width: 900px;
+    margin: 100px auto 50px;
+    padding: 0 20px;
+}
+
+.mod-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.mod-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-left: 5px solid #eab308; /* Yellow for pending */
+}
+
+.mod-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.mod-body h2 {
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.mod-text {
+    white-space: pre-wrap; /* Preserves line breaks from text area */
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.mod-images {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.mod-images img {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.mod-actions {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.btn-approve, .btn-delete {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-approve {
+    background: #22c55e;
+    color: white;
+}
+
+.btn-approve:hover { background: #16a34a; }
+
+.btn-delete {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-delete:hover { background: #dc2626; }
+
+.empty-state {
+    text-align: center;
+    padding: 100px 0;
+    color: #64748b;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #22c55e;
+    margin-bottom: 20px;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 25px;
+    background-color: transparent;
+    color: var(--komodo-green);
+    border: 2px solid var(--komodo-green);
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: var(--komodo-green);
+    color: rgb(50, 200, 120);
+    transform: translateY(-2px);
+}

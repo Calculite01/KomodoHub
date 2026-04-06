@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Subscription Data - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/subscriptions.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div class="sub-container">
+    <div class="navigation-top">
+        <a href="{{ url_for('home') }}" class="btn-back">
+            <i class="fa-solid fa-arrow-left"></i> Return Home
+        </a>
+    </div>
+    <header class="sub-header">
+        <h1>Organization Subscriptions</h1>
+        <div class="sub-count-badge">
+            There are <strong>{{ organisations|length }}</strong> organisations subscibed to Komodo Hub
+        </div>
+    </header>
+
+    <div class="org-list">
+        <table class="sub-table">
+            <thead>
+                <tr>
+                    <th>Icon</th>
+                    <th>Organization Name</th>
+                    <th>Type</th>
+                    <th>Members</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for org in organisations %}
+                <tr>
+                    <td>
+                        <img src="{{ url_for('static', filename='images/' + org.icon) }}" 
+                             alt="Icon" class="org-icon-mini">
+                    </td>
+                    <td class="org-name-cell">{{ org.name }}</td>
+                    <td><span class="type-tag">{{ org.org_type }}</span></td>
+                    <td>{{ org.users|length }} Users</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
