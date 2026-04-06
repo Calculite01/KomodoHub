@@ -204,6 +204,8 @@ def register():
         otp = generate_otp(email) 
         send_otp_email(recipient_email=email, otp=otp)
         flash("OTP sent to email. Please enter OTP", 'notification')
+    else:
+        flash("Registration failed", "failure")
 
     if otpform.submit_btn.data and otpform.validate_on_submit():
         email = session.get('verify_registration_email')

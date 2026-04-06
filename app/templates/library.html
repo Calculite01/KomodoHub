@@ -14,7 +14,7 @@
     </div>
 
     <div class="workshop-header">
-        {% if current_org.type == "School" %}
+        {% if current_org.org_type == "School" %}
             <h1>School Library</h1>
         {% else %}
             <h1>Community Library</h1>
@@ -58,7 +58,7 @@
             <div class="activity-card">
                 <div class="activity-card-header">
                     <div class="user-meta">
-                        {% if con.user == "Student" and current_user.organization_id != current_org.id and current_org.type == "School" %}
+                        {% if con.user == "Student" and current_user.organization_id != current_org.id and current_org.org_type == "School" %}
                         <strong>{{ con.user.first_name }} {{ con.user.last_name }}</strong>
                         {% else %}
                             <strong>Student at {{ current_org.name  }}</strong>
@@ -101,7 +101,7 @@
                             {% for reply in con.replies %}
                                 <div class="reply-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #f0f0f0;">
                                     <div style="font-size: 0.9rem;">
-                                        {% if reply.user == "Student" and current_user.organization_id != current_org.id and current_org.type == "School" %}
+                                        {% if reply.user == "Student" and current_user.organization_id != current_org.id and current_org.org_type == "School" %}
                                         <strong style="color: #228B22;">{{ reply.user.first_name }} {{ reply.user.last_name }}:</strong>
                                         {% else %}
                                          <strong style="color: #228B22;">Student at {{ current_org.name  }}</strong>
