@@ -1336,6 +1336,7 @@ def publiclibraryprograms():
 
 
 @app.route("/games",methods=["GET"])
+@login_required
 def games():
     track_visit("game_visits")
     return render_template("games.html")

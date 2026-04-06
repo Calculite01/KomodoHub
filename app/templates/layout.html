@@ -18,12 +18,21 @@
         {% endwith %}
     </div>
     <header class="navbar">
-        <a href="{{ url_for('home') }}" class="logo-link">
-            <div class="logo-group">
-                <i class="fa-solid fa-paw"></i>
-                <h1>Komodo Hub</h1>
-            </div>
-        </a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('home') }}" class="logo-link">
+                <div class="logo-group">
+                    <i class="fa-solid fa-paw"></i>
+                    <h1>Komodo Hub</h1>
+                </div>
+            </a>
+        {% else %}
+            <a href="{{ url_for('index') }}" class="logo-link">
+                <div class="logo-group">
+                    <i class="fa-solid fa-paw"></i>
+                    <h1>Komodo Hub</h1>
+                </div>
+            </a>
+        {% endif %}
 
         <nav class="nav-links">
             <a href="{{ url_for('publiclibrary') }}">Public Library</a>

@@ -38,7 +38,7 @@
             </p>
 
             <div class="org-nav-links" style="display: flex; gap: 15px; flex-wrap: wrap;">
-                {% if current_org.type == "School" %}
+                {% if current_org.org_type == "School" %}
                     <a href="{{ url_for('library', orgid=orgid) }}" class="org-link">
                         <i class="fa-solid fa-book"></i> School Library
                     </a>
