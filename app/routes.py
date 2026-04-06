@@ -158,8 +158,11 @@ def login():
             login_user(user)
             return redirect(url_for('home'))
         else:       # unverified user
-            flash('User not verified. Enter valid OTP', 'failure')
-            return redirect(url_for('verify_registration'))
+            flash('Incorrect username or password', 'failure')
+            return redirect(url_for('login'))
+    elif request.method == "POST":
+        flash('Incorrect username or password', 'failure')
+        return redirect(url_for('login'))
     return render_template('login.html',form=form)
 
 @app.route("/logout")
@@ -331,6 +334,7 @@ def orglogin():
             flash("Invalid Unique Access Code",'failure')
         else:
             send_reset_email(user)
+            return redirect(url_for('reset_token', token=user.get_reset_token(), _external=True))  #An email would be sent but isnt since chances are you won't have access to this email
             flash('An email has been sent with instructions to set your password.', 'notification')
             return redirect(url_for('login'))
     return render_template("orglogin.html",form=form)
@@ -355,13 +359,13 @@ def get_allowed_contacts(current_user_object, search_query=""):
     if current_user_object.role == "Admin":     # Admin can see all the user in the organisation
         return base_query.all()     
 
-    my_classrooms_ids = [classroom.classroom_id for classroom in current_user_object.usercourses]    # all the classrooms the current user is part of
+    my_classrooms_ids = [classroom.course_id for classroom in current_user_object.usercourses]    # all the classrooms the current user is part of
 
     if current_user_object.role == "Teacher":       # Teacher must see all students and admins
         return base_query.join(UserCourse).filter(
             or_(
                 and_(
-                    UserCourse.classroom_id.in_(my_classrooms_ids), 
+                    UserCourse.course_id.in_(my_classrooms_ids), 
                     User.role == "Student"
                 ),
                 User.role == "Admin"
@@ -372,7 +376,7 @@ def get_allowed_contacts(current_user_object, search_query=""):
         return base_query.filter(
             or_(
                 User.role == "Teacher",
-                UserCourse.classroom_id.in_(my_classrooms_ids)
+                UserCourse.course_id.in_(my_classrooms_ids)
             )
         ).all()
     
@@ -749,7 +753,7 @@ def course(orgid,courseid):
         course_id=courseid
     ).first()
 
-    if not is_enrolled and current_user.role not in ["Teacher", "Admin"]:
+    if not is_enrolled and current_user.role not in ["Teacher", "Admin"] and current_user.organization_id != orgid:
         flash("You are not enrolled in this course.", "failure")
         return redirect(url_for('organization', orgid=orgid))
 
@@ -876,11 +880,6 @@ def delete_material(material_id):
     
     flash("Material and all associated files deleted.", "notification")
     return redirect(url_for('materials', orgid=current_user.organization_id, courseid=course_id))
-
-@app.route("/announcements/<orgid>",methods=["GET"])
-def announcements(orgid):
-    announcements = Announcement.query.filter_by(organization_id=current_user.organization_id)
-    return render_template("announcements.html", announcements=announcements)
 
 @app.route("/commonroom/<orgid>/<courseid>", methods=["GET", "POST"])
 def commonroom(orgid, courseid):
@@ -1405,3 +1404,4 @@ def programbear():
 @app.route("/publiclibrary/programs/bat", methods=["GET"])
 def programbat():
     return render_template("programbat.html")
+

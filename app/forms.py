@@ -213,4 +213,3 @@ class OrganizationForm(FlaskForm):
         FileAllowed(['jpg', 'png', 'jpeg'])
     ])
     submit_btn = SubmitField('Create Organization')
-    
