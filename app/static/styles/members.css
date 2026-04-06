@@ -1,0 +1,128 @@
+.members-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.members-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.btn-back {
+    text-decoration: none;
+    color: #666;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.add-btn {
+    background-color: #228B22; /* Forest Green */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 50px; /* Pill shape */
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Space between + and text */
+    box-shadow: 0 4px 6px rgba(34, 139, 34, 0.2);
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    background-color: #1A3C1A; /* Darker Green */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.add-btn:active {
+    transform: translateY(0);
+}
+.member-section h3 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    color: #1A3C1A;
+    margin-top: 30px;
+}
+
+.member-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: #1A3C1A;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.student-avatar {
+    background: #228B22;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: #d9534f;
+    cursor: pointer;
+    padding: 8px;
+    transition: transform 0.2s;
+}
+
+.remove-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Minimalist Modal Styling */
+.modal-content {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-10%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.btn-primary {
+    background-color: #228B22;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}

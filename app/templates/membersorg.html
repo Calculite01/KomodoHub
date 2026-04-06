@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Members - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/members.css') }}">
+{% endblock head %}
+{% block content %}
+<div class="members-container">
+    <div class="members-header">
+        <div class="header-left">
+            <a href="{{ url_for('organization', orgid=orgid) }}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Course
+            </a>
+            <h1>Organisation Members</h1>
+        </div>
+        
+        {% if current_user.role in ["Sysadmin", "Admin"] %}
+        <button type="button" class="add-btn" onclick="document.getElementById('addMemberModal').style.display='block'">
+            + Add Participant
+        </button>
+        {% endif %}
+        <div id="addMemberModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); backdrop-filter: blur(2px);">
+            <div class="modal-content" style="background-color:white; margin:10% auto; padding:30px; border-radius:12px; width:100%; max-width:450px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin:0; color:#1e293b; font-size: 1.4rem;">Register Member</h3>
+                    <span onclick="document.getElementById('addMemberModal').style.display='none'" 
+                        style="font-size: 24px; color: #94a3b8; cursor:pointer; line-height: 1;">&times;</span>
+                </div>
+
+                <form method="POST" action="{{ url_for('membersorg', orgid=orgid) }}" >
+                    {{ form.hidden_tag() }}
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        {{ form.first_name.label(style="display:block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #475569;") }}
+                        {{ form.first_name(class="form-control", placeholder="e.g. Alex", 
+                            style="width:100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;") }}
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        {{ form.last_name.label(style="display:block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #475569;") }}
+                        {{ form.last_name(class="form-control", placeholder="e.g. Smith", 
+                            style="width:100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;") }}
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        {{ form.email.label(style="display:block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #475569;") }}
+                        {{ form.email(class="form-control", placeholder="email@org.com", 
+                            style="width:100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;") }}
+                        
+                        {% if form.email.errors %}
+                            {% for error in form.email.errors %}
+                                <small style="color: #dc3545; display: block; margin-top: 4px;">{{ error }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        {{ form.role.label(style="display:block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: #475569;") }}
+                        {{ form.role(class="form-control", 
+                            style="width:100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; box-sizing: border-box;") }}
+                    </div>
+
+                    <div>
+                        {{ form.submit(class="btn-primary", style="width:100%; background: #228B22; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem;") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <section class="member-section">
+        <h3><i class="fa-solid fa-chalkboard-user"></i> Teachers</h3>
+        <div class="member-list">
+            {% for teacher in teachers %}
+            <div class="member-card">
+                <div class="member-info">
+                    <div class="avatar">{{ teacher.first_name[0] }}{{ teacher.last_name[0] }}</div>
+                    <span>{{ teacher.first_name }} {{ teacher.last_name }}</span>
+                </div>
+                {% if current_user.role in ["Teacher", "Admin"] and teacher.id != current_user.id %}
+                <form action="{{ url_for('remove_member', orgid=orgid, userid=teacher.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <button type="button" class="remove-btn" title="Remove User" onclick="requestDelete(this)">
+                        <i class="fa-solid fa-user-minus"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="member-section">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Students ({{ students|length }})</h3>
+        <div class="member-list">
+            {% for student in students %}
+            <div class="member-card">
+                <div class="member-info">
+                    <div class="avatar student-avatar">{{ student.first_name[0] }}{{ student.last_name[0] }}</div>
+                    <span>{{ student.first_name }} {{ student.last_name }}</span>
+                </div>
+                {% if current_user.role in ["Teacher", "Admin"] %}
+                <form action="{{ url_for('remove_member', orgid=orgid, userid=student.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <button type="button" class="remove-btn" title="Remove User" onclick="requestDelete(this)">
+                        <i class="fa-solid fa-user-minus"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+
+    {% if current_user.role in ["Admin","Sysadmin"] %}
+    <section class="member-section unverified-section" style="margin-top: 50px; border-top: 2px dashed #cbd5e1; padding-top: 30px;">
+        <h3 style="color: #64748b;"><i class="fa-solid fa-clock-rotate-left"></i> Pending Registrations (Unverified)</h3>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">These users must use their access code to verify their account.</p>
+        
+        <div class="member-list">
+            {% for user in unverified_users %}
+            <div class="member-card" style="border-color: #e2e8f0; background: #f8fafc;">
+                <div class="member-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="avatar" style="background: #94a3b8;">{{ user.first_name[0] }}{{ user.last_name[0] }}</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-weight: 600;">{{ user.first_name }} {{ user.last_name }}</span>
+                            <small style="color: #64748b;">{{ user.role }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="access-code-badge" style="background: #1e293b; color: #38bdf8; padding: 5px 12px; border-radius: 6px; font-family: monospace; font-weight: bold; border: 1px solid #38bdf8;">
+                        <i class="fa-solid fa-key" style="font-size: 0.8rem; margin-right: 5px;"></i>
+                        {{ user.uniqueAccessCode }}
+                    </div>
+                </div>
+                {% if current_user.role in ["Teacher", "Admin"] %}
+                <form action="{{ url_for('remove_member', orgid=orgid, userid=user.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <button type="button" class="remove-btn" title="Remove User" onclick="requestDelete(this)">
+                        <i class="fa-solid fa-user-minus"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% else %}
+            <p style="color: #94a3b8; font-style: italic;">No pending unverified users.</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<div id="deleteConfirmModal" class="modal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); backdrop-filter: blur(4px);">
+    <div class="modal-content" style="background-color:white; margin:15% auto; padding:30px; border-radius:12px; width:100%; max-width:400px; text-align:center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+        <div style="color: #dc3545; font-size: 3rem; margin-bottom: 15px;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 style="margin:0 0 10px 0; color:#1e293b;">Delete Account?</h3>
+        <p style="color:#64748b; line-height:1.5; margin-bottom:25px;">
+            Are you sure? This will permanently remove this user from the organization. 
+            <br><strong style="color:#dc3545;">This action cannot be undone.</strong>
+        </p>
+        
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <button type="button" onclick="closeDeleteModal()" 
+                    style="flex:1; padding:12px; border-radius:8px; border:1px solid #cbd5e1; background:white; cursor:pointer; font-weight:600; color:#475569;">
+                Cancel
+            </button>
+            <button type="button" id="confirmDeleteBtn" 
+                    style="flex:1; padding:12px; border-radius:8px; border:none; background:#dc3545; color:white; cursor:pointer; font-weight:700;">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+<script src="/static/scripts/membersorg.js"></script>
+{% endblock content %}

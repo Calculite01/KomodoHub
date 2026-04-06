@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Tasks - Komodo Hub</title>
+{% endblock head%}
+{% block content %}
+<a href="{{ url_for('createtask') }}">Create new task</a>
+{% for task in tasks %}
+    <div>Task Name - Submitted</div>
+    <div>{{ task.task.name }} - {{ task.submitted }} - <button>Remove Task(for teacher only)</button></div>
+{% endfor %}
+{% endblock content %}

@@ -1,12 +1,129 @@
 {% extends "layout.html" %}
+
 {% block head %}
-<title>Organisation - Komodo Hub</title>
-{% endblock head%}
+    <title>{{ current_org.name }} - Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/organisationpage.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
 {% block content %}
-<h1>{{ current_user.organization.name }}</h1>
-<a href="{{ url_for('chat', orgid=current_user.organization_id) }}">Chat</a>
-<a href="{{ url_for('tasks',orgid=current_user.organization_id) }}">Tasks</a>
-<a href="{{ url_for('classrooms',orgid=current_user.organization_id) }}">Classrooms</a>
-<a href="{{ url_for('announcements',orgid=current_user.organization_id) }}">Announcements</a>
-<a href=""></a>
+<div class="org-container">
+    <div class="nav-top">
+        <a href="{{ url_for('home') }}" class="btn-home">
+            <i class="fa-solid fa-house"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <header class="org-header" style="display: flex; align-items: center; gap: 30px; margin-bottom: 40px; border-bottom: 1px solid #e2e8f0; padding-bottom: 30px;">
+        <div class="org-brand-icon">
+            <img src="{{ url_for('static', filename='images/' + (current_org.icon or 'default_org.jpg')) }}" 
+                 alt="School Logo" 
+                 style="width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 1px solid #eee;"
+                 href="{{ url_for('static', filename='images/default_org.jpg') }}">
+        </div>
+
+        <div class="org-info-block" style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 class="org-title" style="margin: 0; color: #1e293b;">{{ current_org.name }}</h1>
+                
+                {% if current_user.role in ['Admin', 'Teacher'] and current_user.organization_id == current_org.id %}
+                    <button class="add-course-btn" onclick="document.getElementById('courseModal').style.display='block'">
+                        <i class="fa-solid fa-plus-circle"></i> Create Course
+                    </button>
+                {% endif %}
+            </div>
+
+            <p class="org-description" style="color: #64748b; margin: 12px 0; line-height: 1.6; font-size: 1.1rem;">
+                {{ current_org.description or "Welcome to our institution. Explore our specialized courses and materials below." }}
+            </p>
+
+            <div class="org-nav-links" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                {% if current_org.type == "School" %}
+                    <a href="{{ url_for('library', orgid=orgid) }}" class="org-link">
+                        <i class="fa-solid fa-book"></i> School Library
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('library', orgid=orgid) }}" class="org-link">
+                        <i class="fa-solid fa-book"></i> Community Library
+                    </a>
+                {% endif %}
+
+                {% if current_user.organization_id == current_org.id and current_user.role in ["Admin", "Manager", "Teacher"] %}
+                <a href="{{ url_for('membersorg', orgid=orgid) }}" class="org-link">
+                    <i class="fa-solid fa-users"></i> Member Directory
+                </a>
+                {% endif %}
+
+                {% if current_user.organization_id == current_org.id %}
+                <a href="{{ url_for('chat', orgid=orgid) }}" class="org-link">
+                    <i class="fa-solid fa-comments"></i> Organization Chat
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    {% if current_org.org_type in ["School", "Community"] %}
+    <h2 style="margin-bottom: 20px; color: #1e293b;">Courses</h2>
+    <div class="course-grid">
+        {% for course in courses %}
+        <div class="course-card">
+            <div class="course-banner">
+                <div class="course-icon-wrapper">
+                    <img src="{{ url_for('static', filename='images/' + (course.icon or 'default_course.jpg')) }}" 
+                         class="course-icon-img" alt="Course Icon"
+                         href="{{ url_for('static', filename='images/default_course.jpg') }}">
+                </div>
+            </div>
+            
+            <div class="course-content">
+                <h3 class="course-title">{{ course.name }}</h3>
+                <p class="course-description">{{ course.description or "No course description available." }}</p>
+                
+                <div class="material-box">
+                    <span>Recent Resources</span>
+                    <ul class="material-list">
+                        {% for mat in course.materials[:3] %}
+                            <li class="material-item">
+                                <i class="fa-solid fa-file-lines" style="color: #228B22; font-size: 0.8rem;"></i> 
+                                {{ mat.title }}
+                            </li>
+                        {% else %}
+                            <li style="color: #cbd5e1; font-style: italic;">No resources yet</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <a href="{{ url_for('course', orgid=orgid, courseid=course.id) }}" class="btn-view-course">
+                    View Course <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div id="courseModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+    <div class="modal-content" style="background:white; margin:5% auto; padding:30px; border-radius:12px; max-width:500px; position:relative;">
+        <span onclick="document.getElementById('courseModal').style.display='none'" style="position:absolute; right:20px; top:15px; cursor:pointer; font-size:24px;">&times;</span>
+        <h3>Create New Course</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div style="margin-bottom: 15px;">
+                {{ form.name.label }}<br>
+                {{ form.name(style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;") }}
+            </div>
+            <div style="margin-bottom: 15px;">
+                {{ form.description.label }}<br>
+                {{ form.description(style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; height:80px;") }}
+            </div>
+            <div style="margin-bottom: 15px;">
+                {{ form.icon.label }}<br>
+                {{ form.icon() }}
+            </div>
+            {{ form.submit(class="btn-view-course", style="border:none; cursor:pointer; width: 100%;") }}
+        </form>
+    </div>
+</div>
 {% endblock content %}
