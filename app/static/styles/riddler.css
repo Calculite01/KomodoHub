@@ -108,4 +108,4 @@ input#answer-input:focus {
 }
 
 #hint-text { color: #facc15; font-style: italic; margin-bottom: 5px; }
-#result-text { font-weight: bold; font-size: 1.1rem; }
+#result-text { font-weight: bold; font-size: 1.1rem; color:white }
