@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>{{ course.name }} - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/course.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock head %}
+
+{% block content %}
+<div class="course-dashboard">
+    
+    <nav style="margin-bottom: 10px;">
+        <a href="{{ url_for('organization', orgid=current_user.organization_id) }}" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Organisation
+        </a>
+    </nav>
+
+    <header class="course-hero">
+        <h1>{{ course.name }}</h1>
+        <p style="opacity: 0.9; margin-top: 8px; font-size: 1rem;">
+            Course ID: {{ course.id }} | Organization Hub
+        </p>
+    </header>
+
+    <main class="nav-grid">
+        
+        <a href="{{ url_for('commonroom', orgid=current_user.organization_id, courseid=course.id) }}" class="nav-card">
+            <div class="icon-box bg-common"><i class="fa-solid fa-comments"></i></div>
+            <div class="card-text">
+                <h3>Common Room</h3>
+                <p>Collaborative discussion space for all students.</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('workshop', orgid=current_user.organization_id, courseid=course.id) }}" class="nav-card">
+            <div class="icon-box bg-workshop"><i class="fa-solid fa-hammer"></i></div>
+            <div class="card-text">
+                <h3>Workshop</h3>
+                <p>Interactive activities and peer contributions.</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('materials', orgid=current_user.organization_id, courseid=course.id) }}" class="nav-card">
+            <div class="icon-box bg-materials"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="card-text">
+                <h3>Materials</h3>
+                <p>Course documents, slides, and references.</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('tasks', orgid=current_user.organization_id, courseid=course.id) }}" class="nav-card">
+            <div class="icon-box bg-tasks"><i class="fa-solid fa-list-check"></i></div>
+            <div class="card-text">
+                <h3>Assignments</h3>
+                <p>Submit work and track upcoming deadlines.</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('members', orgid=current_user.organization_id, courseid=course.id) }}" class="nav-card">
+            <div class="icon-box bg-members"><i class="fa-solid fa-user-group"></i></div>
+            <div class="card-text">
+                <h3>Members</h3>
+                <p>Connect with your instructors and classmates.</p>
+            </div>
+        </a>
+
+    </main>
+</div>
+{% endblock content %}

@@ -1,6 +1,85 @@
 {% extends "layout.html" %}
 {% block head %}
     <title>Members - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/members.css') }}">
+{% endblock head %}
 {% block content %}
+<div class="members-container">
+    <div class="members-header">
+        <div class="header-left">
+            <a href="{{ url_for('course', orgid=orgid, courseid=course.id) }}" class="btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back to Course
+            </a>
+            <h1>Course Participants</h1>
+        </div>
+        
+        {% if current_user.role in ["Teacher", "Admin"] %}
+        <button type="button" class="add-btn" onclick="document.getElementById('addMemberModal').style.display='block'">
+            + Add Participant
+        </button>
+        {% endif %}
+        <div id="addMemberModal" class="modal" style="display:none; position:fixed; z-index:1; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.4);">
+            <div class="modal-content" style="background-color:white; margin:15% auto; padding:20px; border-radius:10px; width:400px;">
+                <span onclick="document.getElementById('addMemberModal').style.display='none'" style="float:right; cursor:pointer;">&times;</span>
+                
+                <h3>Add User to Course</h3>
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.email.label }}<br>
+                        {{ form.email(class="form-control", placeholder="enter@email.com") }}
+                    </div>
+                    <div style="margin-top: 15px;">
+                        {{ form.submit(class="btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <section class="member-section">
+        <h3><i class="fa-solid fa-chalkboard-user"></i> Teachers</h3>
+        <div class="member-list">
+            {% for teacher in teachers %}
+            <div class="member-card">
+                <div class="member-info">
+                    <div class="avatar">{{ teacher.first_name[0] }}{{ teacher.last_name[0] }}</div>
+                    <span>{{ teacher.first_name }} {{ teacher.last_name }}</span>
+                </div>
+                {% if current_user.role in ["Teacher", "Admin"] and teacher.id != current_user.id %}
+                <form action="{{ url_for('remove_participant', courseid=course.id, userid=teacher.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <button type="submit" class="remove-btn" title="Remove Teacher" onclick="return confirm('Remove this teacher?')">
+                        <i class="fa-solid fa-user-minus"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="member-section">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Students ({{ students|length }})</h3>
+        <div class="member-list">
+            {% for student in students %}
+            <div class="member-card">
+                <div class="member-info">
+                    <div class="avatar student-avatar">{{ student.first_name[0] }}{{ student.last_name[0] }}</div>
+                    <span>{{ student.first_name }} {{ student.last_name }}</span>
+                </div>
+                {% if current_user.role in ["Teacher", "Admin"] %}
+                <form action="{{ url_for('remove_participant', courseid=course.id, userid=student.id) }}" method="POST">
+                    {{ form.hidden_tag() }}
+                    <button type="submit" class="remove-btn" title="Remove Student">
+                        <i class="fa-solid fa-user-minus"></i>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+<script src="/static/scripts/members.js"></script>
 {% endblock content %}
