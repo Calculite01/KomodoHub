@@ -1,0 +1,157 @@
+/* Container & Nav */
+.submission-detail-container {
+    max-width: 850px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.back-link {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #228B22;
+}
+
+/* Header Card */
+.header-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.grade-badge {
+    background: #f0fdf4;
+    border: 1px solid #228B22;
+    color: #166534;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+/* File Area */
+.file-download-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #edf2f7;
+}
+
+/* Grading Section */
+.grade-section {
+    background: #ffffff;
+    border: 2px solid #228B22;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #475569;
+}
+
+.styled-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    transition: border-color 0.2s;
+}
+
+.styled-input:focus {
+    border-color: #228B22;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.1);
+}
+
+/* Chat/Replies */
+.replies-section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 30px;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.teacher-msg { align-items: flex-end; }
+.student-msg { align-items: flex-start; }
+
+.bubble {
+    max-width: 80%;
+    padding: 15px;
+    border-radius: 12px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.teacher-bubble {
+    background: #f1f5f9;
+    color: #1e293b;
+    border-bottom-right-radius: 2px;
+}
+
+.student-bubble {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #dcfce7;
+    border-bottom-left-radius: 2px;
+}
+
+/* Buttons */
+.btn-submit-grade {
+    background: #228B22;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-send-reply {
+    background: #228B22;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-submit-grade:hover, .btn-send-reply:hover {
+    opacity: 0.9;
+}

@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/submission_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="submission-detail-container">
+    
+    <nav style="margin-bottom: 25px;">
+        {% if current_user.role == "Teacher" %}
+            <a href="{{ url_for('view_submissions', courseid=usertask.task.course_id) }}" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Submissions Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('tasks', orgid=current_user.organization_id, courseid=usertask.task.course_id) }}" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to Assignments
+            </a>
+        {% endif %}
+    </nav>
+
+    <div class="header-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 style="margin: 0; color: #0f172a;">{{ usertask.task.name }}</h1>
+                <p style="margin: 5px 0 0; color: #64748b;">
+                    Student: <span style="color: #334155; font-weight: 600;">{{ usertask.user.first_name }} {{ usertask.user.last_name }}</span>
+                </p>
+            </div>
+            
+            {% if usertask.grade %}
+            <div style="text-align: right;">
+                <div class="grade-badge">{{ usertask.grade }}%</div>
+                <small style="color: #94a3b8; display: block; margin-top: 5px;">Final Grade</small>
+            </div>
+            {% endif %}
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 25px 0;">
+
+        <div class="file-download-box">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fa-solid fa-file-pdf" style="font-size: 1.5rem; color: #ef4444;"></i>
+                <div>
+                    <span style="display: block; font-weight: 600; font-size: 0.9rem;">Student Submission</span>
+                    <small style="color: #94a3b8;">{{ usertask.submission_file }}</small>
+                </div>
+            </div>
+            <a href="{{ url_for('static', filename='uploads/' + usertask.submission_file) }}" class="btn-submit-grade" style="text-decoration: none; font-size: 0.85rem;" download>
+                <i class="fa-solid fa-download"></i> Download File
+            </a>
+        </div>
+    </div>
+
+    {% if current_user.role == "Teacher" and not usertask.grade %}
+    <div class="grade-section">
+        <h3 style="margin-top: 0; color: #166534;"><i class="fa-solid fa-star"></i> Assign Grade</h3>
+        <form method="POST">
+            {{ grade_form.hidden_tag() }}
+            <div class="form-group">
+                <label class="form-label">Numeric Grade (0-100)</label>
+                {{ grade_form.grade(class="styled-input", placeholder="e.g. 95") }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Initial Feedback</label>
+                {{ grade_form.feedback(class="styled-input", rows="3", placeholder="Tell the student how they did...") }}
+            </div>
+            <button type="submit" name="grade" class="btn-submit-grade">Publish Grade</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="replies-section">
+        <h3 style="margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; font-size: 1.1rem; color: #475569;">
+            <i class="fa-solid fa-comments"></i> Feedback and Discussion
+        </h3>
+        
+        <div class="chat-container">
+            {% for reply in usertask.replies %}
+            <div class="message-wrapper {{ 'teacher-msg' if reply.user.role == 'Teacher' else 'student-msg' }}">
+                <div class="bubble {{ 'teacher-bubble' if reply.user.role == 'Teacher' else 'student-bubble' }}">
+                    <small style="display: block; font-weight: 800; font-size: 0.75rem; margin-bottom: 5px;">{{ reply.user.first_name }}</small>
+                    <p style="margin: 0;">{{ reply.text }}</p>
+                    <small style="display: block; margin-top: 8px; font-size: 0.7rem; opacity: 0.7;">{{ reply.time_of_creation.strftime('%b %d • %I:%M %p') }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #f8fafc; display: flex; gap: 10px;">
+            {{ reply_form.hidden_tag() }}
+            <div style="flex-grow: 1;">
+                {{ reply_form.text(class="styled-input", placeholder="Write a reply...") }}
+            </div>
+            <button type="submit" name="submit_reply" class="btn-send-reply">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/submission.js') }}"></script>
+{% endblock %}

@@ -1,10 +1,127 @@
 {% extends "layout.html" %}
+
 {% block head %}
-    <title>Tasks - Komodo Hub</title>
-{% endblock head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/tasks.css') }}">
+{% endblock %}
+
 {% block content %}
-{% for task in tasks %}
-    <div>Task Name - Submitted</div>
-    <div>{{ task.task.name }} - {{ task.submitted }}</div>
-{% endfor %}
-{% endblock content %}
+<div class="dashboard-wrapper">
+    <nav class="dashboard-nav" style="margin-bottom: 20px;">
+        <a href="{{ url_for('course', orgid=orgid, courseid=courseid) }}" class="back-link">
+            <i class="fa-solid fa-chevron-left"></i> Back to Course
+        </a>
+    </nav>
+
+    <div class="dashboard-header">
+        <div class="welcome-text">
+            <h1><i class="fa-solid fa-list-check"></i> Assignments</h1>
+            <p>Course: <span class="highlight">{{ course.name }}</span></p>
+        </div>
+        
+        <div class="action-buttons">
+            {% if current_user.role == "Teacher" %}
+                <a href="{{ url_for('view_submissions', courseid=courseid) }}" class="btn-stats">
+                    <i class="fa-solid fa-chart-line"></i> View All Submissions
+                </a>
+                <button onclick="toggleCreateForm()" class="btn-add">
+                    <i class="fa-solid fa-plus"></i> New Task
+                </button>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if current_user.role == "Teacher" %}
+    <div id="create-task-container" class="glass-panel hidden">
+        <div class="panel-header">
+            <h3>Assign New Work</h3>
+            <button onclick="toggleCreateForm()" class="close-btn">&times;</button>
+        </div>
+        <form method="POST" class="task-creation-form">
+            {{ create_form.hidden_tag() }}
+            <input type="hidden" name="create_task" value="1">
+            
+            <div class="input-group">
+                <label><i class="fa-solid fa-signature"></i> Assignment Title</label>
+                {{ create_form.name(placeholder="e.g. Komodo Dragon Habitat Analysis", class="form-control") }}
+            </div>
+            
+            <div class="input-group">
+                <label><i class="fa-solid fa-calendar-day"></i> Due Date & Time</label>
+                {{ create_form.due_date(class="form-control") }}
+            </div>
+            
+            <button type="submit" class="btn-submit">Create Assignment</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="task-grid">
+        {% for item in tasks %}
+            {% set task_ref = item.task if current_user.role != "Teacher" else item %}
+            
+            <div class="task-card">
+                <div class="card-status-bar {{ 'teacher-mode' if current_user.role == 'Teacher' else 'student-mode' }}"></div>
+                
+                <div class="card-body">
+                    <div class="task-main-info">
+                        <h3>{{ task_ref.name }}</h3>
+                        <div class="meta-data">
+                            <span class="deadline-pill">
+                                <i class="fa-regular fa-clock"></i> 
+                                {{ task_ref.due_date.strftime('%b %d • %I:%M %p') if task_ref.due_date else 'No Deadline' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if current_user.role != "Teacher" %}
+                        <div class="submission-area">
+                            {% if item.submitted %}
+                                <div class="submitted-info" style="text-align: center;">
+                                    <span style="color: #228B22; font-weight: 600; display: block; margin-bottom: 10px;">
+                                        <i class="fa-solid fa-circle-check"></i> Assignment Submitted
+                                    </span>
+                                    <a href="{{ url_for('view_single_submission', usertask_id=item.id) }}" class="btn-view-results" style="background: #f0fdf4; border: 1px solid #228B22; color: #228B22; display: inline-block; padding: 8px 15px; border-radius: 8px; text-decoration: none;">
+                                        View Grade & Feedback <i class="fa-solid fa-comments"></i>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                                    {{ submit_form.hidden_tag() }}
+                                    <input type="hidden" name="submit_work" value="1">
+                                    <input type="hidden" name="user_task_id" value="{{ item.id }}">
+                                    
+                                    <label class="file-upload-label">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <span>Choose File</span>
+                                        {{ submit_form.file(class="file-input") }}
+                                    </label>
+                                    <button type="submit" class="btn-upload">Submit</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="teacher-actions">
+                            <a href="{{ url_for('view_submissions', courseid=courseid) }}?task_id={{ item.id }}" class="btn-view-results">
+                                Track Submissions <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="Empty" class="empty-img">
+                <p>No assignments due!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleCreateForm() {
+        const panel = document.getElementById('create-task-container');
+        panel.classList.toggle('hidden');
+        panel.style.animation = "slideDown 0.4s ease-out";
+    }
+</script>
+{% endblock %}
