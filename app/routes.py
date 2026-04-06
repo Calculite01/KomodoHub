@@ -745,8 +745,8 @@ def view_single_submission(usertask_id):
                            grade_form=grade_form, 
                            reply_form=reply_form)
 
-@login_required
 @app.route("/course/<orgid>/<courseid>",methods=["GET"])
+@login_required
 def course(orgid,courseid):
     course = Course.query.get_or_404(courseid)
     is_enrolled = UserCourse.query.filter_by(
