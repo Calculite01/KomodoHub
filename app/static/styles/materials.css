@@ -1,0 +1,385 @@
+/* Dark Overlay that covers the whole screen */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Dim the background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+/* The White Box in the middle */
+.modal-content {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #1A3C1A; /* Your dark green */
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.dashboard-container {
+    display: flex;
+    height: calc(100vh - 70px); /* Adjust based on your navbar height */
+    overflow: hidden;
+}
+
+/* SIDEBAR STYLES */
+.materials-sidebar {
+    width: 300px;
+    background-color: #FFFFFF; /* Pure White */
+    border-right: 1px solid #E0E0E0; /* Subtle light gray border */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Soft shadow pointing right */
+}
+
+.sidebar-header {
+    padding: 0 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.materials-nav {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #1A3C1A;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.sidebar-item:hover {
+    border-right: 3px solid #e0e0e0; /* Subtle light gray border */
+}
+
+.sidebar-item.active {
+    /* Transitions from a deep green to a slightly brighter moss green */
+    background: linear-gradient(90deg, #40b440 0%, #4aca50 100%);
+    color: white;
+    font-weight: 600;
+    /* Optional: adds a tiny bit of "lift" */
+    box-shadow: 0 4px 12px rgba(26, 60, 26, 0.2); 
+    border-radius: 0 25px 25px 0; /* Gemini-style rounded right edge */
+    margin-right: 10px; /* Gives it some breathing room from the edge */
+}
+
+.sidebar-back {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    display: block;
+    text-decoration: none;
+    color: #1A3C1A;
+    font-size: 13px;
+    opacity: 0.7;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.sidebar-back:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.02);
+}
+
+/* MAIN CONTENT STYLES */
+.material-viewer {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.material-content-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.select-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #888;
+}
+
+.admin-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.status-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.status-badge.visible { background: #e8f5e9; color: #2e7d32; }
+.status-badge.hidden { background: #ffebee; color: #c62828; }
+
+.btn-icon {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.2s;
+    margin-left: 5px;
+}
+
+.btn-icon:hover {
+    background: #f5f5f5;
+    color: #228B22; /* Your green */
+}
+
+.btn-icon.delete:hover {
+    color: #c62828;
+    border-color: #c62828;
+    background: #fff5f5;
+}
+
+/* Dim the item in the sidebar if it's hidden */
+.sidebar-item.is-hidden {
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Container for Image Thumbnails */
+.preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.img-preview-wrapper img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid #228B22; /* Your Forest Green */
+}
+
+/* Container for Document List */
+.file-list-preview {
+    margin-top: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+}
+
+.doc-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px;
+    font-size: 13px;
+    color: #1A3C1A;
+    border-bottom: 1px solid #eee;
+}
+
+.doc-preview-item i {
+    color: #228B22;
+}
+
+.error-text {
+    color: #d9534f; /* A professional soft red */
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    font-weight: 500;
+}
+
+/* Optional: Highlight the input box red too */
+.form-control.is-invalid {
+    border: 1px solid #d9534f !important;
+    background-color: #fff8f8;
+}
+
+/* Section Headers */
+.material-images-section h3, .material-files-section h3 {
+    font-size: 1.1rem;
+    color: #1A3C1A;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-left: 4px solid #228B22;
+    padding-left: 10px;
+}
+
+/* Image Grid Styling */
+.display-image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; /* Keeps images consistent size */
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.image-wrapper img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* File Download List Styling */
+.file-download-list {
+    background: #f8faf8;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.file-download-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #eef2ee;
+}
+
+.file-download-item i {
+    font-size: 1.5rem;
+    color: #228B22;
+    margin-right: 15px;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    word-break: break-all;
+}
+
+.download-link {
+    font-size: 0.8rem;
+    color: #228B22;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.download-link:hover {
+    text-decoration: underline;
+}
+
+.delete-confirm-box {
+    max-width: 400px;
+    text-align: center;
+    padding: 30px;
+}
+
+.delete-icon-header {
+    font-size: 3rem;
+    color: #d9534f;
+    margin-bottom: 15px;
+}
+
+.delete-confirm-box h3 {
+    color: #1A3C1A;
+    margin-bottom: 10px;
+}
+
+.delete-confirm-box p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+.btn-secondary {
+    background: #eee;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.add-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%; /* Perfect circle */
+    background-color: #ffffff;
+    color: #228B22; /* Your Forest Green */
+    border: 1px solid #e0e0e0;
+    font-size: 24px;
+    font-weight: 300;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.add-btn:hover {
+    background-color: #f8faf8;
+    transform: translateY(-2px); /* Slight lift */
+    box-shadow: 0 6px 12px rgba(34, 139, 34, 0.2);
+    color: #1A3C1A;
+}

@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>Materials - Komodo Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/materials.css') }}">
+{% endblock head %}
+
+{% block content %}
+<div id="createtask" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <h3>New Course Material</h3>
+            
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(class="form-control", id="title-input") }}
+                <small id="title-error" class="error-text"></small> 
+            </div>
+
+            <div class="form-group">
+                {{ form.text.label }} {{ form.text(class="form-control", rows="5") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.images.label }}
+                {{ form.images(class="form-control-file", id="image-input", multiple=True) }}
+                <small id="image-error" class="error-text"></small> <div id="image-preview-container" class="preview-grid"></div>
+            </div>
+            <div class="form-group">
+                {{ form.documents.label }}
+                {{ form.documents(class="form-control-file", id="doc-input", multiple=True) }}
+                <small id="doc-error" class="error-text"></small> <div id="doc-preview-container" class="file-list-preview"></div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form.submit(class="sign-in") }} 
+                <button type="button" id="closeTaskButton" class="btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="delete-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content delete-confirm-box">
+        <div class="delete-icon-header">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3>Delete Material?</h3>
+        <p>This action cannot be undone. All images and documents attached to this material will be removed.</p>
+        
+        <div class="modal-footer">
+            <button type="button" onclick="closeDeleteModal()" class="btn-secondary">Cancel</button>
+            <button type="button" onclick="confirmDelete()" class="btn-danger">Delete Permanently</button>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-container">
+    <aside class="materials-sidebar">
+        <div class="sidebar-top-nav">
+        <a href="{{ url_for('course', orgid=orgid, courseid=courseid) }}" class="sidebar-back">
+            <i class="fa-solid fa-chevron-left"></i> All Courses
+        </a>
+        </div>
+        <div class="sidebar-header">
+            <h3>Materials</h3>
+            {% if current_user.role in ["Teacher", "Admin"] %}
+                <button id="createTaskButton" class="add-btn">+</button>
+            {% endif %}
+        </div>
+        
+        <nav class="materials-nav">
+            {% if materials %}
+                {% for material in materials %}
+                    {% if material.is_visible or current_user.role in ["Teacher", "Admin"] %}
+                        <a href="{{ url_for('materials', orgid=current_user.organization_id, courseid=courseid, selected_id=material.id) }}" 
+                        class="sidebar-item {% if selected_material and selected_material.id == material.id %}active{% endif %}">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>{{ material.title }}</span>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p class="empty-msg" style="padding-left: 20px;">No materials yet.</p>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <main class="material-viewer">
+        {% if selected_material %}
+            <div class="material-content-card">
+                {% if current_user.role in ["Teacher", "Admin"] %}
+                    <div class="admin-controls">
+                        <span class="status-badge {{ 'visible' if selected_material.is_visible else 'hidden' }}">
+                            {{ 'Visible' if selected_material.is_visible else 'Invisible' }}
+                        </span>
+                        
+                        <div class="action-buttons">
+                            <form action="{{ url_for('toggle_visibility', material_id=selected_material.id) }}" method="POST" style="display:inline;">
+                                {{ form.hidden_tag() }}
+                                <button type="submit" class="btn-icon" title="Toggle Visibility">
+                                    <i class="fa-solid {{ 'fa-eye-slash' if selected_material.is_visible else 'fa-eye' }}"></i>
+                                </button>
+                            </form>
+
+                        <form id="delete-form-{{ selected_material.id }}" action="{{ url_for('delete_material', material_id=selected_material.id) }}" method="POST" style="display:inline;">
+                            {{ form.hidden_tag() }}
+                            <button type="button" class="btn-icon delete" title="Delete Material" onclick="openDeleteModal('delete-form-{{ selected_material.id }}')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <h1>{{ selected_material.title }}</h1>
+                <hr style="margin-top: 10px; margin-bottom: 10px;">
+                <div class="material-text">
+                    {{ selected_material.text }}
+                    </div>
+
+                    {% if selected_material.images %}
+                        <div class="material-images-section">
+                            <h3>Images</h3>
+                            <div class="display-image-grid">
+                                {% for img in selected_material.images %}
+                                    <div class="image-wrapper">
+                                        <a href="{{ url_for('static', filename='images/' + img.file) }}" target="_blank">
+                                            <img src="{{ url_for('static', filename='images/' + img.file) }}" alt="Material Image">
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if selected_material.files %}
+                        <div class="material-files-section">
+                            <h3>Attachments</h3>
+                            <div class="file-download-list">
+                                {% for doc in selected_material.files %}
+                                    <div class="file-download-item">
+                                        <i class="fa-solid fa-file-arrow-down"></i>
+                                        <div class="file-info">
+                                            <span class="file-name">{{ doc.file }}</span>
+                                            <a href="{{ url_for('static', filename='uploads/' + doc.file) }}" download class="download-link">
+                                                Download File
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+        {% endif %}
+    </main>
+</div>
+
+<script src="/static/scripts/materials.js"></script>
+{% endblock content %}
