@@ -9,9 +9,15 @@
 {% block content %}
 <div class="schools-container">
     <nav class="schools-nav" style="margin-bottom: 20px;">
-        <a href="{{ url_for('home') }}" class="back-link">
-            <i class="fa-solid fa-house"></i> Back to Home
-        </a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('home') }}" class="back-link">
+                <i class="fa-solid fa-house"></i> Back to Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('index') }}" class="back-link">
+                <i class="fa-solid fa-house"></i> Back to Dashboard
+            </a>
+        {% endif %} 
     </nav>
     <header class="schools-header">
         <h1>Discover Schools</h1>
