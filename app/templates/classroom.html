@@ -1,9 +1,0 @@
-{% extends "layout.html" %}
-{% block head %}
-    <title>Classroom - Komodo Hub</title>
-{% endblock head%}
-{% block content %}
-<a href="{{ url_for('commonroom',orgid=current_user.organization_id,classid=classid) }}">Common Room</a>
-<a href="{{ url_for('classtasks',orgid=current_user.organization_id,classid=classid) }}">Tasks</a>
-<a href="{{ url_for('members',orgid=current_user.organization_id,classid=classid) }}">Members</a>
-{% endblock content %}
