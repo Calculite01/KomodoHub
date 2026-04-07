@@ -238,9 +238,6 @@ with app.app_context():
     db.session.add(individual)
     db.session.commit()
 
-    db.session.add(individual)
-    db.session.commit()
-
     #Courses for Coventry university
     course_rhinos = Course(
     name="Wildlife Conservation: The Rhino Project", 
