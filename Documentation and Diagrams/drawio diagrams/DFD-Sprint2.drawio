@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram name="Page-1" id="li-06dJhVVrc-qupGMzl">
-        <mxGraphModel dx="2690" dy="3165" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+        <mxGraphModel dx="-803" dy="1907" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -20,6 +20,9 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="3" value="Participate in games" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="a9lJfSfJJjWHiSIlEpBC-12" target="2">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="a9lJfSfJJjWHiSIlEpBC-12" value="Student" style="ellipse;whiteSpace=wrap;html=1;fontStyle=1;fillColor=light-dark(#FFE6CC,#AE6C23);strokeColor=#d79b00;" parent="1" vertex="1">
                     <mxGeometry x="3330" y="775" width="120" height="80" as="geometry"/>
                 </mxCell>
@@ -33,7 +36,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="a9lJfSfJJjWHiSIlEpBC-109" value="&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Send &amp;amp; Receive Messages&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=#BAC8D3;fontColor=#EEEEEE;fillColor=#09555B;fontStyle=0" parent="a9lJfSfJJjWHiSIlEpBC-104" connectable="0" vertex="1">
+                <mxCell id="a9lJfSfJJjWHiSIlEpBC-109" value="&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Send &amp;amp; Receive Messages,&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Organise Activities&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=#BAC8D3;fontColor=#EEEEEE;fillColor=#09555B;fontStyle=0" parent="a9lJfSfJJjWHiSIlEpBC-104" connectable="0" vertex="1">
                     <mxGeometry x="0.0167" y="-4" relative="1" as="geometry">
                         <mxPoint x="-44" y="-1" as="offset"/>
                     </mxGeometry>
@@ -240,8 +243,8 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="a9lJfSfJJjWHiSIlEpBC-103" value="7. Send Direct Messages" style="rounded=1;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;gradientColor=none;" parent="1" vertex="1">
-                    <mxGeometry x="3650" y="950" width="130" height="70" as="geometry"/>
+                <mxCell id="a9lJfSfJJjWHiSIlEpBC-103" value="&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;7. Send Direct Messages/Workshops&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: rgb(0, 0, 0);&quot;&gt;/Courses&lt;/font&gt;&lt;/div&gt;" style="rounded=1;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;gradientColor=none;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="3640" y="950" width="150" height="70" as="geometry"/>
                 </mxCell>
                 <mxCell id="a9lJfSfJJjWHiSIlEpBC-106" value="Messages DB" style="shape=datastore;whiteSpace=wrap;html=1;fontStyle=1;fillColor=#b1ddf0;strokeColor=#10739e;" parent="1" vertex="1">
                     <mxGeometry x="3670" y="1150" width="90" height="95" as="geometry"/>
@@ -255,7 +258,7 @@
                         <mxPoint x="3870" y="1115" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="a9lJfSfJJjWHiSIlEpBC-112" value="&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Send &amp;amp; Receive Messages&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=#BAC8D3;fontColor=#EEEEEE;fillColor=#09555B;fontStyle=0" parent="a9lJfSfJJjWHiSIlEpBC-111" connectable="0" vertex="1">
+                <mxCell id="a9lJfSfJJjWHiSIlEpBC-112" value="&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Send &amp;amp; Receive Messages,&amp;nbsp;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Participate in Activities&lt;/span&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=#BAC8D3;fontColor=#EEEEEE;fillColor=#09555B;fontStyle=0" parent="a9lJfSfJJjWHiSIlEpBC-111" connectable="0" vertex="1">
                     <mxGeometry x="0.0167" y="-4" relative="1" as="geometry">
                         <mxPoint x="52" y="-4" as="offset"/>
                     </mxGeometry>
@@ -305,6 +308,12 @@
                 </mxCell>
                 <mxCell id="a9lJfSfJJjWHiSIlEpBC-130" value="&lt;font&gt;Data Flow Diagram - Sprint 2&lt;/font&gt;" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=80;fontStyle=1" parent="1" vertex="1">
                     <mxGeometry x="2810" y="-170" width="1160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Save scores" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.7;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="a9lJfSfJJjWHiSIlEpBC-65">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="10. Play games and Quizzes" style="rounded=1;fontStyle=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;gradientColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="3580" y="670" width="130" height="70" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
