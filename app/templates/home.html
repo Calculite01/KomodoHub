@@ -28,7 +28,7 @@
             {% else %}
                 <p class="org-status warning">
                     <i class="fa-solid fa-circle-exclamation"></i> 
-                    You aren't part of an organization yet.
+                    You aren't part of an organization.
                 </p>
             {% endif %}
         </div>
@@ -62,10 +62,12 @@
             <span>Game Center</span>
         </a>
         
+        {% if current_user.organization and current_user.organization.org_type == "School" %}
         <a href="{{ url_for('courses') }}" class="hub-card">
             <i class="fa-solid fa-graduation-cap"></i>
             <span>My Courses</span>
         </a>
+        {% endif %}
 
         {% if current_user.role == 'Sysadmin' %}
         <a href="{{ url_for('moderate') }}" class="hub-card admin-card">

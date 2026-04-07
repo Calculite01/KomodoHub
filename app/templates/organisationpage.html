@@ -48,7 +48,7 @@
                     </a>
                 {% endif %}
 
-                {% if current_user.organization_id == current_org.id and current_user.role in ["Admin", "Manager", "Teacher"] %}
+                {% if (current_user.organization_id == current_org.id and current_user.role in ["Admin", "Manager", "Teacher"]) or current_user.role == "Sysadmin" %}
                 <a href="{{ url_for('membersorg', orgid=orgid) }}" class="org-link">
                     <i class="fa-solid fa-users"></i> Member Directory
                 </a>
@@ -63,7 +63,7 @@
         </div>
     </header>
 
-    {% if current_org.org_type in ["School", "Community"] %}
+    {% if current_org.org_type in ["School"] %}
     <h2 style="margin-bottom: 20px; color: #1e293b;">Courses</h2>
     <div class="course-grid">
         {% for course in courses %}

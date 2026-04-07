@@ -21,6 +21,7 @@
         {% endif %}
     </div>
 
+    {% if current_user.organization_id == orgid %}
     <div class="post-card">
         <h3 style="margin-bottom: 15px;">Contribute to Library</h3>
         
@@ -52,16 +53,18 @@
             </div>
         </form>
     </div>
+    {% endif %}
 
     <div class="activity-feed">
+        {% if contributions %}
         {% for con in contributions %}
             <div class="activity-card">
                 <div class="activity-card-header">
                     <div class="user-meta">
-                        {% if con.user == "Student" and current_user.organization_id != current_org.id and current_org.org_type == "School" %}
-                        <strong>{{ con.user.first_name }} {{ con.user.last_name }}</strong>
-                        {% else %}
+                        {% if con.user.role == "Student" and current_user.organization_id != current_org.id and current_org.org_type == "School" %}
                             <strong>Student at {{ current_org.name  }}</strong>
+                        {% else %}
+                            <strong>{{ con.user.first_name }} {{ con.user.last_name }}</strong>
                         {% endif %}
                         <small>{{ con.time_of_creation.strftime('%b %d, %H:%M') }}</small>
                     </div>
@@ -101,10 +104,10 @@
                             {% for reply in con.replies %}
                                 <div class="reply-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #f0f0f0;">
                                     <div style="font-size: 0.9rem;">
-                                        {% if reply.user == "Student" and current_user.organization_id != current_org.id and current_org.org_type == "School" %}
-                                        <strong style="color: #228B22;">{{ reply.user.first_name }} {{ reply.user.last_name }}:</strong>
+                                        {% if con.user.role == "Student" and current_user.organization_id != current_org.id and current_org.org_type == "School" %}
+                                        <strong style="color: #228B22;">Student at {{ current_org.name  }}</strong>
                                         {% else %}
-                                         <strong style="color: #228B22;">Student at {{ current_org.name  }}</strong>
+                                        <strong style="color: #228B22;">{{ reply.user.first_name }} {{ reply.user.last_name }}:</strong>
                                         {% endif %}
                                         <span style="color: #444;">{{ reply.text }}</span>
                                     </div>
@@ -131,10 +134,15 @@
                                 Reply
                             </button>
                         </form>
-                    </div>
                 </div>  
             </div>
         {% endfor %}
+        {% else %}
+        <div class="no-activity-placeholder" style="text-align: center; padding: 40px; color: #64748b;">
+            <i class="fa-solid fa-box-open" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+            <p>No contributions yet</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 

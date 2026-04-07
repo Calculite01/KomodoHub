@@ -60,10 +60,10 @@
                     <div class="activity-card">
                         <div class="activity-card-header">
                             <div class="user-meta">
-                                {% if con.user == "Student" and current_user.organization_id != current_org.id and current_org.type == "School" %}
-                                    <strong>{{ con.user.first_name }} {{ con.user.last_name }}</strong>
+                                {% if con.user.organization.org_type == "School" and con.user.role == "Student" %}
+                                    <strong>Student at {{ con.user.organization.name  }}</strong>
                                 {% else %}
-                                    <strong>Student at {{ current_org.name  }}</strong>
+                                    <strong>{{ con.user.first_name }} {{ con.user.last_name }}</strong>
                                 {% endif %}
                                 <small>{{ con.time_of_creation.strftime('%b %d, %H:%M') }}</small>
                             </div>
@@ -103,10 +103,10 @@
                                 {% for reply in con.replies %}
                                     <div class="reply-item" style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #f0f0f0;">
                                         <div style="font-size: 0.9rem;">
-                                            {% if reply.user == "Student" and current_user.organization_id != current_org.id and current_org.type == "School" %}
-                                                <strong style="color: #228B22;">{{ reply.user.first_name }} {{ reply.user.last_name }}:</strong> 
+                                            {% if reply.user.organization.org_type == "School" and reply.user.role == "Student" %}
+                                                <strong>Student at {{ reply.name.organization.name  }}</strong>
                                             {% else %}
-                                                <strong>Student at {{ current_org.name  }}</strong>
+                                                <strong style="color: #228B22;">{{ reply.user.first_name }} {{ reply.user.last_name }}:</strong> 
                                             {% endif %}      
                                             <span style="color: #444;">{{ reply.text }}</span>
                                         </div>

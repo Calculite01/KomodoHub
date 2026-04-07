@@ -189,7 +189,7 @@ class CommonRoomMessage(db.Model):
 
     # FIXED: Added explicit foreign_keys
     images = db.relationship('Image', 
-        primaryjoin="and_(Image.parent_id==CommonRoomMessage.id, Image.parent_type=='common_room')",
+        primaryjoin="and_(Image.parent_id==CommonRoomMessage.id, Image.parent_type=='common_room_message')",
         foreign_keys="Image.parent_id", overlaps="images", cascade="all, delete-orphan", lazy=True)
     
     replies = db.relationship('CommonRoomMessageReply', backref='message', cascade="all, delete-orphan", lazy=True)

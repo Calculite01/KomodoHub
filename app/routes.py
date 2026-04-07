@@ -66,7 +66,7 @@ def verify_email_otp(email, entered_otp):
     if not otp_object:      # check if record exists
         return False
 
-    if datetime.now() > otp_object.expiration_time:      # check if OTP has expired
+    if datetime.utcnow() > otp_object.expiration_time:      # check if OTP has expired
         db.session.delete(otp_object)
         db.session.commit()
         return False
@@ -176,51 +176,65 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+    
     form = RegistrationForm()
     otpform = OTPForm()
-    showotpform = False
-    if form.submit.data and form.validate_on_submit():
-        email = form.email.data
-        user = User.query.filter_by(email=email).first()
-        if user:
-            db.session.delete(user)
-            db.session.commit()
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = User(email= email,
-                        first_name= form.first_name.data.strip(),
-                        last_name= form.last_name.data.strip(),
-                        password= hashed_password)
-        session['verify_registration_email'] = email
-        db.session.add(new_user)
-        db.session.commit()
+    showotpform = False  # Always defaults to False on a fresh page load
 
-        otp_object = OTP.query.filter_by(email=email).first()
-        if otp_object:
-            db.session.delete(otp_object)
-            db.session.commit()
+    if request.method == "POST":
+        # STEP 1: Registration Button Clicked
+        if 'submit' in request.form and form.validate_on_submit():
+            email = form.email.data.strip().lower()
             
-        # send email with OTP for verification
-        showotpform = True
-        otp = generate_otp(email) 
-        send_otp_email(recipient_email=email, otp=otp)
-        flash("OTP sent to email. Please enter OTP", 'notification')
-    else:
-        flash("Registration failed", "failure")
+            user = User.query.filter_by(email=email).first()
+            if user:
+                if not user.is_verified:
+                    db.session.delete(user)
+                    db.session.commit()
+                else:
+                    flash("Email already in use. Please log in.", "info")
+                    return redirect(url_for('login'))
 
-    if otpform.submit_btn.data and otpform.validate_on_submit():
-        email = session.get('verify_registration_email')
-        otp = otpform.user_entered_OTP.data
-        if verify_email_otp(email=email,entered_otp=otp):
-            user = User.query.filter_by(email=email).first()   #Set user is_verified to true
-            user.is_verified = True
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            new_user = User(email=email,
+                            first_name=form.first_name.data.strip(),
+                            last_name=form.last_name.data.strip(),
+                            password=hashed_password)
+            
+            db.session.add(new_user)
+            # We still need the email in the session to verify the OTP later
+            session['verify_registration_email'] = email 
+            
+            # OTP Handling
+            otp_object = OTP.query.filter_by(email=email).first()
+            if otp_object:
+                db.session.delete(otp_object)
             db.session.commit()
-            session.pop('verify_registration_email', None)              # clear session after successful verification
-            flash("Account created, you can now log in", 'success')
-            return redirect(url_for('login'))
-        else:
-            session.pop('verify_registration_email', None)              # clear session after unsuccessful verification
-            flash("Account registration failed. Invalid code", 'failure')
-            return redirect(url_for('register'))
+
+            otp = generate_otp(email) 
+            send_otp_email(recipient_email=email, otp=otp)
+            
+            # Switch to OTP view for this specific POST request
+            showotpform = True 
+            flash("OTP sent to email.", 'notification')
+
+        # STEP 2: OTP Verification Button Clicked
+        elif 'submit_btn' in request.form and otpform.validate_on_submit():
+            email = session.get('verify_registration_email')
+            
+            if verify_email_otp(email=email, entered_otp=otpform.user_entered_OTP.data):
+                user = User.query.filter_by(email=email).first()
+                if user:
+                    user.is_verified = True
+                    db.session.commit()
+                    session.pop('verify_registration_email', None)
+                    flash("Account created!", 'success')
+                    return redirect(url_for('login'))
+            else:
+                # If OTP is wrong, keep the OTP form visible
+                showotpform = True 
+                flash("Invalid code. Try again.", 'failure')
+
     return render_template('register.html', form=form, otpform=otpform, showotpform=showotpform)
 
 @app.route('/contact', methods= ['GET', 'POST'])
@@ -235,6 +249,8 @@ def contact():
                                          region= form.region.data,
                                          email= email,
                                          userMessage= form.userQuery.data.strip())
+        flash("Query Submitted!", "success")
+        return redirect(url_for("index"))
         try:
             db.session.add(contact_message)      #adds the new data field about a user's query to the db table
             db.session.commit()
@@ -552,6 +568,10 @@ def organization(orgid):
         )
         db.session.add(new_course)
         db.session.commit()
+
+        enrollment = UserCourse(user_id=current_user.id, course_id=new_course.id)
+        db.session.add(enrollment)
+        db.session.commit()
         return redirect(url_for('organization', orgid=orgid))
 
     courses = Course.query.filter_by(organization_id=orgid).all()
@@ -592,7 +612,7 @@ def membersorg(orgid):
     ).all()
 
     unverified_users = []
-    if current_user.role == "Admin":
+    if current_user.role in ["Admin","Sysadmin"]:
         unverified_users = User.query.filter_by(organization_id=orgid, is_verified=False).all()
 
     return render_template("membersorg.html", 
@@ -650,7 +670,7 @@ def tasks(orgid, courseid):
             if submit_form.file.data:
                 file = submit_form.file.data
                 filename = secure_filename(f"user_{current_user.id}_{file.filename}")
-                file.save(os.path.join(app.root_path, 'static/uploads', filename))
+                file.save(os.path.join(app.root_path, 'static/files', filename))
                 
                 user_task.submission_file = filename
                 user_task.submitted = True
@@ -798,7 +818,7 @@ def materials(orgid, courseid, selected_id=None):
         if form.documents.data:
             for file in form.documents.data:
                 if file.filename:
-                    filename = save_file(file, 'static/uploads')
+                    filename = save_file(file, 'static/files')
                     file_record = File(file=filename, parent_id=new_material.id, parent_type="material")
                     db.session.add(file_record)
 
@@ -872,7 +892,7 @@ def delete_material(material_id):
     # 2. Delete Physical Document Files
     for doc in material.files:
         # Adjust 'images' to 'files' if you stored documents in a different subfolder
-        file_path = os.path.join(current_app.root_path, 'static/uploads', doc.file)
+        file_path = os.path.join(current_app.root_path, 'static/files', doc.file)
         if os.path.exists(file_path):
             os.remove(file_path)
         db.session.delete(doc)
@@ -913,11 +933,11 @@ def commonroom(orgid, courseid):
         return redirect(url_for('commonroom', orgid=orgid, courseid=courseid))
 
     # Fetch messages (Newest first)
-    messages = CommonRoomMessage.query.order_by(CommonRoomMessage.time_of_creation.desc()).all()
+    messages = CommonRoomMessage.query.filter_by(course_id=courseid).order_by(CommonRoomMessage.time_of_creation.desc()).all()
     
     return render_template("commonroom.html", 
                            messages=messages, 
-                           form=form, 
+                           form=form,
                            reply_form=reply_form,
                            orgid=orgid, 
                            courseid=courseid)
@@ -1242,9 +1262,7 @@ def library(orgid):
                      .order_by(desc(Contribution.time_of_creation))
                      .all())
     
-    return render_template("library.html", 
-                           contributions=contributions,
-                           form=form, reply_form=reply_form, orgid=orgid, current_org=Organization.query.get(orgid))
+    return render_template("library.html", contributions=contributions, form=form, reply_form=reply_form, orgid=int(orgid), current_org=Organization.query.get(orgid))
 
 @app.route("/schools",methods=["GET"])
 def schools():

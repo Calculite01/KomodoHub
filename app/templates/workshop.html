@@ -21,9 +21,11 @@
             <p class="subtitle" style="color: #888; margin-top: 5px;">View instructions and submit your contributions.</p>
         </div>
         
+        {% if current_user.role in ["Teacher","Admin"]%}
         <button class="create-btn" onclick="toggleForm()" style="background: #228B22; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <i class="fa-solid fa-plus"></i> <span>New Activity</span>
         </button>
+        {% endif %}
     </div>
 
     <div id="create-area" class="post-card" style="display: none; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 40px; border: 1px solid #e0e0e0;">

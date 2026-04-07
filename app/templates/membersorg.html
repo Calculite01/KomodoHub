@@ -116,7 +116,7 @@
     {% if current_user.role in ["Admin","Sysadmin"] %}
     <section class="member-section unverified-section" style="margin-top: 50px; border-top: 2px dashed #cbd5e1; padding-top: 30px;">
         <h3 style="color: #64748b;"><i class="fa-solid fa-clock-rotate-left"></i> Pending Registrations (Unverified)</h3>
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">These users must use their access code to verify their account.</p>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">These users must use their <b>ACCESS CODE</b> given to verify their account.</p>
         
         <div class="member-list">
             {% for user in unverified_users %}
