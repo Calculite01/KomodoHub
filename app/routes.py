@@ -1050,7 +1050,7 @@ def workshop(orgid, courseid):
         new_activity = WorkshopActivity(
             title=form.title.data,
             text=form.text.data,
-            course_id=courseid # Ensure your model has this field to filter by course
+            course_id=courseid
         )
         db.session.add(new_activity)
         db.session.flush()  # Get the ID before committing
@@ -1092,7 +1092,7 @@ def workshop(orgid, courseid):
 @login_required
 def view_contributions(activity_id):
     form = ContributionForm()
-    reply_form = ContributionReplyForm() # Add this
+    reply_form = ContributionReplyForm()
     if form.validate_on_submit():
         contribution = Contribution(
             user_id=current_user.id,

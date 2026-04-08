@@ -9,7 +9,7 @@
 <div class="contributions-container">
     
     <div class="back-navigation">
-        <a href="{{ url_for('workshop', orgid=activity.course_id, courseid=activity.course_id) }}" class="back-link">
+        <a href="{{ url_for('workshop', orgid=activity.course.organization_id, courseid=activity.course_id) }}" class="back-link">
             <i class="fa-solid fa-arrow-left"></i> Back to Workshop
         </a>
     </div>
