@@ -6,6 +6,7 @@ import os
 from flask_wtf.csrf import CSRFProtect
 from flask_mail import Mail
 from dotenv import load_dotenv
+from sqlalchemy.pool import NullPool
 
 load_dotenv()
 
@@ -13,6 +14,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,   # test each connection before using it; reconnect if dead
+    'poolclass': NullPool,   # don't keep connections alive between invocations at all
+}
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 app.secret_key = os.environ['SECRET_KEY']
