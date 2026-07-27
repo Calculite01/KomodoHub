@@ -29,7 +29,7 @@
                         {% if con.images %}
                             <div class="mod-images">
                                 {% for img in con.images %}
-                                    <img src="{{ url_for('static', filename='images/' + img.file) }}" alt="Contribution Image">
+                                    <img src="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" alt="Contribution Image">
                                 {% endfor %}
                             </div>
                         {% endif %}

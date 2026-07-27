@@ -23,7 +23,7 @@ class UserTask(db.Model):
     
     submitted = db.Column(db.Boolean, default=False)
     date_submitted = db.Column(db.DateTime, nullable=True)
-    submission_file = db.Column(db.String(100), nullable=True)
+    submission_file = db.Column(db.String(500), nullable=True)
     grade = db.Column(db.Integer, nullable=True)
     replies = db.relationship('TaskReply', backref='usertask', cascade="all, delete-orphan", lazy=True)
 
@@ -42,7 +42,7 @@ class TaskReply(db.Model):
 class Image(db.Model):
     __tablename__ = 'image'
     id = db.Column(db.Integer, primary_key=True)
-    file = db.Column(db.String(120), nullable=False)
+    file = db.Column(db.String(500), nullable=False)
     
     # Polymorphic columns
     parent_id = db.Column(db.Integer, nullable=False)
@@ -51,7 +51,7 @@ class Image(db.Model):
 class File(db.Model):
     __tablename__ = 'file'
     id = db.Column(db.Integer, primary_key=True)
-    file = db.Column(db.String(120), nullable=False)
+    file = db.Column(db.String(500), nullable=False)
     
     # Polymorphic columns
     parent_id = db.Column(db.Integer, nullable=False)
@@ -66,7 +66,7 @@ class User(db.Model,UserMixin):
     last_name = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     acc_type = db.Column(db.String(20), nullable=False, default="Standard")
-    image = db.Column(db.String(100), nullable=False, default='default_profile.jpg')
+    image = db.Column(db.String(500), nullable=False, default='default_profile.jpg')
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
     role = db.Column(db.String(20), nullable=False, default="None")
     contributions = db.relationship("Contribution", backref="user", lazy=True)
@@ -99,7 +99,7 @@ class Organization(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     description = db.Column(db.Text, nullable=True)
-    icon = db.Column(db.String(20), nullable=True, default='default_org.jpg') 
+    icon = db.Column(db.String(500), nullable=True, default='default_org.jpg') 
     org_type = db.Column(db.String(20), nullable=False)
     users = db.relationship('User', backref='organization', lazy=True)
 
@@ -137,7 +137,7 @@ class Course(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    icon = db.Column(db.String(20), nullable=True, default='default_course.jpg')
+    icon = db.Column(db.String(500), nullable=True, default='default_course.jpg')
     organization_id = db.Column(db.Integer, db.ForeignKey('organization.id'))
     tasks = db.relationship('Task', backref='task', lazy=True)
     
@@ -247,7 +247,7 @@ class ContributionReply(db.Model):
 class Sighting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    image = db.Column(db.String(100), nullable=False, default='default_sighting.jpg')
+    image = db.Column(db.String(500), nullable=False, default='default_sighting.jpg')
     description = db.Column(db.Text, nullable=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

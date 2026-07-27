@@ -69,7 +69,7 @@
                     <div class="msg-image-grid" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
                         {% for img in msg.images if img.parent_type == "common_room_message" %}
                             <div class="image-wrapper">
-                                <img src="{{ url_for('static', filename='images/' + img.file) }}" 
+                                <img src="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" 
                                     alt="Post Image" 
                                     style="width: 200px; height: 150px; object-fit: cover; border-radius: 8px;">
                             </div>

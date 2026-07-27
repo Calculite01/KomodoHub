@@ -1,10 +1,10 @@
 import os
 
-db_path = os.path.join("instance", "komodohub.db")
+# db_path = os.path.join("instance", "komodohub.db")
 
-#Delete the database file if it exists
-if os.path.exists(db_path):
-    os.remove(db_path)
+# #Delete the database file if it exists
+# if os.path.exists(db_path):
+#     os.remove(db_path)
 
 
 from app import app,db,bcrypt
@@ -433,6 +433,8 @@ with app.app_context():
 
     db.session.add_all([enroll_4, enroll_5, enroll_6])
     db.session.commit()
+
+    db.create_all()
     
     
 

@@ -84,7 +84,7 @@
                     {% if act.images %}
                     <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
                         {% for img in act.images %}
-                            <img src="{{ url_for('static', filename='images/' + img.file) }}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+                            <img src="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -92,7 +92,7 @@
                         <div class="resource-section" style="padding: 15px 20px; background: #f9f9f9; border-top: 1px solid #eee;">
                             <p style="font-size: 0.8rem; font-weight: 700; color: #777; margin-bottom: 8px;">ATTACHMENTS</p>
                             {% for f in act.files %}
-                                <a href="{{ url_for('static', filename='documents/' + f.file) }}" download style="display: block; color: #228B22; text-decoration: none; margin-bottom: 5px; font-size: 0.9rem;">
+                                <a href="{{ (f.file if f.file.startswith('http') else url_for('static', filename='documents/' + f.file)) }}" download style="display: block; color: #228B22; text-decoration: none; margin-bottom: 5px; font-size: 0.9rem;">
                                     <i class="fa-solid fa-download"></i> {{ f.file }}
                                 </a>
                             {% endfor %}

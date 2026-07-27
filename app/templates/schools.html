@@ -28,7 +28,7 @@
         {% for school in schools %}
         <div class="school-card">
             <div class="school-logo-box">
-                <img src="{{ url_for('static', filename='images/' + (school.icon or 'default_org.jpg')) }}" 
+                <img src="{{ ((school.icon or 'default_org.jpg') if (school.icon or 'default_org.jpg').startswith('http') else url_for('static', filename='images/' + (school.icon or 'default_org.jpg'))) }}" 
                      class="school-logo-img" 
                      alt="{{ school.name }} Logo"
                      href="{{ url_for('static', filename='images/default_org.jpg') }}">

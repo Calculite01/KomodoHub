@@ -16,7 +16,7 @@
 
     <header class="org-header" style="display: flex; align-items: center; gap: 30px; margin-bottom: 40px; border-bottom: 1px solid #e2e8f0; padding-bottom: 30px;">
         <div class="org-brand-icon">
-            <img src="{{ url_for('static', filename='images/' + (current_org.icon or 'default_org.jpg')) }}" 
+            <img src="{{ ((current_org.icon or 'default_org.jpg') if (current_org.icon or 'default_org.jpg').startswith('http') else url_for('static', filename='images/' + (current_org.icon or 'default_org.jpg'))) }}" 
                  alt="School Logo" 
                  style="width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 1px solid #eee;"
                  href="{{ url_for('static', filename='images/default_org.jpg') }}">
@@ -70,7 +70,7 @@
         <div class="course-card">
             <div class="course-banner">
                 <div class="course-icon-wrapper">
-                    <img src="{{ url_for('static', filename='images/' + (course.icon or 'default_course.jpg')) }}" 
+                    <img src="{{ ((course.icon or 'default_course.jpg') if (course.icon or 'default_course.jpg').startswith('http') else url_for('static', filename='images/' + (course.icon or 'default_course.jpg'))) }}" 
                          class="course-icon-img" alt="Course Icon"
                          href="{{ url_for('static', filename='images/default_course.jpg') }}">
                 </div>

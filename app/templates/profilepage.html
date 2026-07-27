@@ -17,7 +17,7 @@
     <div class="profile-card {{ current_user.profile_pattern if current_user.profile_pattern and current_user.profile_pattern != 'none' }}">
         
         <div class="profile-img-wrapper">
-            <img src="{{ url_for('static', filename='images/' + (current_user.image or 'default_profile.jpg')) }}" 
+            <img src="{{ ((current_user.image or 'default_profile.jpg') if (current_user.image or 'default_profile.jpg').startswith('http') else url_for('static', filename='images/' + (current_user.image or 'default_profile.jpg'))) }}" 
                  alt="Profile Image" 
                  class="profile-header-img"
                  id="profile-display">

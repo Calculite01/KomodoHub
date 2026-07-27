@@ -126,8 +126,8 @@
                             <div class="display-image-grid">
                                 {% for img in selected_material.images %}
                                     <div class="image-wrapper">
-                                        <a href="{{ url_for('static', filename='images/' + img.file) }}" target="_blank">
-                                            <img src="{{ url_for('static', filename='images/' + img.file) }}" alt="Material Image">
+                                        <a href="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" target="_blank">
+                                            <img src="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" alt="Material Image">
                                         </a>
                                     </div>
                                 {% endfor %}
@@ -144,7 +144,7 @@
                                         <i class="fa-solid fa-file-arrow-down"></i>
                                         <div class="file-info">
                                             <span class="file-name">{{ doc.file }}</span>
-                                            <a href="{{ url_for('static', filename='files/' + doc.file) }}" download class="download-link">
+                                            <a href="{{ (doc.file if doc.file.startswith('http') else url_for('static', filename='files/' + doc.file)) }}" download class="download-link">
                                                 Download File
                                             </a>
                                         </div>

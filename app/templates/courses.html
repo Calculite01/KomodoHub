@@ -30,7 +30,7 @@
         <div class="course-card">
             <div class="course-banner">
                 <div class="course-icon-wrapper">
-                    <img src="{{ url_for('static', filename='images/' + (course.icon or 'default_course.jpg')) }}" 
+                    <img src="{{ ((course.icon or 'default_course.jpg') if (course.icon or 'default_course.jpg').startswith('http') else url_for('static', filename='images/' + (course.icon or 'default_course.jpg'))) }}" 
                          class="course-icon-img" alt="Course Icon">
                 </div>
             </div>

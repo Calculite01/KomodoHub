@@ -37,7 +37,7 @@
 
         {% for id, name, desc, file in animal_list %}
         <a href="{{ url_for('program' ~ id) }}" class="program-card">
-            <img src="{{ url_for('static', filename='images/' + file) }}" alt="{{ name }}" class="program-image">
+            <img src="{{ (file if file.startswith('http') else url_for('static', filename='images/' + file)) }}" alt="{{ name }}" class="program-image">
             <div class="program-info">
                 <h3>{{ name }}</h3>
                 <p>{{ desc }}</p>
@@ -55,7 +55,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
             {% for sighting in sightings %}
             <div class="sighting-card" style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden;">
-                <img src="{{ url_for('static', filename='images/' + sighting.image) }}" 
+                <img src="{{ (sighting.image if sighting.image.startswith('http') else url_for('static', filename='images/' + sighting.image)) }}" 
                      style="width: 100%; height: 150px; object-fit: cover;">
                 <div style="padding: 12px;">
                     <strong style="display: block; color: #228B22;">{{ sighting.title }}</strong>

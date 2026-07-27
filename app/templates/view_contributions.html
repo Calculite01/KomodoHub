@@ -77,8 +77,8 @@
                     {% if con.images %}
                     <div class="contribution-gallery">
                         {% for img in con.images %}
-                            <a href="{{ url_for('static', filename='images/' + img.file) }}" target="_blank">
-                                <img src="{{ url_for('static', filename='images/' + img.file) }}" 
+                            <a href="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" target="_blank">
+                                <img src="{{ (img.file if img.file.startswith('http') else url_for('static', filename='images/' + img.file)) }}" 
                                     class="contribution-img" 
                                     alt="Student Work">
                             </a>

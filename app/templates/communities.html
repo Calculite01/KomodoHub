@@ -28,7 +28,7 @@
         {% for community in communities %}
         <div class="school-card">
             <div class="school-logo-box">
-                <img src="{{ url_for('static', filename='images/' + (community.icon or 'default_org.jpg')) }}" 
+                <img src="{{ ((community.icon or 'default_org.jpg') if (community.icon or 'default_org.jpg').startswith('http') else url_for('static', filename='images/' + (community.icon or 'default_org.jpg'))) }}" 
                      class="school-logo-img" 
                      alt="{{ community.name }} Logo"
                      href = "{{ url_for('static', filename='images/default_org.jpg') }}">

@@ -14,19 +14,31 @@ import os
 from sqlalchemy import or_, and_, desc
 from PIL import Image as PILImage
 from werkzeug.utils import secure_filename
+import vercel_blob
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 def save_file(file, folder):
-    """Helper to give files unique names and save them"""
+    """Helper to give files unique names and upload them to Vercel Blob storage"""
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(file.filename)
     filename = random_hex + f_ext
-    filepath = os.path.join(app.root_path, folder, filename)
-    file.save(filepath)
-    return filename
+    blob_path = f"{folder}/{filename}"
+    result = vercel_blob.put(blob_path, file.read())
+    return result['url']  # store this full URL in the DB instead of a local filename
+
+def delete_file(file_url):
+    """Helper to delete a file from Vercel Blob storage. Safe to call even if the
+    value stored isn't a blob URL (e.g. leftover local filenames from before migration,
+    or default images) -- failures are swallowed so this never blocks the calling route."""
+    if not file_url:
+        return
+    try:
+        vercel_blob.delete(file_url)
+    except Exception:
+        pass
 
 def generate_otp(email):
     otp = f"{secrets.randbelow(1000000):06}"
@@ -122,11 +134,7 @@ def home():
     
     if current_user.role == 'Sysadmin' and form.validate_on_submit():
         if form.icon.data:
-            icon_file = form.icon.data
-            filename = secure_filename(icon_file.filename)
-            filepath = os.path.join(current_app.root_path, 'static/images', filename)
-            icon_file.save(filepath)
-            db_icon_name = filename
+            db_icon_name = save_file(form.icon.data, 'static/images')
         else:
             db_icon_name = 'default_org.jpg'
 
@@ -428,11 +436,9 @@ def profilepage():
         
         # 2. Update the Picture (Only if provided)
         if form.picture.data:
-            # Delete old picture logic...
+            # Delete old picture from Blob storage (if it was an uploaded blob, not the default)
             if current_user.image and current_user.image != 'default_profile.jpg':
-                old_path = os.path.join(app.root_path, 'static/images', current_user.image)
-                if os.path.exists(old_path):
-                    os.remove(old_path)
+                delete_file(current_user.image)
             
             # Save new file
             picture_file = save_file(form.picture.data, "static/images")
@@ -456,12 +462,7 @@ def organization(orgid):
     if form.validate_on_submit():
         icon_file = 'default.png'
         if form.icon.data:
-            # Simple unique filename logic
-            random_hex = secrets.token_hex(8)
-            _, f_ext = os.path.splitext(form.icon.data.filename)
-            icon_file = random_hex + f_ext
-            path = os.path.join(app.root_path, 'static/images', icon_file)
-            form.icon.data.save(path)
+            icon_file = save_file(form.icon.data, 'static/images')
 
         new_course = Course(
             name=form.name.data,
@@ -573,9 +574,9 @@ def tasks(orgid, courseid):
             if submit_form.file.data:
                 file = submit_form.file.data
                 filename = secure_filename(f"user_{current_user.id}_{file.filename}")
-                file.save(os.path.join(app.root_path, 'static/files', filename))
+                submission_url = save_file(file, 'static/files')
                 
-                user_task.submission_file = filename
+                user_task.submission_file = submission_url
                 user_task.submitted = True
                 user_task.date_submitted = datetime.utcnow()
                 db.session.commit()
@@ -784,20 +785,15 @@ def delete_material(material_id):
     material = Material.query.get_or_404(material_id)
     course_id = material.course_id
     
-    # 1. Delete Physical Image Files
+    # 1. Delete Blob Image Files
     for img in material.images:
-        image_path = os.path.join(current_app.root_path, 'static/images', img.file)
-        if os.path.exists(image_path):
-            os.remove(image_path)
+        delete_file(img.file)
         # The database record for 'img' will be deleted via cascade or manual delete
         db.session.delete(img)
 
-    # 2. Delete Physical Document Files
+    # 2. Delete Blob Document Files
     for doc in material.files:
-        # Adjust 'images' to 'files' if you stored documents in a different subfolder
-        file_path = os.path.join(current_app.root_path, 'static/files', doc.file)
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        delete_file(doc.file)
         db.session.delete(doc)
     
     # 3. Delete the Material itself
@@ -850,15 +846,13 @@ def delete_common_room_msg(msg_id):
     msg = CommonRoomMessage.query.get_or_404(msg_id)
     course_id = msg.course_id
     
-    # 1. Delete Physical Image Files
+    # 1. Delete Blob Image Files
     for img in msg.images:
-        image_path = os.path.join(current_app.root_path, 'static/images', img.file)
-        if os.path.exists(image_path):
-            os.remove(image_path)
+        delete_file(img.file)
         # The database record for 'img' will be deleted via cascade or manual delete
         db.session.delete(img)
 
-    # 2. Delete Physical Document Files
+    # 2. Delete replies
     for reply in msg.replies:
         db.session.delete(reply)
     
@@ -1033,11 +1027,9 @@ def delete_contribution(con_id):
     contribution = Contribution.query.get_or_404(con_id)
     
 
-    # 1. Delete physical image files from the server
+    # 1. Delete Blob image files
     for img in contribution.images:
-        file_path = os.path.join(current_app.root_path, 'static/images', img.file)
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        delete_file(img.file)
 
     # 2. Delete from Database (Cascades handle the Image table rows)
     db.session.delete(contribution)
@@ -1051,12 +1043,9 @@ def delete_contribution(con_id):
 def delete_workshop(act_id):
     activity = WorkshopActivity.query.get_or_404(act_id)
     
-    # 1. Delete physical files for both Images and Documents
-    # 1. Delete Physical Image Files
+    # 1. Delete Blob Image Files
     for img in activity.images:
-        image_path = os.path.join(current_app.root_path, 'static/images', img.file)
-        if os.path.exists(image_path):
-            os.remove(image_path)
+        delete_file(img.file)
         # The database record for 'img' will be deleted via cascade or manual delete
         db.session.delete(img)
 
@@ -1182,6 +1171,7 @@ def publiclibrary():
     return render_template("publiclibrary.html")
 
 @app.route("/publiclibrary/contributions",methods=["GET","POST"])
+@login_required
 def publiclibrarycontributions():
     form = ContributionForm()
     reply_form = ContributionReplyForm()
@@ -1329,4 +1319,3 @@ def programbear():
 @app.route("/publiclibrary/programs/bat", methods=["GET"])
 def programbat():
     return render_template("programbat.html")
-

@@ -44,7 +44,7 @@
                 <a href="{{ url_for('profilepage') }}" class="user-profile-badge">
                     <span class="user-name">{{ current_user.first_name }} {{ current_user.last_name }}</span>
                     <div class="profile-img-container">
-                        <img src="{{ url_for('static', filename='images/' + (current_user.image or 'default_profile.jpg')) }}" 
+                        <img src="{{ ((current_user.image or 'default_profile.jpg') if (current_user.image or 'default_profile.jpg').startswith('http') else url_for('static', filename='images/' + (current_user.image or 'default_profile.jpg'))) }}" 
                             alt="Profile" 
                             class="nav-profile-img"
                             onerror="this.src='{{ url_for('static', filename='images/default_profile.jpg') }}';">
