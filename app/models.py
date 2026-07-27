@@ -244,12 +244,6 @@ class ContributionReply(db.Model):
     time_of_creation = db.Column(db.DateTime, default=datetime.now, nullable=False)
     contribution_id = db.Column(db.Integer, db.ForeignKey('contribution.id'), nullable=False)
 
-
-with app.app_context():
-    if not os.path.exists('komodohub.db'):
-        db.create_all()
-
-
 class Sighting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
