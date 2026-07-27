@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
@@ -17,8 +16,6 @@ bcrypt = Bcrypt(app)
 app.secret_key = "secret-key-for-csrf-tokens"
 csrf = CSRFProtect(app)     # enable CSRF protection globally on the 'app' instance
 app.config['WTF_CSRF_ENABLED'] = True
-socketio = SocketIO()
-socketio.init_app(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

@@ -2,77 +2,8 @@
 
 {% block head %}
 <title>Messages - Komodo Hub</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/chat.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="chat-page-container">
-    <div id="chat-app-frame" data-user-id="{{ current_user.id }}">
-        
-        <aside class="chat-sidebar">
-            <div class="sidebar-header">
-                <h2>Messages</h2>
-                <button id="add-contact-btn" class="icon-btn" title="New Message">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-            </div>
-
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="search-contact" placeholder="Search contacts...">
-            </div>
-
-            <ul id="active-contacts-list" class="contact-list">
-                {% for u in users %}
-                    {% if u.id != current_user.id %}
-                    <li class="contact-item" onclick="chatWith('{{ u.id }}', '{{ u.first_name }} {{ u.last_name }}')">
-                        <div class="avatar-circle">
-                            {{ u.first_name[0] }}{{ u.last_name[0] }}
-                        </div>
-                        <div class="contact-meta">
-                            <span class="contact-name">{{ u.first_name }} {{ u.last_name }}</span>
-                            <span class="contact-status">Active now</span>
-                        </div>
-                    </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </aside>
-
-        <main class="chat-main">
-            <header class="chat-main-header">
-                <h3 id="chat-name">Select a contact to start chatting</h3>
-            </header>
-            
-            <div id="chat-window">
-                <ul id="messages">
-                    </ul>
-            </div>
-
-            <div class="chat-input-footer">
-                <div class="input-wrapper">
-                    <input type="text" id="entered-message" placeholder="Type a message..." required>
-                    <button id="send-btn" class="send-btn">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-        </main>
-    </div>
-</div>
-
-<div id="new-msg-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-top">
-            <h3>New Message</h3>
-            <button id="close-modal-btn" class="close-x">&times;</button>
-        </div>
-        <input type="text" id="global-search-input" placeholder="Search users by name..." class="modal-search">
-        <ul id="global-search-results"></ul>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-<script src="{{ url_for('static', filename='scripts/chat.js') }}"></script>
+    <h1>Chat feature is no longer supported</h1>
 {% endblock %}

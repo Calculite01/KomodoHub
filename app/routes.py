@@ -3,7 +3,7 @@ from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, ContributionForm, GradeTaskForm, ReplyTaskForm
 from app.models import User, ContactMessage, OTP, Organization, Task, UserTask, Contribution, UserCourse, GlobalMesssages, Course, Material, CommonRoomMessage, CommonRoomMessageReply,Image, File, WorkshopActivity, ContributionReply, Sighting, TaskReply, FeatureStat
 from flask import render_template, url_for, redirect, flash, session
-from app import app, login_manager, mail, bcrypt, db, socketio
+from app import app, login_manager, mail, bcrypt, db
 from app.forms import RegistrationForm, LoginForm, ContactForm, OTPForm, ResetPasswordForm, ForgotPasswordForm, UniqueAccessCodeForm, MaterialForm, AddUserCourseForm, CommonRoomMessageForm, CommonRoomReplyForm, WorkshopActivityForm, ContributionReplyForm, AddUserOrganisationForm, CreateCourseForm, SightingForm, UpdateProfileForm, CreateTaskForm, SubmissionForm, OrganizationForm
 from app.models import User, Organization, ContactMessage, OTP, Messages
 from datetime import datetime, timedelta
@@ -11,7 +11,6 @@ import secrets      # for otp generation
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_mail import Message
 import os
-from flask_socketio import emit, join_room, leave_room, close_room, rooms
 from sqlalchemy import or_, and_, desc
 from PIL import Image as PILImage
 from werkzeug.utils import secure_filename
@@ -401,105 +400,9 @@ def get_allowed_contacts(current_user_object, search_query=""):
     return []
 
 @app.route('/chat/<int:orgid>')
-@login_required        # chat feature available only to logged in users
+@login_required        # chat feature no longer works
 def chat(orgid):
-    if current_user.organization_id != orgid:
-        flash("You do not have access to this organization's chat.", "failure")
-        return redirect(url_for('home'))
-    
-    active_contacts = get_allowed_contacts(current_user)
-    global_history = GlobalMesssages.query.join(User).filter(
-        User. organization_id == orgid
-    ).order_by(GlobalMesssages.timestamp.asc()).all()
-          
-    return render_template('chat.html', users=active_contacts, global_msgs= global_history)
-
-@socketio.on('connect')
-def handle_join():
-    if current_user.is_authenticated:
-        # join private room for each user
-        join_room(f"User_{current_user.id}")
-        # join organisation global chatroom
-        join_room(f"Organisation_global_{current_user.organization_id}")
-        print(f"\nUser {current_user.id} can chat in private & organisation rooms\n")
-
-# Defining event listener
-@socketio.on('send_private_message')        # listen for 'send_private_message' event from JavaScript side
-def send_pvt_message(data):
-    """Triggered when the user hits 'Send' button"""
-    friend_id = int(data['friend_id'])
-    my_id = current_user.id
-
-    # save data to SQLite DB here
-    txt_msg = data.get('text', None)
-    if txt_msg and friend_id:
-        new_message = Messages(text= txt_msg,
-                               sender_id= my_id,
-                               receiver_id= friend_id)
-        db.session.add(new_message)
-        db.session.commit()
-
-        print(f"Sending message [{txt_msg}] from [{my_id}] to [{friend_id}]")
-        # send data to sender and receiver's frontend
-        emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to=f"User_{current_user.id}")
-        emit('receive_private_message', {'text': txt_msg,'sender_id': my_id}, to=f"User_{friend_id}")
-    else:
-        print(f"Failed to send [{txt_msg}].")
-
-@socketio.on('send_global_message')
-def handle_global_msgs(data):
-    if current_user.role == "Student":  # Students not allowed to message globally
-        return
-    
-    # Teachers and Admins can message globally
-    print(f"Server received: {data}")
-    
-    text = data.get('text', None)
-    sender_id = current_user.id
-    
-    if text and sender_id:
-        global_msg = GlobalMesssages(text=text, sender_id=sender_id)
-        db.session.add(global_msg)
-        db.session.commit()
-        # broadcast received msg to everyone in the same organisation
-        emit('receive_global_message', 
-            {
-                'text': text, 
-                'sender': f"{current_user.first_name} {current_user.last_name}",
-                'sender_id': sender_id
-            }, 
-            to=f"Organisation_global_{current_user.organization_id}", broadcast= True)
-
-# REST API that returns chat history
-@app.route('/api/messages/<int:friend_id>', methods= ['GET'])
-@login_required
-def get_chat_history(friend_id):
-    my_id = current_user.id
-
-    # fetch the chats between 2 specific people
-    chat_history = Messages.query.filter(
-        or_(
-            (Messages.sender_id == my_id) & (Messages.receiver_id == friend_id),
-            (Messages.sender_id == friend_id) & (Messages.receiver_id == my_id)
-        )
-    ).order_by(Messages.timestamp.asc()).all()
-
-    all_chats = []
-
-    # packaging only required chat data from chats history
-    for chat in chat_history:
-        chat_data = {
-            'id': chat.id,
-            'sender_name': f"{chat.sender.first_name} {chat.sender.last_name}",
-            'receiver_name': f"{chat.receiver.first_name} {chat.receiver.last_name}",
-            'message_content': chat.text,
-            'sender_id': chat.sender_id,
-            'receiver_id': chat.receiver_id
-        }
-        all_chats.append(chat_data)
-
-    # return the chats as a JSON object
-    return jsonify({'messages': all_chats})
+    return render_template('chat.html')
 
 @app.route('/api/search_db', methods=['GET'])
 @login_required
